@@ -1,24 +1,22 @@
-ROLE: code_Role, nom 
-AVOIR, 11 FAMILLE, 0N ROLE
-FAMILLE: code_Famille, nom, prénom, email, mot_de_passe, adresse, téléphone, description, url_image, statut
-DEMANDER, 0N FAMILLE, 11 DEMANDE
-DEMANDE: code_Demande, statut,
-SOLLICITER, 0N ANIMAL, 11 DEMANDE
-
 DETENIR, 11 ASSOCIATION, 0N ROLE
-LOCALISATION: code_Localisation, numéro, département,
-LOCALISER, 11 FAMILLE, 0N LOCALISATION
-POSSEDER, 0N FAMILLE, 11 ANIMAL
+ASSOCIATION: code_Association, nom, email, mot_de_passe, adresse, code_postal, ville, département, téléphone, description, url_image
+APPARTENIR, 0N ASSOCIATION, 11 ANIMAL
+:
 :
 
-ASSOCIATION: code_Association, nom, email, mot_de_passe, adresse, téléphone, description, url_image
-SITUER, 11 ASSOCIATION, 0N LOCALISATION
+ROLE: code_Role, nom 
+POSSEDER, 0N FAMILLE, 01 ANIMAL
 ANIMAL: code_Animal, nom, genre, race, âge, taille, description, url_image, disponible
 ETRE, 11 ANIMAL, 0N TYPE
+TYPE: code_Type, nom
+
+AVOIR, 11 FAMILLE, 0N ROLE
+FAMILLE: code_Famille, nom, prénom, email, mot_de_passe, adresse, code_postal, ville, département, téléphone, description, url_image, statut
+SOLLICITER, 0N ANIMAL, 11 DEMANDE
 :
 
 :
-APPARTENIR, 11 ANIMAL, 0N ASSOCIATION
+DEMANDER, 0N FAMILLE, 11 DEMANDE
+DEMANDE: code_Demande, statut,
 :
-TYPE: code_Type, nom
 :

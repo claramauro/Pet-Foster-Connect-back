@@ -19,6 +19,9 @@ name text
 email text
 password text
 adress text
+zip_code text
+city text
+department text
 phone_number text
 description text
 url_image text
@@ -33,6 +36,9 @@ lastname text
 email text
 password text
 adress text
+zip_code text
+city text
+department text
 phone_number text
 description text
 url_image text
@@ -46,11 +52,6 @@ Table type {
  name text(128) 
 }
 
-Table location {
- id integer [primary key]
- department_number number
- department_name text(128)
-}
 
 Table request {
    id integer [primary key]
@@ -65,11 +66,9 @@ name text(128)
 }
 
 Ref : role.id < family.role_id
-Ref : location.id < family.location_id
 Ref : family.id < animal.family_id
 Ref : type.id < animal.type_id
 Ref : role.id < association.role_id
-Ref : location.id < association.location_id
 Ref : association.id < animal.association_id
 Ref : family.id < request.family_id
 Ref : animal.id < request.animal_id

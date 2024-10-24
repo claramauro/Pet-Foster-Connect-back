@@ -25,6 +25,9 @@
 | email | string |  | UNIQUE, NOT NULL | Adresse e-mail de l'utilisateur “famille” |
 | password | string |  | NOT NULL | Mot de passe de l'utilisateur “famille” |
 | adress | string |  | NOT NULL | Adresse de l’utilisateur “famille” |
+| zip_code | string |  | NOT NULL | Code postale de l'utilisateur “famille” |
+| department | string |  | NOT NULL | Departement de l'utilisateur “famille” |
+| city | string |  | NOT NULL | Ville de l'utilisateur “famille” |
 | phone_number | string |  | NOT NULL | Numéro de téléphone de l’utilisateur “famille” |
 | description | string |  | NOT NULL | Description de la famille |
 | url_image | string |  | UNIQUE | URL de l’image |
@@ -40,6 +43,9 @@
 | email | string |  | UNIQUE, NOT NULL | Adresse e-mail de l’association |
 | password | string |  | NOT NULL | Mot de passe de l’association |
 | adress | string |  | NOT NULL | Adresse de l’association |
+| zip_code | string |  | NOT NULL | Code postale de l'association |
+| department | string |  | NOT NULL | Departement de l'association |
+| city | string |  | NOT NULL | Ville de l'association |
 | phone_number | string |  | NOT NULL | Numéro de téléphone de l’association |
 | description | string |  | NOT NULL | Description de l’association |
 | url_image | string |  | UNIQUE | URL de l’image |
@@ -55,13 +61,6 @@
 | family_id | number | Etrangère | NOT NULL | Code de la famille |
 | animal_id | number | Etrangère | NOT NULL | Code de l’animal |
 
-## Table LOCATION
-
-| **Champ** | **Type de donnée** | **Clé** | **Contraintes** | **Description** |
-| --- | --- | --- | --- | --- |
-| id | number | Primaire | UNIQUE NOT NULL | Identifiant unique de la localisation |
-| department_number | number |  | NOT NULL | Numéro de département |
-| department_name | string |  | NOT NULL | Nom de département |
 
 ## Table TYPE
 
