@@ -1,22 +1,7 @@
-DETENIR, 11 ASSOCIATION, 0N ROLE
-ASSOCIATION: code_Association, nom, email, mot_de_passe, adresse, code_postal, ville, département, téléphone, description, url_image
-APPARTENIR, 0N ASSOCIATION, 11 ANIMAL
-:
-:
+ACCUEILLIR, 0N UTILISATEUR, 0N ANIMAL
+ANIMAL: code_Animal, nom, genre, espèce, race, âge, taille, description, url_image, disponible
+CONCERNER, 0N ANIMAL, 11 DEMANDE
 
-ROLE: code_Role, nom 
-POSSEDER, 0N FAMILLE, 01 ANIMAL
-ANIMAL: code_Animal, nom, genre, race, âge, taille, description, url_image, disponible
-ETRE, 11 ANIMAL, 0N TYPE
-TYPE: code_Type, nom
-
-AVOIR, 11 FAMILLE, 0N ROLE
-FAMILLE: code_Famille, nom, prénom, email, mot_de_passe, adresse, code_postal, ville, département, téléphone, description, url_image, statut
-SOLLICITER, 0N ANIMAL, 11 DEMANDE
-:
-
-:
-DEMANDER, 0N FAMILLE, 11 DEMANDE
+UTILISATEUR: code_Utilisateur, nom, prénom, email, mot_de_passe, adresse, code_postal, ville, département, téléphone, description, url_image, role
+DEMANDER, 0N UTILISATEUR, 11 DEMANDE
 DEMANDE: code_Demande, statut,
-:
-:
