@@ -40,10 +40,16 @@ Animal.init(
 			type: DataTypes.BOOLEAN,
 			allownull: false,
 		},
+		created_at: {
+			type: DataTypes.DATE,
+			allowNull: false,
+			defaultValue: literal("CURRENT_TIMESTAMP"),
+		},
+		updated_at: DataTypes.DATE,
 	},
 	{
 		sequelize,
-		tableName: "animals",
+		tableName: "animal",
 	},
 );
 
