@@ -1,10 +1,10 @@
-import {Router} from 'express';
-import {associationsController} from "../controllers/associations.controller.js";
+import { Router } from "express";
+import { associationsController } from "../controllers/associations.controller.js";
 
-const associationRoutes  = Router();
+const associationsRoutes = Router();
 
-associationRoutes.get('/', associationsController.index);
-associationRoutes.get('/:id(\\d+)', associationsController.findOne)
-associationRoutes.get('/search', associationsController.filter)
+associationsRoutes.get("/", associationsController.index);
+associationsRoutes.get("/:id(\\d+)", associationsController.findOne);
+associationsRoutes.get("/search", associationsController.filter);
 
-export {associationRoutes};
+export { associationsRoutes };
