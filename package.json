@@ -1,0 +1,30 @@
+{
+  "name": "pet-foster-connect-back",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "type": "module",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "dev" : "nodemon app.js",
+    "start" : "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-jsdoc-swagger": "^1.8.0",
+    "joi": "^17.13.3",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.1",
+    "sequelize": "^6.37.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
