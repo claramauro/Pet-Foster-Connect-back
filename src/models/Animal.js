@@ -1,7 +1,8 @@
 import { Model, DataTypes, literal } from "sequelize";
 import { sequelize } from "../database/connection.js";
 
-class Animal extends Model {}
+class Animal extends Model {
+}
 
 Animal.init(
     {
@@ -40,13 +41,13 @@ Animal.init(
             type: DataTypes.BOOLEAN,
             allowNull: false,
         },
-		family_id: {
-			type: INTEGER,
-		}, 
-		association_id: {
-			type: INTEGER, 
-			allowNull: false, 
-		}
+        family_id: {
+            type: DataTypes.INTEGER,
+        },
+        association_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
         created_at: {
             type: DataTypes.DATE,
             allowNull: false,
@@ -57,7 +58,7 @@ Animal.init(
     {
         sequelize,
         tableName: "animal",
-    }
+    },
 );
 
 export { Animal };

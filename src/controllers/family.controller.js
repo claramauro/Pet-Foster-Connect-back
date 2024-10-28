@@ -1,9 +1,16 @@
+import { Family } from "../models/associations.js";
+
 const familyController = {
 
     findOne: async (req, res) => {
-        /*
-        fetch with req.params and return res.json() one family
-         */
+        const { id } = req.params;
+
+        const family = await Family.findByPk(id)
+
+        console.log(family);
+
+        res.end();
+
     },
 
     update: async (req, res) => {
