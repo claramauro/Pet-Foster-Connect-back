@@ -70,7 +70,7 @@ const animalsController = {
             if (query.gender) whereClause.gender = query.gender; 
             // ici on vient construire un bon de la requête sequelize : Animal.lte vient chercher un animal qui a un age inférieur ou égale à l'âge récupéré dans la query. 
             if (query.age)  whereClause.age = {[Animal.lte]: parseInt(query.age)}
-            if (query.size) 
+            if (query.size) whereClause.size = query.size;
 
             if (query.minAge) whereClause.age = { [Op.gte]: parseInt(query.minAge) };
             if (query.maxAge) whereClause.age = { ...whereClause.age, [Op.lte]: parseInt(query.maxAge) };
