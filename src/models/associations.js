@@ -2,7 +2,7 @@ import { sequelize } from "../database/connection.js";
 import { Animal } from "./Animal.js";
 import { Request } from "./Request.js";
 import { Family } from "./Family.js";
-import { Association } from "./Association";
+import { Association } from "./Association.js";
 import { User } from "./User.js";
 
 Request.belongsTo(Animal, {
@@ -25,23 +25,23 @@ Family.hasMany(Request, {
     foreignKey: "family_id",
 });
 
-Family.belongsTo(User, {
+User.belongsTo(Family, {
+    as: "family",
+    foreignKey: "family_id",
+});
+
+Family.hasOne(User, {
     as: "user",
     foreignKey: "family_id",
 });
 
-User.hasOne(Family, {
-    as: "families",
-    foreignKey: "family_id",
-});
-
-Association.belongsTo(User, {
-    as: "user",
+User.belongsTo(Association, {
+    as: "association",
     foreignKey: "association_id",
 });
 
-User.hasOne(Association, {
-    as: "associations",
+Association.hasOne(User, {
+    as: "user",
     foreignKey: "association_id",
 });
 

@@ -40,13 +40,13 @@ Animal.init(
             type: DataTypes.BOOLEAN,
             allowNull: false,
         },
-		family_id: {
-			type: INTEGER,
-		}, 
-		association_id: {
-			type: INTEGER, 
-			allowNull: false, 
-		}
+        family_id: {
+            type: DataTypes.INTEGER,
+        },
+        association_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
         created_at: {
             type: DataTypes.DATE,
             allowNull: false,

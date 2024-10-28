@@ -5,7 +5,7 @@ import { router } from "./src/routes/routes.js";
 dotenv.config();
 
 import "./src/database/connection.js";
-import { notFound, errorHandler } from "./app/middlewares/errorHandler.js";
+import { notFound, errorHandler } from "./src/middlewares/errorHandler.js";
 
 const app = express();
 
