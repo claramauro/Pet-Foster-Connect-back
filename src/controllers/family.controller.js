@@ -31,12 +31,17 @@ const familyController = {
         res.json(updatedFamily);
     },
 
-    destroy: async (req, res) => {
+    destroy: async (req, res, next) => {
         const { id } = req.params;
 
-        await Family.destroy({ where: { id } });
+        const familyToDestroy = await Family.findByPk(id);
 
-        res.status(204);
+        if (!familyToDestroy) {
+            return next();
+        }
+
+        await familyToDestroy.destroy();
+        res.status(204).send();
 
         /*
         TODO Ajouter la logique pour déconnecter automatiquement l'utilisateur après la suppression de la famille
