@@ -62,42 +62,37 @@ const animalsController = {
         // Middleware de gestion des queries pour vérifier si undefined ou non + transformer age récupéré en intervale (inférieur ou égal) - Ce middleware vient construire la requ$ete where qu'on va passer à sequelize
 
         const buildWhereClause = (query) => {
-            const whereClause = {};
+            const animalWhere = {};
+            const associationWhereClause = {};
             
-            if (query.species) whereClause.species = query.species; 
-            if (query.department) whereClause.department = query.department; // ici mettre la requette qui va venir chercher dans la table ? 
-            if (query.association) whereClause.association = query.association; 
-            if (query.gender) whereClause.gender = query.gender; 
-            // ici on vient construire un bon de la requête sequelize : Animal.lte vient chercher un animal qui a un age inférieur ou égale à l'âge récupéré dans la query. 
-            if (query.age)  whereClause.age = {[Animal.lte]: parseInt(query.age)}
-            if (query.size) whereClause.size = query.size;
+            if (query.species) animalWhere.species = query.species;             
+            if (query.age)  animalWhere.age = {[Animal.lte]: parseInt(query.age)}
+            if (query.size) animalWhere.size = query.size;   
+            if (query.gender) animalWhere.gender = query.gender;
+            if (query.association) animalWhere.association = query.association; 
+            
+            // Gestion association et animalWhere pour chercher la localisation via l'association
+            if (query.department) associationWhereClause.department = query.department;
+            if (query.association) associationWhereClause.id = query.association; //
 
-            if (query.minAge) whereClause.age = { [Op.gte]: parseInt(query.minAge) };
-            if (query.maxAge) whereClause.age = { ...whereClause.age, [Op.lte]: parseInt(query.maxAge) };
-            
-            return whereClause;
+            return {animalWhere: animalWhere, associationWhere: associationWhereClause};
           };
 
         
         // On récupère les queries et on les mets en forme via le middleware 
 
-        const whereClause = buildWhereClause(req.query); 
 
         const animals = await Animal.findAll({
-            where:whereClause
+            where: animalWhere,
+            include: [{
+                model: Association,
+                where: associationWhere,
+                // fonctionne même si le filtre n'est pas appliqué
+                required: false
+            }]
         });
 
         res.json(animals); 
-
-
-
-        // venir transformer age en un intervale 
-        // gestion de sequelize pour gérer l'âge maximal : 
-        
-
-        // récupérer l'association de l'animal pour récupérer son département 
-
-
         
     },
 };
