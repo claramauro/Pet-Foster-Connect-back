@@ -1,59 +1,29 @@
-import { Model, DataTypes } from "sequelize";
+import { Model, DataTypes, literal } from "sequelize";
 import { sequelize } from "../database/connection.js";
 
 class User extends Model {}
 
 User.init(
 	{
-		firstname: {
-			type: DataTypes.TEXT,
-		},
-		lastname: {
-			type: DataTypes.TEXT,
-		},
-		name: {
-			type: DataTypes.TEXT,
-		},
 		email: {
 			type: DataTypes.TEXT,
-			allownull: false,
+			allowNull: false,
 			unique: true,
 		},
 		password: {
 			type: DataTypes.TEXT,
-			allownull: false,
-		},
-		adress: {
-			type: DataTypes.TEXT,
-			allownull: false,
-		},
-		zipcode: {
-			type: DataTypes.TEXT,
-			allownull: false,
-		},
-		department: {
-			type: DataTypes.TEXT,
-			allownull: false,
-		},
-		city: {
-			type: DataTypes.TEXT,
-			allownull: false,
-		},
-		phone_number: {
-			type: DataTypes.INTEGER,
-			allownull: false,
-		},
-		description: {
-			type: DataTypes.TEXT,
-		},
-		url_image: {
-			type: DataTypes.TEXT,
-			unique: true,
+			allowNull: false,
 		},
 		role: {
-			type: DataTypes.STRING,
+			type: DataTypes.TEXT,
 			allownull: false,
 		},
+		family_id: {
+			type: DataTypes.INTEGER,
+		}, 
+		association_id: {
+			type: DataTypes.INTEGER,
+		}
 		created_at: {
 			type: DataTypes.DATE,
 			allowNull: false,

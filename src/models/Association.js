@@ -1,52 +1,44 @@
 import { Model, DataTypes, literal } from "sequelize";
 import { sequelize } from "../database/connection.js";
 
-class Animal extends Model {}
+class Association extends Model {}
 
-Animal.init(
+Association.init(
     {
         name: {
             type: DataTypes.TEXT,
-            allownull: false,
         },
-        gender: {
+        adress: {
             type: DataTypes.TEXT,
             allownull: false,
         },
-        race: {
-            type: DataTypes.TEXT,
-        },
-        species: {
+        zipcode: {
             type: DataTypes.TEXT,
             allownull: false,
         },
-        age: {
+        department: {
+            type: DataTypes.TEXT,
+            allownull: false,
+        },
+        city: {
+            type: DataTypes.TEXT,
+            allownull: false,
+        },
+        phone_number: {
             type: DataTypes.INTEGER,
-            allownull: false,
-        },
-        size: {
-            type: DataTypes.TEXT,
             allownull: false,
         },
         description: {
             type: DataTypes.TEXT,
-            allownull: false,
         },
         url_image: {
             type: DataTypes.TEXT,
             unique: true,
         },
-        availability: {
-            type: DataTypes.BOOLEAN,
+        role: {
+            type: DataTypes.STRING,
             allownull: false,
         },
-		family_id: {
-			type: INTEGER,
-		}, 
-		association_id: {
-			type: INTEGER, 
-			allowNull: false, 
-		}
         created_at: {
             type: DataTypes.DATE,
             allowNull: false,
@@ -56,8 +48,8 @@ Animal.init(
     },
     {
         sequelize,
-        tableName: "animal",
+        tableName: "association",
     }
 );
 
-export { Animal };
+export { Association };
