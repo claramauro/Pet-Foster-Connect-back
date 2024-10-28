@@ -30,10 +30,16 @@ const familyController = {
 
         res.json(updatedFamily);
     },
-    
+
     destroy: async (req, res) => {
+        const { id } = req.params;
+
+        await Family.destroy({ where: { id } });
+
+        res.status(204);
+
         /*
-        delete family req.params and return "ok"
+        TODO Ajouter la logique pour déconnecter automatiquement l'utilisateur après la suppression de la famille
          */
     },
 
