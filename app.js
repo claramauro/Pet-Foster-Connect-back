@@ -4,6 +4,8 @@ import { router } from "./src/routes/routes.js";
 
 dotenv.config();
 
+import "./src/database/connection.js";
+
 const app = express();
 
 app.use(router);
