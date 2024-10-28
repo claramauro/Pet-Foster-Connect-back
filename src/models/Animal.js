@@ -7,30 +7,30 @@ Animal.init(
     {
         name: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         gender: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         race: {
             type: DataTypes.TEXT,
         },
         species: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         age: {
             type: DataTypes.INTEGER,
-            allownull: false,
+            allowNull: false,
         },
         size: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         description: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         url_image: {
             type: DataTypes.TEXT,
@@ -38,7 +38,7 @@ Animal.init(
         },
         availability: {
             type: DataTypes.BOOLEAN,
-            allownull: false,
+            allowNull: false,
         },
 		family_id: {
 			type: INTEGER,

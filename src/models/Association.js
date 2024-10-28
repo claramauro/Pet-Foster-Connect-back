@@ -8,25 +8,25 @@ Association.init(
         name: {
             type: DataTypes.TEXT,
         },
-        adress: {
+        address: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
-        zipcode: {
+        zip_code: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         department: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         city: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         phone_number: {
             type: DataTypes.INTEGER,
-            allownull: false,
+            allowNull: false,
         },
         description: {
             type: DataTypes.TEXT,
@@ -37,7 +37,7 @@ Association.init(
         },
         role: {
             type: DataTypes.STRING,
-            allownull: false,
+            allowNull: false,
         },
         created_at: {
             type: DataTypes.DATE,

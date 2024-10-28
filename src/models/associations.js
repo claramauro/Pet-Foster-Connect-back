@@ -1,7 +1,8 @@
 import { sequelize } from "../database/connection.js";
 import { Animal } from "./Animal.js";
-import { AnimalHasUser } from "./AnimalHasUser.js";
 import { Request } from "./Request.js";
+import { Family } from "./Family.js";
+import { Association } from "./Association";
 import { User } from "./User.js";
 
 Request.belongsTo(Animal, {
@@ -14,28 +15,54 @@ Animal.hasMany(Request, {
     foreignKey: "animal_id",
 });
 
-Request.belongsTo(User, {
-    as: "user",
-    foreignKey: "user_id",
+Request.belongsTo(Family, {
+    as: "family",
+    foreignKey: "family_id",
 });
 
-User.hasMany(Request, {
+Family.hasMany(Request, {
     as: "requests",
-    foreignKey: "user_id",
+    foreignKey: "family_id",
 });
 
-User.belongsToMany(Animal, {
+Family.belongsTo(User, {
+    as: "user",
+    foreignKey: "family_id",
+});
+
+User.hasOne(Family, {
+    as: "families",
+    foreignKey: "family_id",
+});
+
+Association.belongsTo(User, {
+    as: "user",
+    foreignKey: "association_id",
+});
+
+User.hasOne(Association, {
+    as: "associations",
+    foreignKey: "association_id",
+});
+
+Animal.belongsTo(Family, {
+    as: "family",
+    foreignKey: "family_id",
+});
+
+Family.hasMany(Animal, {
     as: "animals",
-    through: AnimalHasUser,
-    foreignKey: "user_id",
-    otherKey: "animal_id",
+    foreignKey: "family_id",
 });
 
-Animal.belongsToMany(User, {
-    as: "users",
-    through: AnimalHasUser,
-    foreignKey: "animal_id",
-    otherKey: "user_id",
+Animal.belongsTo(Association, {
+    as: "association",
+    foreignKey: "association_id",
 });
 
-export { sequelize, Animal, AnimalHasUser, Request, User };
+Association.hasMany(Animal, {
+    as: "animals",
+    foreignKey: "association_id",
+});
+
+export { sequelize, Animal, Request, Family, Association, User };

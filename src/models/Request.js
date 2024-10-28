@@ -7,15 +7,15 @@ Request.init(
     {
         statut: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         family_id: {
             type: DataTypes.INTEGER,
-            allownull: false,
+            allowNull: false,
         },
         animal_id: {
             type: DataTypes.INTEGER,
-            allownull: false,
+            allowNull: false,
         },
         created_at: {
             type: DataTypes.DATE,

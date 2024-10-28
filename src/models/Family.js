@@ -8,25 +8,25 @@ Family.init(
         name: {
             type: DataTypes.TEXT,
         },
-        adress: {
+        address: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
-        zipcode: {
+        zip_code: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         department: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         city: {
             type: DataTypes.TEXT,
-            allownull: false,
+            allowNull: false,
         },
         phone_number: {
             type: DataTypes.INTEGER,
-            allownull: false,
+            allowNull: false,
         },
         description: {
             type: DataTypes.TEXT,

@@ -16,7 +16,7 @@ User.init(
 		},
 		role: {
 			type: DataTypes.TEXT,
-			allownull: false,
+			allowNull: false,
 		},
 		family_id: {
 			type: DataTypes.INTEGER,
