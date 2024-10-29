@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { animalsController } from "../controllers/animals.controller.js";
-import { catchErrors } from "../middlewares/catchErrors.js";
+import { catchErrors } from "../middlewares/catchError.js";
 
 const animalsRoutes = Router();
 
