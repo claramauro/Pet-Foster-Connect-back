@@ -1,4 +1,3 @@
-import { Op } from "sequelize";
 import { Association } from "../models/associations.js";
 
 const associationsController = {
@@ -6,9 +5,7 @@ const associationsController = {
         /*
        fetch and return  res.json() all associations
         */
-        const associations = await Association.findAll({
-            include: "animals",
-        });
+        const associations = await Association.findAll();
         res.json(associations);
     },
     findOne: async (req, res, next) => {
