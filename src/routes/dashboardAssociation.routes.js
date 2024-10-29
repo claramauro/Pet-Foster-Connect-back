@@ -12,12 +12,12 @@ dashboardAssociationRoutes.post(
 );
 
 dashboardAssociationRoutes.patch(
-    "/association/animals/(\\d+)",
+    "/association/animals/:id(\\d+)",
     catchErrors(dashboardController.updateAnimal)
 );
 
 dashboardAssociationRoutes.delete(
-    "/association/animals/(\\d+)",
+    "/association/animals/:id(\\d+)",
     catchErrors(dashboardController.destroyAnimal)
 );
 

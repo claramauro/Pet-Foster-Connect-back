@@ -37,12 +37,12 @@ VALUES
 ('Nala', 'Femelle', 'Angora', 'Chat', 3, 'Petite', 'Chat joyeux, aime la compagnie', 'https://example.com/nala.jpg', TRUE, 1, 1);
 
 -- Seed pour la table request
-INSERT INTO "request" ("status", "family_id", "animal_id")
+INSERT INTO "request" ("status", "family_id", "animal_id", "association_id")
 VALUES 
-('En cours', 1, 1),
-('En attente', 2, 2),
-('Validée', 1, 3),
-('Rejetée', 2, 4);
+('En cours', 1, 1, 1),
+('En attente', 2, 2, 1),
+('Validée', 1, 3, 2),
+('Rejetée', 2, 4, 2);
 
 -- Fin de la transaction
 COMMIT;
