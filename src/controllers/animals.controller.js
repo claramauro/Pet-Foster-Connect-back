@@ -10,6 +10,7 @@ const animalsController = {
         const animals = await Animal.findAll({
             include: [{ association: "association" }, { association: "family" }],
         });
+
         res.json(animals);
     },
     findOne: async (req, res) => {
@@ -20,6 +21,11 @@ const animalsController = {
         const animal = await Animal.findByPk(id, {
             include: [{ association: "association" }, { association: "family" }],
         });
+
+        if (!animal) {
+            return next(new Error("Not Found"));
+        }
+
         res.json(animal);
     },
 
@@ -60,7 +66,20 @@ const animalsController = {
             const associationWhereClause = {};
 
             if (query.species) animalWhere.species = query.species;
-            if (query.age) animalWhere.age = { [Sequelize.Op.lte]: Number.parseInt(query.age) };
+
+            // le front renvoie un intervale sous forme de string (ex: "0-2") sauf 11 = supérieur à 11
+            if (query.age) {
+                if (query.age === "11") {
+                    animalWhere.age = { [Sequelize.Op.gte]: Number.parseInt(11) };
+                } else {
+                    const splitAges = query.age.split("-");
+                    const [age1, age2] = splitAges;
+                    animalWhere.age = {
+                        [Sequelize.Op.gte]: Number.parseInt(age1),
+                        [Sequelize.Op.lte]: Number.parseInt(age2),
+                    };
+                }
+            }
             if (query.size) animalWhere.size = query.size;
             if (query.gender) animalWhere.gender = query.gender;
             if (query.association_id)
