@@ -136,6 +136,26 @@ associations de protection animale.
 - Contact (MVP : lien mailto)
 - Page erreur 404
 
+| Pages                                                 | Chemins                    | 
+|-------------------------------------------------------|----------------------------|
+| Page d'accueil                                        | /                          |
+| Page des associations                                 | /associations              |
+| Page d'une association                                | /associations/:name        |
+| Page d'une famille                                    | /famille/:name-:id         |
+| Page des animaux                                      | /animaux                   |
+| Page d'un animal                                      | /animaux/:name-:id         |
+| Page d'inscription famille                            | /inscription/famille       |
+| Page d'inscription association                        | /inscription/association   |
+| Page de connexion                                     | /connexion                 |
+| Page des mentions légales                             | /mentions-legales          |
+| Page politique de confidentialité                     | /politique-confidentialite |
+| Page du plan du site                                  | /plan-du-site              |
+| Page tableau de bord association - Liste des animaux  | /tableau-de-bord           |
+| Page tableau de bord association - Ajout d'un animal  | /tableau-de-bord/ajout     |
+| Page tableau de bord association - Liste des demandes | /tableau-de-bord/demandes  |
+| Page tableau de bord association - Profil             | /tableau-de-bord/profil    |
+| Page d'erreur 404                                     | /erreur                    |
+
 #### Routes Back-end
 
 ## Homepage
@@ -148,18 +168,18 @@ associations de protection animale.
 
 | Verbe | Chemin                              | Request Body | Response Body                          | Code (succès) |
 |-------|-------------------------------------|--------------|----------------------------------------|---------------|
-| GET   | /associations                       |              | la liste de toutes les assocations     | 200           |
+| GET   | /associations                       |              | la liste de toutes les associations    | 200           |
 | GET   | /associations/:id                   |              | les données d'une association          | 200           |
 | GET   | associations/search?filtre={filtre} |              | liste des associations selon un filtre | 200           |
 
 ## Animaux
 
-| Verbe | Chemin                          | Request Body                               | Response Body                     | Code (succès) |
-|-------|---------------------------------|--------------------------------------------|-----------------------------------|---------------|
-| GET   | /animals                        |                                            | la liste de tous les animaux      | 200           |
-| GET   | /animals/:id                    |                                            | les données d'un animal           | 200           |
-| GET   | /animals/search?filtre={filtre} |                                            | liste des animaux selon un filtre | 200           |
-| POST  | /animals/request                | id de l'asso, de la famille et de l'animal | demande                           | 201           |
+| Verbe | Chemin                          | Request Body                                      | Response Body                     | Code (succès) |
+|-------|---------------------------------|---------------------------------------------------|-----------------------------------|---------------|
+| GET   | /animals                        |                                                   | la liste de tous les animaux      | 200           |
+| GET   | /animals/:id                    |                                                   | les données d'un animal           | 200           |
+| GET   | /animals/search?filtre={filtre} |                                                   | liste des animaux selon un filtre | 200           |
+| POST  | /animals/request                | id de l'association, de la famille et de l'animal | demande                           | 201           |
 
 ## Dashboard
 
@@ -200,6 +220,39 @@ associations de protection animale.
 | Verbe | Chemin       | Request Body | Response Body | Code (succès) |
 |-------|--------------|--------------|---------------|---------------|
 | POST  | /auth/logout |              |               | 200           |
+
+### Les users stories :
+
+| En tant que | Je veux                                      | Dans le but                                                                    | Sprint |
+|-------------|----------------------------------------------|--------------------------------------------------------------------------------|--------|
+| Visiteur    | Consulter la page d'accueil                  |                                                                                |        |
+| Visiteur    | Consulter la liste des animaux               | De voir les animaux disponibles                                                |        |
+| Visiteur    | Consulter la liste des associations          | De voir les associations                                                       |        |
+| Visiteur    | Effectuer une recherche d'animaux            | Voir les animaux correspondants à ses critères                                 |        |
+| Visiteur    | Effectuer une recherche d'associations       | Voir les associations correspondants à ses critères                            |        |
+| Visiteur    | Voir les mentions légales                    | Lire les mentions légales                                                      |        |
+| Visiteur    | Voir le plan du site                         | De connaître l'arborescence du site                                            |        |
+| Visiteur    | Voir la politique de confidentialité         | Lire la politique de confidentialité                                           |        |
+| Visiteur    | M'inscrire en tant que famille / association | Accéder aux fonctionnalités des différents rôles                               |        |
+| Visiteur    | Me connecter                                 | Accéder aux fonctionnalités des familles ou associations                       |        |
+| Association | Accéder au tableau de bord de l'association  | Voir les animaux de mon associations et accéder aux fonctionnalités de gestion |        |
+| Association | Ajouter un animal                            | Ajouter un animal à la liste des animaux de l'association                      |        |
+| Association | Modifier un animal                           | Modifier les informations d'un animal                                          |        |
+| Association | Supprimer un animal                          | Supprimer un animal de la liste des animaux de l'association                   |        |
+| Association | Voir les demandes                            | Consulter les demandes faites à l'association                                  |        |
+| Association | Modifier le statut d'une demande             | Valider ou refuser une demande                                                 |        |
+| Association | Voir la page d'une famille                   | Voir les informations pour valider ou non la demande                           |        |
+| Association | Visualiser les informations de l'association | Consulter ses informations                                                     |        |
+| Association | Modifier les informations de l'association   | D'actualiser les informations de l'association                                 |        |
+| Association | Supprimer mon association                    | Effacer mon association et ses animaux de l'application                        |        |
+| Association | Me déconnecter                               | De sécuriser mon compte                                                        |        |
+| Famille     | Consulter le profil                          | Verifier les informations et mes demandes de prise en charge                   |        |
+| Famille     | Faire une demande                            | Accueillir un animal                                                           |        |
+| Famille     | Supprimer une demande                        | Annuler la proposition d'accueil de l'animal                                   |        |
+| Famille     | Contacter une association                    | Obtenir des informations                                                       |        |
+| Famille     | Modifier les informations de la famille      | D'actualiser les informations de la famille                                    |        |
+| Famille     | Supprimer le profil                          | Effacer le profil                                                              |        |
+| Famille     | Me déconnecter                               | De sécuriser mon compte                                                        |        |
 
 ### L'équipe :
 

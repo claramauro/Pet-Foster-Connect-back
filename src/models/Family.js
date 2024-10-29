@@ -1,7 +1,8 @@
 import { Model, DataTypes, literal } from "sequelize";
 import { sequelize } from "../database/connection.js";
 
-class Family extends Model {}
+class Family extends Model {
+}
 
 Family.init(
     {
@@ -45,7 +46,7 @@ Family.init(
     {
         sequelize,
         tableName: "family",
-    }
+    },
 );
 
 export { Family };

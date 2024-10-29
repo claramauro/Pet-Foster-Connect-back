@@ -1,7 +1,8 @@
 import { Model, DataTypes, literal } from "sequelize";
 import { sequelize } from "../database/connection.js";
 
-class Animal extends Model {}
+class Animal extends Model {
+}
 
 Animal.init(
     {
@@ -57,7 +58,7 @@ Animal.init(
     {
         sequelize,
         tableName: "animal",
-    }
+    },
 );
 
 export { Animal };

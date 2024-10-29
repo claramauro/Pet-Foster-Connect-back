@@ -1,7 +1,8 @@
 import { Model, DataTypes, literal } from "sequelize";
 import { sequelize } from "../database/connection.js";
 
-class Request extends Model {}
+class Request extends Model {
+}
 
 Request.init(
     {
@@ -11,11 +12,9 @@ Request.init(
         },
         family_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
         },
         animal_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
         },
         created_at: {
             type: DataTypes.DATE,
@@ -27,7 +26,7 @@ Request.init(
     {
         sequelize,
         tableName: "request",
-    }
+    },
 );
 
 export { Request };

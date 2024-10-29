@@ -9,3 +9,4 @@ const catchErrors = (fn) => {
 };
 
 export { catchErrors };
+
