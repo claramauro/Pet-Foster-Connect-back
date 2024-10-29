@@ -25,6 +25,16 @@ Family.hasMany(Request, {
     foreignKey: "family_id",
 });
 
+Request.belongsTo(Association, {
+    as: "association",
+    foreignKey: "association_id",
+});
+
+Association.hasMany(Request, {
+    as: "requests",
+    foreignKey: "association_id",
+});
+
 User.belongsTo(Family, {
     as: "family",
     foreignKey: "family_id",

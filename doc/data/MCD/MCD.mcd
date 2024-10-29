@@ -1,7 +1,19 @@
-ACCUEILLIR, 0N UTILISATEUR, 0N ANIMAL
-ANIMAL: code_Animal, nom, genre, espèce, race, âge, taille, description, url_image, disponible
-CONCERNER, 0N ANIMAL, 11 DEMANDE
+ETRE, 11 FAMILLE, 01 UTILISATEUR
+FAMILLE: code_Famille, nom, adresse, code_postal, ville, département, téléphone, description, url_image
+DEMANDER, 0N FAMILLE, 11 DEMANDE
+:
 
-UTILISATEUR: code_Utilisateur, nom, prénom, email, mot_de_passe, adresse, code_postal, ville, département, téléphone, description, url_image, role
-DEMANDER, 0N UTILISATEUR, 11 DEMANDE
+UTILISATEUR: code_Utilisateur, email, mot_de_passe, role
+ACCUEILLIR, 0N FAMILLE, 01 ANIMAL
+CONCERNER, 0N ANIMAL, 11 DEMANDE
 DEMANDE: code_Demande, statut,
+
+REPRESENTER, 01 UTILISATEUR, 11 ASSOCIATION
+ANIMAL: code_Animal, nom, genre, espèce, race, âge, taille, description, url_image, disponible
+POSSEDER, 11 ANIMAL, 0N ASSOCIATION
+RECEVOIR, 0N ASSOCIATION, 11 DEMANDE
+
+:
+:
+ASSOCIATION: code_Association, nom, adresse, code_postal, ville, département, téléphone, description, url_image
+:

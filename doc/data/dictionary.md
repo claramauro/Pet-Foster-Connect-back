@@ -1,7 +1,7 @@
 ## Table ANIMAL
 
 | **Champ**      | **Type de donnée** | **Clé**   | **Contraintes** | **Description**                |
-|----------------|--------------------|-----------|-----------------|--------------------------------|
+| -------------- | ------------------ | --------- | --------------- | ------------------------------ |
 | id             | number             | Primaire  | UNIQUE NOT NULL | Identifiant unique de l'animal |
 | name           | string             |           | NOT NULL        | Nom de l’animal                |
 | gender         | string             |           | NOT NULL        | Sexe de l’animal               |
@@ -18,7 +18,7 @@
 ## Table USER
 
 | **Champ**      | **Type de donnée** | **Clé**  | **Contraintes**  | **Description**                     |
-|----------------|--------------------|----------|------------------|-------------------------------------|
+| -------------- | ------------------ | -------- | ---------------- | ----------------------------------- |
 | id             | number             | Primaire | UNIQUE NOT NULL  | Identifiant unique de l’utilisateur |
 | email          | string             |          | UNIQUE, NOT NULL | Adresse e-mail de l'utilisateur     |
 | password       | string             |          | NOT NULL         | Mot de passe de l'utilisateur       |
@@ -29,7 +29,7 @@
 ## TABLE FAMILY
 
 | **Champ**    | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                   |
-|--------------|--------------------|----------|-----------------|-----------------------------------|
+| ------------ | ------------------ | -------- | --------------- | --------------------------------- |
 | id           | number             | Primaire | UNIQUE NOT NULL | Identifiant unique de la famille  |
 | name         | string             |          | NOT NULL        | Nom d'une association             |
 | address      | string             |          | NOT NULL        | Adresse de la famille             |
@@ -43,7 +43,7 @@
 ## TABLE ASSOCIATION
 
 | **Champ**    | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                      |
-|--------------|--------------------|----------|-----------------|--------------------------------------|
+| ------------ | ------------------ | -------- | --------------- | ------------------------------------ |
 | id           | number             | Primaire | UNIQUE NOT NULL | Identifiant unique de l’association  |
 | name         | string             |          | NOT NULL        | Nom de l'association                 |
 | address      | string             |          | NOT NULL        | Adresse de l’association             |
@@ -56,11 +56,12 @@
 
 ## Table REQUEST
 
-| **Champ** | **Type de donnée** | **Clé**   | **Contraintes** | **Description**                  |
-|-----------|--------------------|-----------|-----------------|----------------------------------|
-| id        | number             | Primaire  | UNIQUE NOT NULL | Identifiant unique de la demande |
-| statuts   | string             |           | NOT NULL        | Statut de la demande             |
-| family_id | number             | Etrangère |                 | Code de la famille               |
-| animal_id | number             | Etrangère |                 | Code de l’animal                 |
+| **Champ**      | **Type de donnée** | **Clé**   | **Contraintes** | **Description**                  |
+| -------------- | ------------------ | --------- | --------------- | -------------------------------- |
+| id             | number             | Primaire  | UNIQUE NOT NULL | Identifiant unique de la demande |
+| statuts        | string             |           | NOT NULL        | Statut de la demande             |
+| family_id      | number             | Etrangère |                 | Code de la famille               |
+| animal_id      | number             | Etrangère |                 | Code de l’animal                 |
+| association_id | number             | Etrangère |                 | Code de l’association            |
 
                                             |
