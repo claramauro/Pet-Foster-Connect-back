@@ -32,9 +32,9 @@ VALUES
 ('Chloé', 'Femelle', 'Angora', 'Chat', 6, 'Petite', 'Chat élégant, adore les endroits calmes', 'https://example.com/chloe.jpg', TRUE, NULL, 2),
 ('Buddy', 'Mâle', 'Bulldog', 'Chien', 4, 'Moyenne', 'Chien fidèle et protecteur', 'https://example.com/buddy.jpg', TRUE, 2, 1),
 ('Zoé', 'Femelle', 'Siamois', 'Chat', 2, 'Petite', 'Chat vif et intelligent', 'https://example.com/zoe.jpg', TRUE, NULL, 2),
-('Simba', 'Mâle', 'Sphynx', 'Chat', 3, 'Petite', 'Chat affectueux sans poils, aime la chaleur', 'https://example.com/simba.jpg', TRUE, 1, 2),
+('Simba', 'Mâle', 'Labrador', 'Chien', 3, 'Grand', 'Chien affectueux et joueur', 'https://example.com/simba.jpg', TRUE, 1, 2),
 ('Cooper', 'Mâle', 'Beagle', 'Chien', 2, 'Moyenne', 'Chien curieux, adore explorer les environs', 'https://example.com/cooper.jpg', TRUE, NULL, 1),
-('Nala', 'Femelle', 'Yorkshire Terrier', 'Chien', 3, 'Petite', 'Chienne joyeuse, aime la compagnie', 'https://example.com/nala.jpg', TRUE, 1, 1);
+('Nala', 'Femelle', 'Angora', 'Chat', 3, 'Petite', 'Chat joyeux, aime la compagnie', 'https://example.com/nala.jpg', TRUE, 1, 1);
 
 -- Seed pour la table request
 INSERT INTO "request" ("status", "family_id", "animal_id")
