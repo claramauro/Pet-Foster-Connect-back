@@ -6,7 +6,7 @@ class Request extends Model {
 
 Request.init(
     {
-        statut: {
+        status: {
             type: DataTypes.TEXT,
             allowNull: false,
         },

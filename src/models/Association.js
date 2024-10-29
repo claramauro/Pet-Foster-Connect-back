@@ -35,10 +35,6 @@ Association.init(
             type: DataTypes.TEXT,
             unique: true,
         },
-        role: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
         created_at: {
             type: DataTypes.DATE,
             allowNull: false,
