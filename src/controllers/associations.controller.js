@@ -36,11 +36,7 @@ const associationsController = {
 
             return { associationWhere, animalWhere };
         };
-
         const { associationWhere, animalWhere } = buildWhereClause(req.query);
-
-        console.log(associationWhere);
-        console.log(animalWhere);
 
         const associations = await Association.findAll({
             where: associationWhere,
