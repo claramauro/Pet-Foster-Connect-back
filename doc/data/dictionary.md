@@ -60,7 +60,7 @@
 |-----------|--------------------|-----------|-----------------|----------------------------------|
 | id        | number             | Primaire  | UNIQUE NOT NULL | Identifiant unique de la demande |
 | statuts   | string             |           | NOT NULL        | Statut de la demande             |
-| family_id | number             | Etrangère | NOT NULL        | Code de la famille               |
-| animal_id | number             | Etrangère | NOT NULL        | Code de l’animal                 |
+| family_id | number             | Etrangère |                 | Code de la famille               |
+| animal_id | number             | Etrangère |                 | Code de l’animal                 |
 
                                             |
