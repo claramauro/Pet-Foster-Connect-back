@@ -45,7 +45,7 @@ const dashboardController = {
         res.status(201).json(animal);
     },
 
-    updateAnimal: async (req, res) => {
+    updateAnimal: async (req, res, next) => {
         /*
         update animal with req.params return res.json updated animal
          */
@@ -69,7 +69,7 @@ const dashboardController = {
         const animalToUpdate = await Animal.findByPk(id);
 
         if (!animalToUpdate) {
-            return next(new Error("Not found"));
+            return next();
         }
 
         const updatedAnimal = await animalToUpdate.update({
@@ -89,7 +89,7 @@ const dashboardController = {
         res.json(updatedAnimal);
     },
 
-    destroyAnimal: async (req, res) => {
+    destroyAnimal: async (req, res, next) => {
         /*
         delete animal with req.params return "ok"
          */
@@ -99,7 +99,7 @@ const dashboardController = {
         const animal = await Animal.findByPk(id);
 
         if (!animal) {
-            return next(new Error("Not Found"));
+            return next();
         }
 
         await animal.destroy();
@@ -144,10 +144,10 @@ const dashboardController = {
             }
         }
 
-        const associationToUpdate = await As.findByPk(id);
+        const associationToUpdate = await Association.findByPk(id);
 
         if (!associationToUpdate) {
-            return next(new Error("Not found"));
+            return next();
         }
 
         const updatedAssociation = await associationToUpdate.update({
@@ -164,10 +164,23 @@ const dashboardController = {
         res.json(updatedAssociation);
     },
 
-    destroyProfile: async (req, res) => {
+    destroyProfile: async (req, res, next) => {
         /*
         delete association profile return "ok"
          */
+
+        const { id } = req.params;
+
+        const association = await Association.findByPk(id);
+
+        if (!association) {
+            return next();
+        }
+
+        await association.destroy();
+        // TODO : Déconnecter l'association
+
+        return res.sendStatus(204);
     },
 
     getRequests: async (req, res, next) => {
@@ -192,6 +205,16 @@ const dashboardController = {
         /*
         update request with req.params return res.json updated request
          */
+        const { id } = req.params;
+
+        // JOI validation
+        const request = await Request.findByPk(id);
+        if (!request) {
+            return next();
+        }
+        const newStatus = req.body.status;
+        const updatedRequest = await request.update({ status: newStatus });
+        res.json(updatedRequest);
     },
 };
 

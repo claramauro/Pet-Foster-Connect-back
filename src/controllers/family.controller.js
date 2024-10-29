@@ -47,7 +47,6 @@ const familyController = {
         TODO Ajouter la logique pour déconnecter automatiquement l'utilisateur après la suppression de la famille
          */
     },
-
 };
 
 export { familyController };

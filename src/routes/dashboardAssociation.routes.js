@@ -29,7 +29,7 @@ dashboardAssociationRoutes.patch(
 );
 
 dashboardAssociationRoutes.delete(
-    "/association/profile",
+    "/association/profile/:id(\\d+)",
     catchErrors(dashboardController.destroyProfile)
 );
 
