@@ -1,4 +1,5 @@
 import { Association, Animal, Request } from "../models/associations.js";
+import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {
@@ -20,19 +21,24 @@ const dashboardController = {
         res.json(animals);
     },
 
-    storeAnimal: async (req, res) => {
+    storeAnimal: async (req, res, next) => {
         /*
         create and store animal return res.json() new animal
         */
 
         // Valider les entrées avec Joi
 
+        const { error, value } = validateAndSanitize.animalStore.validate(req.body);
+        if (error) {
+            return next(error);
+        }
+
         const animalData = {};
 
         for (const key in req.body) {
             let value = req.body[key];
             // vérifie si undefined ou champ vide
-            if (value === "" || !value) {
+            if (value === "" || (!value && key !== "availability")) {
                 value = null;
                 animalData[key] = value;
             } else {
@@ -50,6 +56,13 @@ const dashboardController = {
         update animal with req.params return res.json updated animal
          */
 
+        // Validation des données
+
+        const { error, value } = validateAndSanitize.animalUpdate.validate(req.body);
+        if (error) {
+            return next(error);
+        }
+
         const { id } = req.params;
 
         const animalData = {};
@@ -63,8 +76,6 @@ const dashboardController = {
                 animalData[key] = value;
             }
         }
-
-        // Valider avec Joi Validator
 
         const animalToUpdate = await Animal.findByPk(id);
 
@@ -119,7 +130,7 @@ const dashboardController = {
         res.json(association);
     },
 
-    updateProfile: async (req, res) => {
+    updateProfile: async (req, res, next) => {
         /*
         update association profile return res.json updated profile
          */
@@ -130,7 +141,10 @@ const dashboardController = {
 
         // Valider avec Joi Validator
 
-        // name, address, zip_code, city, department, phone_number, description, url_image
+        const { error, value } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
+        if (error) {
+            return next(error);
+        }
 
         const associationData = {};
 
@@ -208,6 +222,12 @@ const dashboardController = {
         const { id } = req.params;
 
         // JOI validation
+
+        const { error, value } = validateAndSanitize.updatedRequest.validate(req.body);
+        if (error) {
+            return next(error);
+        }
+
         const request = await Request.findByPk(id);
         if (!request) {
             return next();
