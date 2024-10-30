@@ -1,4 +1,5 @@
 import { Association, Animal, Request } from "../models/associations.js";
+import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {
@@ -27,6 +28,11 @@ const dashboardController = {
 
         // Valider les entrées avec Joi
 
+        const { error, value } = validateAndSanitize.animalStoreOrUpdate.validate(req.body);
+        if (error) {
+            return next(error);
+        }
+
         const animalData = {};
 
         for (const key in req.body) {
@@ -50,6 +56,13 @@ const dashboardController = {
         update animal with req.params return res.json updated animal
          */
 
+        // Validation des données
+
+        const { error, value } = validateAndSanitize.animalStoreOrUpdate.validate(req.body);
+        if (error) {
+            return next(error);
+        }
+
         const { id } = req.params;
 
         const animalData = {};
@@ -63,8 +76,6 @@ const dashboardController = {
                 animalData[key] = value;
             }
         }
-
-        // Valider avec Joi Validator
 
         const animalToUpdate = await Animal.findByPk(id);
 
@@ -130,7 +141,10 @@ const dashboardController = {
 
         // Valider avec Joi Validator
 
-        // name, address, zip_code, city, department, phone_number, description, url_image
+        const { error, value } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
+        if (error) {
+            return next(error);
+        }
 
         const associationData = {};
 
@@ -208,6 +222,12 @@ const dashboardController = {
         const { id } = req.params;
 
         // JOI validation
+
+        const { error, value } = validateAndSanitize.updatedRequest.validate(req.body);
+        if (error) {
+            return next(error);
+        }
+
         const request = await Request.findByPk(id);
         if (!request) {
             return next();

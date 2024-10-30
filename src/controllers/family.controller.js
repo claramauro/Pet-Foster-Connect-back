@@ -17,7 +17,7 @@ const familyController = {
     update: async (req, res) => {
         const { id } = req.params;
 
-        const { error, value } = validateAndSanitize.familyUpdate.validate(req.params);
+        const { error, value } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
         if (error) {
             return next(error);
         }

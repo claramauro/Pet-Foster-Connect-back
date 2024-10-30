@@ -45,9 +45,8 @@ const validateAndSanitize = {
         gender: JoiSanitized.string().sanitize().optional(),
         association_id: Joi.number().integer().optional(),
         department: JoiSanitized.string().sanitize().optional(),
-        association: Joi.number().integer().optional(),
     }),
-    familyUpdate: JoiSanitized.object({
+    familyOrAssociationUpdate: JoiSanitized.object({
         name: JoiSanitized.string().sanitize().optional(),
         address: JoiSanitized.string().sanitize().optional(),
         zip_code: JoiSanitized.string().max(5).sanitize().optional(),
@@ -60,6 +59,23 @@ const validateAndSanitize = {
     associationSearchFilter: JoiSanitized.object({
         department: JoiSanitized.string().max(10).sanitize().optional(),
         species: JoiSanitized.string().max(10).sanitize().optional(),
+    }),
+    animalStoreOrUpdate: JoiSanitized.object({
+        name: JoiSanitized.string().max(20).sanitize().optional(),
+        species: JoiSanitized.string().max(10).sanitize().optional(),
+        age: JoiSanitized.string().max(2).sanitize().optional(),
+        size: JoiSanitized.string().max(10).sanitize().optional(),
+        gender: JoiSanitized.string().max(10).sanitize().optional(),
+        association_id: JoiSanitized.string().max(2).optional(),
+        department: JoiSanitized.string().max(10).sanitize().optional(),
+        race: JoiSanitized.string().max(10).sanitize().optional(),
+        description: JoiSanitized.string().max(500).sanitize().optional(),
+        url_image: JoiSanitized.string().max(30).sanitize().optional(),
+        availability: JoiSanitized.string().max(10).sanitize().optional(),
+        family_id: JoiSanitized.string().max(2).sanitize().optional(),
+    }),
+    updateRequest: JoiSanitized.object({
+        status: JoiSanitized.string().max(20).sanitize().optional(),
     }),
 };
 
