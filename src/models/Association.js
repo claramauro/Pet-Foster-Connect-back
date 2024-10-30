@@ -16,8 +16,8 @@ Association.init(
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        department: {
-            type: DataTypes.TEXT,
+        department_id: {
+            type: DataTypes.INTEGER,
             allowNull: false,
         },
         city: {

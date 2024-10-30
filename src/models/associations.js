@@ -4,6 +4,7 @@ import { Request } from "./Request.js";
 import { Family } from "./Family.js";
 import { Association } from "./Association.js";
 import { User } from "./User.js";
+import { Department } from "./Department.js";
 
 Request.belongsTo(Animal, {
     as: "animal",
@@ -75,4 +76,24 @@ Association.hasMany(Animal, {
     foreignKey: "association_id",
 });
 
-export { sequelize, Animal, Request, Family, Association, User };
+Family.belongsTo(Department, {
+    as: "department",
+    foreignKey: "department_id",
+});
+
+Department.hasMany(Family, {
+    as: "families",
+    foreignKey: "department_id",
+});
+
+Association.belongsTo(Department, {
+    as: "department",
+    foreignKey: "department_id",
+});
+
+Department.hasMany(Association, {
+    as: "associations",
+    foreignKey: "department_id",
+});
+
+export { sequelize, Animal, Request, Family, Association, User, Department };
