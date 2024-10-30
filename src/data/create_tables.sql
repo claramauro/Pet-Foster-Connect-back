@@ -74,9 +74,7 @@ CREATE TABLE "department"
 (
     "id"              INTEGER PRIMARY KEY,
     "code"            TEXT NOT NULL UNIQUE,
-    "name"            TEXT    NOT NULL UNIQUE,
-    "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at"      TIMESTAMP          DEFAULT CURRENT_TIMESTAMP
+    "name"            TEXT    NOT NULL UNIQUE
 );
 
 ALTER TABLE "animal"

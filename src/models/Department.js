@@ -15,16 +15,11 @@ Department.init(
             allowNull: false,
             unique: true,
         },
-        created_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: literal("CURRENT_TIMESTAMP"),
-        },
-        updated_at: DataTypes.DATE,
     },
     {
         sequelize,
         tableName: "department",
+        timestamps: false,
     }
 );
 
