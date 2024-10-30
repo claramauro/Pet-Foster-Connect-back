@@ -1,5 +1,5 @@
 import { Family } from "../models/associations.js";
-import { validateAndSanitize } from "../middlewares/validateAndSanitize";
+import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
 
 const familyController = {
     findOne: async (req, res, next) => {

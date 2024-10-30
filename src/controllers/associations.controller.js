@@ -1,4 +1,5 @@
 import { Association } from "../models/associations.js";
+import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
 
 const associationsController = {
     index: async (req, res) => {
@@ -24,7 +25,14 @@ const associationsController = {
         /*
         fetch, filter with req.query and return res.json() all corresponding associations
          */
+
         const buildWhereClause = (query) => {
+            // Validation des données
+            const { error, value } = validateAndSanitize.associationSearchFilter.validate(query);
+            if (error) {
+                return next(error);
+            }
+
             const associationWhere = {};
             const animalWhere = {};
 

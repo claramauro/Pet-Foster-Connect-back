@@ -57,6 +57,10 @@ const validateAndSanitize = {
         description: JoiSanitized.string().sanitize().optional(),
         url_image: JoiSanitized.string().sanitize().optional(),
     }),
+    associationSearchFilter: JoiSanitized.object({
+        department: JoiSanitized.string().max(10).sanitize().optional(),
+        species: JoiSanitized.string().max(10).sanitize().optional(),
+    }),
 };
 
 export { validateAndSanitize };
