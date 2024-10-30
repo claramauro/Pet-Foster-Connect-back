@@ -2,12 +2,15 @@ import { Router } from "express";
 import { dashboardController } from "../controllers/dashboard.controller.js";
 import { catchErrors } from "../middlewares/catchError.js";
 
+import { convertAndSaveImage } from "../middlewares/imageHandlers.js";
+
 const dashboardAssociationRoutes = Router();
 
 dashboardAssociationRoutes.get("/association/animals", catchErrors(dashboardController.getAnimals));
 
 dashboardAssociationRoutes.post(
     "/association/animals",
+    convertAndSaveImage,
     catchErrors(dashboardController.storeAnimal)
 );
 

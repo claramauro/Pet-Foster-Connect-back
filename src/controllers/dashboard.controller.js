@@ -1,5 +1,7 @@
 import { Association, Animal, Request } from "../models/associations.js";
 import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
+import path from "node:path";
+import fs from "node:fs";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {
@@ -47,6 +49,13 @@ const dashboardController = {
         }
 
         const animal = await Animal.create(animalData);
+
+        const newNameImage = `${animal.name}-${animal.id}.webp`;
+        const newImagePath = path.join(req.imagePath, "../", `${newNameImage}`);
+        fs.renameSync(req.imagePath, newImagePath);
+        //Ajouter l'url de l'image en bdd
+        //animal.update({ url_img: url_img });
+        console.log(animal);
 
         res.status(201).json(animal);
     },

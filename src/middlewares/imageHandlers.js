@@ -2,6 +2,7 @@ import multer from "multer";
 import sharp from "sharp";
 import path from "node:path";
 
+// L'image n'est pas enregistré mais stocké en mémoire
 const storage = multer.memoryStorage();
 
 const upload = multer({
@@ -30,6 +31,10 @@ function convertAndSaveImage(req, res, next) {
         if (err) {
             return next(err); // Passer l'erreur au middleware d'erreur
         }
+        if (!req.file) {
+            const error = new Error("Le champ image est obligatoire.");
+            return next(error);
+        }
         if (req.file) {
             let directoryImageName;
             switch (req.file.fieldname) {
@@ -52,6 +57,7 @@ function convertAndSaveImage(req, res, next) {
                     import.meta.dirname,
                     `../../public/images/${directoryImageName}/${originalFileName}.webp`
                 );
+                // Voir pour redimensionner l'image ?
                 await sharp(req.file.buffer).webp().toFile(imagePath);
                 req.imagePath = imagePath;
             } catch (error) {
@@ -62,4 +68,4 @@ function convertAndSaveImage(req, res, next) {
     });
 }
 
-export { saveImage };
+export { convertAndSaveImage };
