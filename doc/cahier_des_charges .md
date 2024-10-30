@@ -221,6 +221,12 @@ associations de protection animale.
 | ----- | ------------ | ------------ | ------------- | ------------- |
 | POST  | /auth/logout |              |               | 200           |
 
+## Département
+
+| Verbe | Chemin       | Request Body | Response Body                            | Code (succès) |
+| ----- | ------------ | ------------ | ---------------------------------------- | ------------- |
+| GET   | /departments |              | Liste de tous les départements de France | 200           |
+
 ### Les users stories :
 
 | En tant que | Je veux                                      | Dans le but                                                                    | Sprint |

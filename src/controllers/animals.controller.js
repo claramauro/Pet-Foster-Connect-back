@@ -82,11 +82,10 @@ const animalsController = {
             }
             if (query.size) animalWhere.size = query.size;
             if (query.gender) animalWhere.gender = query.gender;
-            if (query.association_id)
-                animalWhere.association_id = Number.parseInt(query.association_id);
+            if (query.association_id) animalWhere.association_id = query.association_id;
 
             // Gestion association et animalWhere pour chercher la localisation via l'association
-            if (query.department) associationWhereClause.department = query.department;
+            if (query.department_id) associationWhereClause.department_id = query.department_id;
             if (query.association) associationWhereClause.id = query.association; //
 
             return { animalWhere: animalWhere, associationWhere: associationWhereClause };
@@ -104,8 +103,6 @@ const animalsController = {
                     model: Association,
                     as: "association",
                     where: associationWhere,
-                    // fonctionne même si le filtre n'est pas appliqué
-                    required: false,
                 },
             ],
         });

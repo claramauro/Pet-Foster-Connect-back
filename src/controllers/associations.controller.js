@@ -28,7 +28,7 @@ const associationsController = {
             const associationWhere = {};
             const animalWhere = {};
 
-            if (query.department) associationWhere.department = query.department;
+            if (query.department_id) associationWhere.department_id = query.department_id;
             if (query.species) animalWhere.species = query.species;
 
             return { associationWhere, animalWhere };
