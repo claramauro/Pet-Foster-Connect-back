@@ -28,7 +28,7 @@ const dashboardController = {
 
         // Valider les entrées avec Joi
 
-        const { error, value } = validateAndSanitize.animalStoreOrUpdate.validate(req.body);
+        const { error, value } = validateAndSanitize.animalStore.validate(req.body);
         if (error) {
             return next(error);
         }
@@ -38,7 +38,7 @@ const dashboardController = {
         for (const key in req.body) {
             let value = req.body[key];
             // vérifie si undefined ou champ vide
-            if (value === "" || !value) {
+            if (value === "" || (!value && key !== "availability")) {
                 value = null;
                 animalData[key] = value;
             } else {
@@ -58,7 +58,7 @@ const dashboardController = {
 
         // Validation des données
 
-        const { error, value } = validateAndSanitize.animalStoreOrUpdate.validate(req.body);
+        const { error, value } = validateAndSanitize.animalUpdate.validate(req.body);
         if (error) {
             return next(error);
         }
