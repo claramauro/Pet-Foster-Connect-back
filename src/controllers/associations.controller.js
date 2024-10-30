@@ -21,7 +21,7 @@ const associationsController = {
         res.json(association);
     },
 
-    filter: async (req, res) => {
+    filter: async (req, res, next) => {
         /*
         fetch, filter with req.query and return res.json() all corresponding associations
          */
@@ -41,6 +41,7 @@ const associationsController = {
 
             return { associationWhere, animalWhere };
         };
+
         const { associationWhere, animalWhere } = buildWhereClause(req.query);
 
         const associations = await Association.findAll({

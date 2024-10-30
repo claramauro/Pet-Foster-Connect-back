@@ -38,10 +38,7 @@ const animalsController = {
 
         // Validation des entrées et vérification si la famille et l'association existent
 
-        const { error, value } = validateAndSanitize.createAnimalRequest.validate({
-            family_id,
-            animal_id,
-        });
+        const { error, value } = validateAndSanitize.createAnimalRequest.validate(req.body);
 
         if (error) {
             return next(error);
@@ -97,8 +94,7 @@ const animalsController = {
             }
             if (query.size) animalWhere.size = query.size;
             if (query.gender) animalWhere.gender = query.gender;
-            if (query.association_id)
-                animalWhere.association_id = Number.parseInt(query.association_id);
+            if (query.association_id) animalWhere.association_id = query.association_id;
 
             // Gestion association et animalWhere pour chercher la localisation via l'association
             if (query.department_id) associationWhereClause.department_id = query.department_id;

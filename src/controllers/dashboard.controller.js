@@ -21,7 +21,7 @@ const dashboardController = {
         res.json(animals);
     },
 
-    storeAnimal: async (req, res) => {
+    storeAnimal: async (req, res, next) => {
         /*
         create and store animal return res.json() new animal
         */
@@ -130,7 +130,7 @@ const dashboardController = {
         res.json(association);
     },
 
-    updateProfile: async (req, res) => {
+    updateProfile: async (req, res, next) => {
         /*
         update association profile return res.json updated profile
          */
