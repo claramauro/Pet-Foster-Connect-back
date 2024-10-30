@@ -1,5 +1,7 @@
 import { Association, Animal, Request } from "../models/associations.js";
 import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
+import path from "node:path";
+import fs from "node:fs";
 import { ValidationError, NotFoundError } from "../middlewares/customErrors.js";
 
 const dashboardController = {
@@ -28,7 +30,6 @@ const dashboardController = {
         */
 
         // Valider les entrées avec Joi
-
         const { error, value } = validateAndSanitize.animalStore.validate(req.body);
         if (error) {
             return next(new ValidationError());
@@ -49,6 +50,13 @@ const dashboardController = {
 
         const animal = await Animal.create(animalData);
 
+        // Gestion de l'image téléchargée
+        const newNameImage = `${animal.name}-${animal.id}.webp`;
+        const newImagePath = path.join(req.imagePath, "../", `${newNameImage}`);
+        fs.renameSync(req.imagePath, newImagePath);
+        req.imagePath = newImagePath;
+        //Ajouter l'url de l'image renommée en bdd
+        animal.update({ url_image: `/images/animals/${newNameImage}` });
         res.status(201).json(animal);
     },
 
