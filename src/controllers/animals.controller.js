@@ -1,5 +1,6 @@
-import { Animal, Request, Association } from "../models/associations.js";
+import { Animal, Request, Family, Association } from "../models/associations.js";
 import { Sequelize } from "sequelize";
+import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
 // import Joi from 'joi';
 
 const animalsController = {
@@ -35,18 +36,25 @@ const animalsController = {
          */
         const { family_id, animal_id } = req.body;
 
-        // const schema = Joi.object({
-        //     family_id: Joi.number().integer().min(1).required(),
-        //     animal_id: Joi.number().integer().min(1).required(),
-        // });
+        // Validation des entrées et vérification si la famille et l'association existent
 
-        // const { error } = schema.validate({ family_id, animal_id});
+        const { error } = validateAndSanitize.createAnimalRequest.validate({
+            family_id,
+            animal_id,
+        });
 
-        // if(error){
-        //     const customError = new Error('An error occured');
-        //     customError.statusCode = 400;
-        //     return next(customError);
-        // }
+        if (error) {
+            return next(error);
+        }
+
+        const family = await Family.findByPk(family_id);
+        const animal = await Animal.findByPk(animal_id);
+
+        if (!family || !animal) {
+            return next(Error);
+        }
+
+        // Création de la demande
 
         const status = "En attente";
 
@@ -62,6 +70,13 @@ const animalsController = {
         // Middleware de gestion des queries pour vérifier si undefined ou non + transformer age récupéré en intervale (inférieur ou égal) - Ce middleware vient construire la requ$ete where qu'on va passer à sequelize
 
         const buildWhereClause = (query) => {
+            // On vient valider et sanitizer les entrées de la query
+
+            const { error, value } = validateAndSanitize.animalSearchFilter.validate(query);
+            if (error) {
+                return next(error);
+            }
+
             const animalWhere = {};
             const associationWhereClause = {};
 
