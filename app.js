@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { router } from "./src/routes/routes.js";
 import cors from "cors";
+import path from "node:path";
 
 dotenv.config();
 
@@ -9,6 +10,9 @@ import "./src/database/connection.js";
 import { notFound, errorHandler } from "./src/middlewares/errorHandler.js";
 
 const app = express();
+
+const securePathToAssets = path.join(import.meta.dirname, "public");
+app.use(express.static(securePathToAssets));
 
 app.use(
     cors({
