@@ -1,5 +1,6 @@
 import { Family } from "../models/associations.js";
 import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
+import { ValidationError, NotFoundError } from "../middlewares/customErrors.js";
 
 const familyController = {
     findOne: async (req, res, next) => {
@@ -8,7 +9,7 @@ const familyController = {
         const family = await Family.findByPk(id);
 
         if (!family) {
-            return next();
+            return next(new NotFoundError());
         }
 
         res.json(family);
@@ -19,7 +20,7 @@ const familyController = {
 
         const { error, value } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
         if (error) {
-            return next(error);
+            return next(new ValidationError());
         }
 
         // Vérifie que les valeurs ne soit pas ""
@@ -43,7 +44,7 @@ const familyController = {
         const familyToDestroy = await Family.findByPk(id);
 
         if (!familyToDestroy) {
-            return next();
+            return next(new NotFoundError());
         }
 
         await familyToDestroy.destroy();

@@ -1,4 +1,4 @@
-export class notFound extends Error {
+export class NotFoundError extends Error {
     constructor(name, message = "Ressource non trouvée", statusCode = 404) {
         super(message);
         this.name = "Not Found";
@@ -8,7 +8,7 @@ export class notFound extends Error {
     }
 }
 
-export class validationError extends Error {
+export class ValidationError extends Error {
     constructor(fieldName, name = "Validation Error") {
         super(name);
         this.message = "Les données fournies sont incorrectes";

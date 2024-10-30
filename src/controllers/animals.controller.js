@@ -1,7 +1,7 @@
 import { Animal, Request, Family, Association } from "../models/associations.js";
 import { Sequelize } from "sequelize";
 import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
-// import Joi from 'joi';
+import { ValidationError, NotFoundError } from "../middlewares/customErrors.js";
 
 const animalsController = {
     index: async (req, res) => {
@@ -24,7 +24,7 @@ const animalsController = {
         });
 
         if (!animal) {
-            return next(new Error("Not Found"));
+            return next(new NotFoundError());
         }
 
         res.json(animal);
@@ -41,7 +41,7 @@ const animalsController = {
         const { error, value } = validateAndSanitize.createAnimalRequest.validate(req.body);
 
         if (error) {
-            return next(error);
+            return next(new ValidationError());
         }
 
         const family = await Family.findByPk(family_id);

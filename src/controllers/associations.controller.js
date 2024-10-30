@@ -1,5 +1,6 @@
 import { Association } from "../models/associations.js";
 import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
+import { ValidationError } from "../middlewares/customErrors.js";
 
 const associationsController = {
     index: async (req, res) => {
@@ -30,7 +31,7 @@ const associationsController = {
             // Validation des données
             const { error, value } = validateAndSanitize.associationSearchFilter.validate(query);
             if (error) {
-                return next(error);
+                return next(new ValidationError());
             }
 
             const associationWhere = {};
