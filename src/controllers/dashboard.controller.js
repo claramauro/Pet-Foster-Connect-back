@@ -2,6 +2,7 @@ import { Association, Animal, Request } from "../models/associations.js";
 import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
 import path from "node:path";
 import fs from "node:fs";
+import { ValidationError, NotFoundError } from "../middlewares/customErrors.js";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {
@@ -31,7 +32,7 @@ const dashboardController = {
         // Valider les entrées avec Joi
         const { error, value } = validateAndSanitize.animalStore.validate(req.body);
         if (error) {
-            return next(error);
+            return next(new ValidationError());
         }
 
         const animalData = {};
@@ -68,7 +69,7 @@ const dashboardController = {
 
         const { error, value } = validateAndSanitize.animalUpdate.validate(req.body);
         if (error) {
-            return next(error);
+            return next(new ValidationError());
         }
 
         const { id } = req.params;
@@ -88,7 +89,7 @@ const dashboardController = {
         const animalToUpdate = await Animal.findByPk(id);
 
         if (!animalToUpdate) {
-            return next();
+            return next(new NotFoundError());
         }
 
         const updatedAnimal = await animalToUpdate.update({
@@ -118,7 +119,7 @@ const dashboardController = {
         const animal = await Animal.findByPk(id);
 
         if (!animal) {
-            return next();
+            return next(new NotFoundError());
         }
 
         await animal.destroy();
@@ -133,7 +134,7 @@ const dashboardController = {
         const { id } = req.query;
         const association = await Association.findByPk(id);
         if (!association) {
-            return next();
+            return next(new NotFoundError());
         }
         res.json(association);
     },
@@ -151,7 +152,7 @@ const dashboardController = {
 
         const { error, value } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
         if (error) {
-            return next(error);
+            return next(new ValidationError());
         }
 
         const associationData = {};
@@ -169,7 +170,7 @@ const dashboardController = {
         const associationToUpdate = await Association.findByPk(id);
 
         if (!associationToUpdate) {
-            return next();
+            return next(new NotFoundError());
         }
 
         const updatedAssociation = await associationToUpdate.update({
@@ -196,7 +197,7 @@ const dashboardController = {
         const association = await Association.findByPk(id);
 
         if (!association) {
-            return next();
+            return next(new NotFoundError());
         }
 
         await association.destroy();
@@ -212,7 +213,7 @@ const dashboardController = {
         const { id } = req.query;
         const association = await Association.findByPk(id);
         if (!association) {
-            return next();
+            return next(new NotFoundError());
         }
         const requests = await Request.findAll({
             where: {
@@ -233,12 +234,12 @@ const dashboardController = {
 
         const { error, value } = validateAndSanitize.updatedRequest.validate(req.body);
         if (error) {
-            return next(error);
+            return next(new ValidationError());
         }
 
         const request = await Request.findByPk(id);
         if (!request) {
-            return next();
+            return next(new NotFoundError());
         }
         const newStatus = req.body.status;
         const updatedRequest = await request.update({ status: newStatus });

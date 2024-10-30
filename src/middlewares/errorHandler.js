@@ -1,10 +1,8 @@
 import { removeImage } from "../utils/deleteImage.js";
+import { NotFoundError } from "./customErrors.js";
 
 const notFound = (req, res, next) => {
-    const error = new Error("Not Found");
-    error.statusCode = 404;
-
-    next(error);
+    next(new NotFoundError());
 };
 
 const errorHandler = (err, req, res, next) => {
