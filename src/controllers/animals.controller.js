@@ -38,7 +38,7 @@ const animalsController = {
 
         // Validation des entrées et vérification si la famille et l'association existent
 
-        const { error } = validateAndSanitize.createAnimalRequest.validate({
+        const { error, value } = validateAndSanitize.createAnimalRequest.validate({
             family_id,
             animal_id,
         });

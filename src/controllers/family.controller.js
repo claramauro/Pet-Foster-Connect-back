@@ -1,4 +1,5 @@
 import { Family } from "../models/associations.js";
+import { validateAndSanitize } from "../middlewares/validateAndSanitize";
 
 const familyController = {
     findOne: async (req, res, next) => {
@@ -15,6 +16,11 @@ const familyController = {
 
     update: async (req, res) => {
         const { id } = req.params;
+
+        const { error, value } = validateAndSanitize.familyUpdate.validate(req.params);
+        if (error) {
+            return next(error);
+        }
 
         // Vérifie que les valeurs ne soit pas ""
         for (const key in req.body) {

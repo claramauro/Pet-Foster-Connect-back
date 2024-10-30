@@ -31,6 +31,8 @@ const JoiSanitized = Joi.extend((joi) => ({
     },
 }));
 
+// Ajouter des min et max
+
 const validateAndSanitize = {
     createAnimalRequest: Joi.object({
         family_id: Joi.number().integer().min(1).required(),
@@ -38,15 +40,22 @@ const validateAndSanitize = {
     }),
     animalSearchFilter: JoiSanitized.object({
         species: JoiSanitized.string().sanitize().optional(),
-        age: JoiSanitized.string()
-            .pattern(/^(\d{1,2}(-\d{1,2})?|11)$/)
-            .sanitize()
-            .optional(),
+        age: JoiSanitized.string().sanitize().optional(),
         size: JoiSanitized.string().sanitize().optional(),
         gender: JoiSanitized.string().sanitize().optional(),
         association_id: Joi.number().integer().optional(),
         department: JoiSanitized.string().sanitize().optional(),
         association: Joi.number().integer().optional(),
+    }),
+    familyUpdate: JoiSanitized.object({
+        name: JoiSanitized.string().sanitize().optional(),
+        address: JoiSanitized.string().sanitize().optional(),
+        zip_code: JoiSanitized.string().max(5).sanitize().optional(),
+        city: JoiSanitized.string().sanitize().optional(),
+        department: JoiSanitized.string().sanitize().optional(),
+        phone_number: JoiSanitized.string().max(15).sanitize().optional(),
+        description: JoiSanitized.string().sanitize().optional(),
+        url_image: JoiSanitized.string().sanitize().optional(),
     }),
 };
 
