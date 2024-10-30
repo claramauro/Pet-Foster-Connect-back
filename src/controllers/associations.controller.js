@@ -7,7 +7,9 @@ const associationsController = {
         /*
        fetch and return  res.json() all associations
         */
-        const associations = await Association.findAll();
+        const associations = await Association.findAll({
+            include: "department",
+        });
         res.json(associations);
     },
     findOne: async (req, res, next) => {
@@ -15,7 +17,9 @@ const associationsController = {
     fetch with req.params and return res.json() one association
      */
         const { id } = req.params;
-        const association = await Association.findByPk(id);
+        const association = await Association.findByPk(id, {
+            include: "department",
+        });
         if (!association) {
             return next();
         }
@@ -48,6 +52,7 @@ const associationsController = {
         const associations = await Association.findAll({
             where: associationWhere,
             include: [
+                "department",
                 {
                     association: "animals",
                     where: animalWhere,

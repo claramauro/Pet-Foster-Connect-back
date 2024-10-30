@@ -9,7 +9,10 @@ const animalsController = {
        fetch and return  res.json() all animals
         */
         const animals = await Animal.findAll({
-            include: [{ association: "association" }, { association: "family" }],
+            include: [
+                { association: "association", include: "department" },
+                { association: "family" },
+            ],
         });
 
         res.json(animals);
@@ -20,7 +23,10 @@ const animalsController = {
          */
         const { id } = req.params;
         const animal = await Animal.findByPk(id, {
-            include: [{ association: "association" }, { association: "family" }],
+            include: [
+                { association: "association", include: "department" },
+                { association: "family" },
+            ],
         });
 
         if (!animal) {
@@ -115,6 +121,7 @@ const animalsController = {
                     model: Association,
                     as: "association",
                     where: associationWhere,
+                    include: "department",
                 },
             ],
         });
