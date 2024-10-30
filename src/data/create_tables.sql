@@ -70,6 +70,14 @@ CREATE TABLE "request"
     "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"      TIMESTAMP          DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE "department"
+(
+    "id"              INTEGER PRIMARY KEY,
+    "code"            TEXT NOT NULL UNIQUE,
+    "name"            TEXT    NOT NULL UNIQUE,
+    "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"      TIMESTAMP          DEFAULT CURRENT_TIMESTAMP
+);
 
 ALTER TABLE "animal"
     ADD FOREIGN KEY ("family_id") REFERENCES "family" ("id") ON DELETE SET NULL;

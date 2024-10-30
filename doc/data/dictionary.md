@@ -28,31 +28,31 @@
 
 ## TABLE FAMILY
 
-| **Champ**    | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                   |
-| ------------ | ------------------ | -------- | --------------- | --------------------------------- |
-| id           | number             | Primaire | UNIQUE NOT NULL | Identifiant unique de la famille  |
-| name         | string             |          | NOT NULL        | Nom d'une association             |
-| address      | string             |          | NOT NULL        | Adresse de la famille             |
-| zip_code     | string             |          | NOT NULL        | Code postal de la famille         |
-| city         | string             |          | NOT NULL        | Ville de la famille               |
-| department   | string             |          | NOT NULL        | Département de la famille         |
-| phone_number | string             |          | NOT NULL        | Numéro de téléphone de la famille |
-| description  | string             |          |                 | Description de la famille         |
-| url_image    | string             |          | UNIQUE          | URL de l’image                    |
+| **Champ**       | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                   |
+| --------------- | ------------------ | -------- | --------------- | --------------------------------- |
+| id              | number             | Primaire | UNIQUE NOT NULL | Identifiant unique de la famille  |
+| name            | string             |          | NOT NULL        | Nom d'une association             |
+| address         | string             |          | NOT NULL        | Adresse de la famille             |
+| zip_code        | string             |          | NOT NULL        | Code postal de la famille         |
+| city            | string             |          | NOT NULL        | Ville de la famille               |
+| code_department | string             |          | NOT NULL        | Code Département de la famille    |
+| phone_number    | string             |          | NOT NULL        | Numéro de téléphone de la famille |
+| description     | string             |          |                 | Description de la famille         |
+| url_image       | string             |          | UNIQUE          | URL de l’image                    |
 
 ## TABLE ASSOCIATION
 
-| **Champ**    | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                      |
-| ------------ | ------------------ | -------- | --------------- | ------------------------------------ |
-| id           | number             | Primaire | UNIQUE NOT NULL | Identifiant unique de l’association  |
-| name         | string             |          | NOT NULL        | Nom de l'association                 |
-| address      | string             |          | NOT NULL        | Adresse de l’association             |
-| zip_code     | string             |          | NOT NULL        | Code postal de l'association         |
-| city         | string             |          | NOT NULL        | Ville de l'association               |
-| department   | string             |          | NOT NULL        | Département de l'association         |
-| phone_number | string             |          | NOT NULL        | Numéro de téléphone de l’association |
-| description  | string             |          |                 | Description de l'association         |
-| url_image    | string             |          | UNIQUE          | URL de l’image                       |
+| **Champ**       | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                      |
+| --------------- | ------------------ | -------- | --------------- | ------------------------------------ |
+| id              | number             | Primaire | UNIQUE NOT NULL | Identifiant unique de l’association  |
+| name            | string             |          | NOT NULL        | Nom de l'association                 |
+| address         | string             |          | NOT NULL        | Adresse de l’association             |
+| zip_code        | string             |          | NOT NULL        | Code postal de l'association         |
+| city            | string             |          | NOT NULL        | Ville de l'association               |
+| code_department | string             |          | NOT NULL        | Code Département de l'association    |
+| phone_number    | string             |          | NOT NULL        | Numéro de téléphone de l’association |
+| description     | string             |          |                 | Description de l'association         |
+| url_image       | string             |          | UNIQUE          | URL de l’image                       |
 
 ## Table REQUEST
 
@@ -64,4 +64,10 @@
 | animal_id      | number             | Etrangère |                 | Code de l’animal                 |
 | association_id | number             | Etrangère |                 | Code de l’association            |
 
-                                            |
+## Table DEPARTMENT
+
+| **Champ** | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                   |
+| --------- | ------------------ | -------- | --------------- | --------------------------------- |
+| id        | number             | Primaire | UNIQUE NOT NULL | Identifiant unique du département |
+| code      | string             |          | UNIQUE NOT NULL | Code du département               |
+| name      | string             |          | UNIQUE NOT NULL | Nom du département                |
