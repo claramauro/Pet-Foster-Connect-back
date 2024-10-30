@@ -28,7 +28,7 @@ name text
 adress text
 zip_code text
 city text
-department_id text
+department_id integer
 phone_number text
 description text
 url_image text
@@ -40,7 +40,7 @@ name text
 adress text
 zip_code text
 city text
-department_id text
+department_id integer
 phone_number text
 description text
 url_image text
