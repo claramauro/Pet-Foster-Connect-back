@@ -29,7 +29,6 @@ const dashboardController = {
         */
 
         // Valider les entrées avec Joi
-
         const { error, value } = validateAndSanitize.animalStore.validate(req.body);
         if (error) {
             return next(error);
@@ -50,13 +49,13 @@ const dashboardController = {
 
         const animal = await Animal.create(animalData);
 
+        // Gestion de l'image téléchargée
         const newNameImage = `${animal.name}-${animal.id}.webp`;
         const newImagePath = path.join(req.imagePath, "../", `${newNameImage}`);
         fs.renameSync(req.imagePath, newImagePath);
-        //Ajouter l'url de l'image en bdd
-        //animal.update({ url_img: url_img });
-        console.log(animal);
-
+        req.imagePath = newImagePath;
+        //Ajouter l'url de l'image renommée en bdd
+        animal.update({ url_image: `/images/animals/${newNameImage}` });
         res.status(201).json(animal);
     },
 
