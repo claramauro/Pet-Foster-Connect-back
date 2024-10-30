@@ -1,15 +1,16 @@
 # Pet-foster-connect-BACK
 
-# Démarrer le conteneur :
+## Gestion base de données dans le conteneur Docker:
 
     docker compose up
 
-# Exécuter les scripts npm pour reset la BDD :
+Le conteneur est lancé, la première fois les scripts sql (create_tables et seed_tables) sont exécutés automatiquement.  
+Si on arrête de conteneur, les données de la BDD sont sauvegardés dans docker (dans un volume), et donc toujours disponible au relancement du conteneur.
 
-Une fois le conteneur lancé, se placer dans un autre terminal toujours à la racine du projet et exécuter cette commande pour accéder au conteneur api-petfoster :
+Si on veut modifier les scripts et mettre à jour la bdd, il faut exécuter le script "db:reset" du package.json.  
+Pour cela :  
+Une fois le conteneur lancé, se placer dans un autre terminal toujours à la racine du projet et exécuter cette commande :
 
-    docker compose exec -it api-petfoster sh
+    docker compose exec api-petfoster npm run db:reset
 
-On est à présent "dans le conteneur", on peut exécuter
-
-    npm run db:reset
+Le mot de passe de la base de donnée sera demandé à chaque étape (suppression db, creation nouvelle db, creation des tables et seed)
