@@ -1,8 +1,7 @@
-const notFound = (req, res, next) => {
-    const error = new Error("Not Found");
-    error.statusCode = 404;
+import { NotFoundError } from "./customErrors.js";
 
-    next(error);
+const notFound = (req, res, next) => {
+    next(new NotFoundError());
 };
 
 const errorHandler = (err, req, res, next) => {
