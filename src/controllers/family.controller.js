@@ -6,7 +6,9 @@ const familyController = {
     findOne: async (req, res, next) => {
         const { id } = req.params;
 
-        const family = await Family.findByPk(id);
+        const family = await Family.findByPk(id, {
+            include: "department",
+        });
 
         if (!family) {
             return next(new NotFoundError());
@@ -32,8 +34,11 @@ const familyController = {
             }
         }
 
-        await Family.update(req.body, { where: { id } });
-        const updatedFamily = await Family.findByPk(id);
+        await Family.update(req.body, { where: { id: id } });
+
+        const updatedFamily = await Family.findByPk(id, {
+            include: "department",
+        });
 
         res.json(updatedFamily);
     },

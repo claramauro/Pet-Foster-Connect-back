@@ -108,14 +108,14 @@ INSERT INTO "department" ("id", "code", "name") VALUES
 -- Seed pour la table association
 INSERT INTO "association" ("name", "address", "zip_code", "city", "department_id", "phone_number", "description", "url_image")
 VALUES 
-('Animal Rescue', '123 Rue de la Liberté', '75001', 'Paris', '75', '0123456789', 'Organisation dédiée au sauvetage des animaux', 'https://example.com/animal_rescue.jpg'),
-('Four Paws', '456 Avenue des Animaux', '69001', 'Lyon', '69', '0987654321', 'Refuge pour animaux de toutes espèces', 'https://example.com/four_paws.jpg');
+('Animal Rescue', '123 Rue de la Liberté', '75001', 'Paris', '76', '0123456789', 'Organisation dédiée au sauvetage des animaux', 'https://example.com/animal_rescue.jpg'),
+('Four Paws', '456 Avenue des Animaux', '69001', 'Lyon', '70', '0987654321', 'Refuge pour animaux de toutes espèces', 'https://example.com/four_paws.jpg');
 
 -- Seed pour la table family
 INSERT INTO "family" ("name", "address", "zip_code", "city", "department_id", "phone_number", "description", "url_image")
 VALUES 
-('Famille Dupont', '12 Rue du Bonheur', '75002', 'Paris', '75', '0712345678', 'Famille aimante cherchant à adopter un animal', 'https://example.com/dupont_family.jpg'),
-('Famille Martin', '34 Avenue du Soleil', '69002', 'Lyon', '69', '0765432109', 'Famille prête à accueillir un animal dans le besoin', 'https://example.com/martin_family.jpg');
+('Famille Dupont', '12 Rue du Bonheur', '75002', 'Paris', '76', '0712345678', 'Famille aimante cherchant à adopter un animal', 'https://example.com/dupont_family.jpg'),
+('Famille Martin', '34 Avenue du Soleil', '69002', 'Lyon', '70', '0765432109', 'Famille prête à accueillir un animal dans le besoin', 'https://example.com/martin_family.jpg');
 
 -- Seed pour la table user
 INSERT INTO "user" ("email", "password", "role", "family_id", "association_id")
