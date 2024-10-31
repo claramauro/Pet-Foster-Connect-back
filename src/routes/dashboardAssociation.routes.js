@@ -16,6 +16,7 @@ dashboardAssociationRoutes.post(
 
 dashboardAssociationRoutes.patch(
     "/association/animals/:id(\\d+)",
+    convertAndSaveImage,
     catchErrors(dashboardController.updateAnimal)
 );
 

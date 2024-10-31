@@ -9,9 +9,13 @@ export class NotFoundError extends Error {
 }
 
 export class ValidationError extends Error {
-    constructor(fieldName, name = "Validation Error") {
+    constructor(
+        fieldName,
+        message = "Les données fournies sont incorrectes",
+        name = "Validation Error"
+    ) {
         super(name);
-        this.message = "Les données fournies sont incorrectes";
+        this.message = message;
         this.fieldName = fieldName; // nom du champ qui a échoué à la validation
         this.statusCode = 400;
         // A modifier en prod
@@ -21,11 +25,13 @@ export class ValidationError extends Error {
 
 export class ServerError extends Error {
     constructor(
+        error,
         name = "Server Error",
         message = "Une erreur est survenue. Veuillez réessayer plus tard.",
         statusCode = 500
     ) {
         super(message);
+        this.error = error; // récupérer les infos sur l'erreur
         this.name = name;
         this.statusCode = statusCode;
         Error.captureStackTrace(this, ServerError);

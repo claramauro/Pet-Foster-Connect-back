@@ -43,7 +43,7 @@ CREATE TABLE "family"
     "department_id" INTEGER      NOT NULL,
     "phone_number"  TEXT      NOT NULL,
     "description"   TEXT,
-    "url_image"     TEXT UNIQUE,
+    "url_image"     TEXT DEFAULT '/images/families/default_family_img.svg',
     "created_at"    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"    TIMESTAMP          DEFAULT CURRENT_TIMESTAMP
 );

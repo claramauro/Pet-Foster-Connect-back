@@ -1,7 +1,8 @@
 import { Association, Animal, Request, sequelize } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError, NotFoundError } from "../utils/customErrors.js";
-import { renameImage } from "../utils/imageManager.js";
+import { removeImage } from "../utils/imageManager.js";
+import path from "node:path";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {
@@ -27,6 +28,9 @@ const dashboardController = {
         /*
         create and store animal return res.json() new animal
         */
+        if (!req.file) {
+            return next(new ValidationError("animal_img", "Le champ image est obligatoire."));
+        }
 
         // Valider les entrées avec Joi
         const { error, value } = validateAndSanitize.animalStore.validate(req.body);
@@ -49,15 +53,10 @@ const dashboardController = {
 
         const animal = await sequelize.transaction(async (transaction) => {
             const animal = await Animal.create(animalData, { transaction: transaction });
-            // Gestion de l'image téléchargée
-            const newNameImage = `${animal.name}-${animal.id}`;
-            const newImagePath = await renameImage(req.imagePath, newNameImage);
-            req.imagePath = newImagePath;
+
             //Ajouter l'url de l'image renommée en BDD
-            await animal.update(
-                { url_image: `/images/animals/${newNameImage}` },
-                { transaction: transaction }
-            );
+            const relativePathImage = req.absolutePathImage.replace("/src/public", "");
+            await animal.update({ url_image: relativePathImage }, { transaction: transaction });
 
             return animal;
         });
@@ -71,7 +70,6 @@ const dashboardController = {
          */
 
         // Validation des données
-
         const { error, value } = validateAndSanitize.animalUpdate.validate(req.body);
         if (error) {
             return next(new ValidationError());
@@ -92,9 +90,26 @@ const dashboardController = {
         }
 
         const animalToUpdate = await Animal.findByPk(id);
-
         if (!animalToUpdate) {
             return next(new NotFoundError());
+        }
+
+        // Dans le cas où une nouvelle image est téléchargée
+        // On récupère le chemin absolu de l'ancienne image
+        // Pour pouvoir la supprimer après la mise à jour de la bdd
+        const oldImageAbsolutePath = path.join(
+            import.meta.dirname,
+            "../../public",
+            animalToUpdate.url_image
+        );
+
+        let relativePathNewImage;
+        let isImageChange = false;
+        if (req.file) {
+            // Si une nouvelle image est téléchargée on récupère son chemin
+            // Pour pouvoir mettre à jour l'url dans la bdd
+            relativePathNewImage = req.absolutePathImage.replace("/src/public", "");
+            isImageChange = true;
         }
 
         const updatedAnimal = await animalToUpdate.update({
@@ -105,11 +120,16 @@ const dashboardController = {
             age: animalData.age || animalToUpdate.age,
             size: animalData.size || animalToUpdate.size,
             description: animalData.description || animalToUpdate.description,
-            url_img: animalData.url_img || animalToUpdate.url_img,
+            url_image: isImageChange ? relativePathNewImage : animalToUpdate.url_image,
             availability: animalData.availability || animalToUpdate.availability,
             family_id: animalData.family_id || animalToUpdate.family_id,
             association_id: animalData.association_id || animalToUpdate.association_id,
         });
+
+        if (isImageChange) {
+            // Une fois l'animal mis à jour en BDD on supprime l'ancienne image
+            await removeImage(oldImageAbsolutePath);
+        }
 
         res.json(updatedAnimal);
     },

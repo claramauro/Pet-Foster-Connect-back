@@ -8,8 +8,8 @@ const notFound = (req, res, next) => {
 const errorHandler = async (err, req, res, next) => {
     console.log(err);
 
-    if (req.imagePath) {
-        await removeImage(req.imagePath);
+    if (req.absolutePathImage) {
+        await removeImage(req.absolutePathImage);
     }
     const statusCode = err.statusCode || 500;
 

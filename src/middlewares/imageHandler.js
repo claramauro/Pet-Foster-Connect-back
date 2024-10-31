@@ -32,8 +32,7 @@ function convertAndSaveImage(req, res, next) {
             return next(err); // Passer l'erreur au middleware d'erreur
         }
         if (!req.file) {
-            const error = new Error("Le champ image est obligatoire.");
-            return next(error);
+            return next();
         }
         if (req.file) {
             let directoryImageName;
@@ -55,11 +54,11 @@ function convertAndSaveImage(req, res, next) {
                 const originalFileName = path.parse(req.file.originalname).name;
                 const imagePath = path.join(
                     import.meta.dirname,
-                    `../../public/images/${directoryImageName}/${originalFileName}.webp`
+                    `../../public/images/${directoryImageName}/${originalFileName}-${Date.now()}.webp`
                 );
                 // Voir pour redimensionner l'image ?
                 await sharp(req.file.buffer).webp().toFile(imagePath);
-                req.imagePath = imagePath;
+                req.absolutePathImage = imagePath;
             } catch (error) {
                 next(error);
             }
