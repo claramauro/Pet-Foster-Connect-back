@@ -51,15 +51,9 @@ const dashboardController = {
             }
         }
 
-        const animal = await sequelize.transaction(async (transaction) => {
-            const animal = await Animal.create(animalData, { transaction: transaction });
-
-            //Ajouter l'url de l'image renommée en BDD
-            const relativePathImage = req.absolutePathImage.replace("/src/public", "");
-            await animal.update({ url_image: relativePathImage }, { transaction: transaction });
-
-            return animal;
-        });
+        const relativePathImage = req.absolutePathImage.replace("/src/public", "");
+        animalData.url_image = relativePathImage;
+        const animal = await Animal.create(animalData);
 
         res.status(201).json(animal);
     },
