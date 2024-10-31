@@ -108,14 +108,17 @@ INSERT INTO "department" ("id", "code", "name") VALUES
 -- Seed pour la table association
 INSERT INTO "association" ("name", "address", "zip_code", "city", "department_id", "phone_number", "description", "url_image")
 VALUES 
-('Animal Rescue', '123 Rue de la Liberté', '75001', 'Paris', '76', '0123456789', 'Organisation dédiée au sauvetage des animaux', 'https://example.com/animal_rescue.jpg'),
-('Four Paws', '456 Avenue des Animaux', '69001', 'Lyon', '70', '0987654321', 'Refuge pour animaux de toutes espèces', 'https://example.com/four_paws.jpg');
+('Animal Rescue', '123 Rue de la Liberté', '75001', 'Paris', 76, '0123456789', 'Organisation dédiée au sauvetage des animaux', '/images/associations/Animal-Rescue-1.webp'),
+('Four Paws', '456 Avenue des Animaux', '69001', 'Lyon', 70, '0987654321', 'Refuge pour animaux de toutes espèces', '/images/associations/Four-Paws-2.webp'),
+('SPA du 06', '20 Chemin du soleil', '06000', 'Nice', 6, '0963739971', 'Refuge d''accueil pour animaux de toutes espèces en attente d''adoption', '/images/associations/SPA-du-06-3.webp');
 
 -- Seed pour la table family
 INSERT INTO "family" ("name", "address", "zip_code", "city", "department_id", "phone_number", "description", "url_image")
 VALUES 
-('Famille Dupont', '12 Rue du Bonheur', '75002', 'Paris', '76', '0712345678', 'Famille aimante cherchant à adopter un animal', 'https://example.com/dupont_family.jpg'),
-('Famille Martin', '34 Avenue du Soleil', '69002', 'Lyon', '70', '0765432109', 'Famille prête à accueillir un animal dans le besoin', 'https://example.com/martin_family.jpg');
+('Dupont', '12 Rue du Bonheur', '75002', 'Paris', 76, '0712345678', 'Famille aimante cherchant à adopter un animal', '/images/families/Dupont-1.webp'),
+('Martin', '34 Avenue du Soleil', '69002', 'Lyon', 70, '0765432109', 'Famille prête à accueillir un animal dans le besoin', '/images/families/Martin-2.webp'),
+('Lefevre', '2 impasse des fleurs', '06000', 'Nice', 6, '0739455660', 'Famille avec enfants pouvant accueillir un animal dans le besoin', '/images/families/Lefevre-3.webp'),
+('Petit', '67 Rue Carnot', '05000', 'Gap', 5, '0788352890', 'Couple à la retraite voulant aider les associations', '/images/families/Petit-4.webp');
 
 -- Seed pour la table user
 INSERT INTO "user" ("email", "password", "role", "family_id", "association_id")
@@ -123,30 +126,33 @@ VALUES
 ('alice@example.com', 'hashed_password1', 'family', 1, NULL),
 ('bob@example.com', 'hashed_password2', 'association', NULL, 1),
 ('carol@example.com', 'hashed_password3', 'family', 2, NULL),
-('dave@example.com', 'hashed_password4', 'association', NULL, 2);
+('dave@example.com', 'hashed_password4', 'association', NULL, 2),
+('john@example.com', 'hashed_password5', 'family', 3, NULL),
+('spa@example.com', 'hashed_password6', 'association', NULL, 3);
 
 -- Seed pour la table animal
 INSERT INTO "animal" ("name", "gender", "race", "species", "age", "size", "description", "url_image", "availability", "family_id", "association_id")
 VALUES 
-('Oscar', 'Mâle', 'Golden Retriever', 'Chien', 2, 'Grande', 'Chien sociable et affectueux, idéal pour les familles', 'https://example.com/oscar.jpg', TRUE, NULL, 1),
-('Lily', 'Femelle', 'Persan', 'Chat', 5, 'Petite', 'Chat calme, aime se prélasser au soleil', 'https://example.com/lily.jpg', TRUE, NULL, 2),
-('Charlie', 'Mâle', 'Teckel', 'Chien', 4, 'Petite', 'Chien joueur, parfait pour les petits espaces', 'https://example.com/charlie.jpg', TRUE, 2, 1),
-('Maya', 'Femelle', 'Maine Coon', 'Chat', 3, 'Moyenne', 'Chat curieux et doux, aime les câlins', 'https://example.com/maya.jpg', TRUE, 1, 2),
-('Max', 'Mâle', 'Jack Russell', 'Chien', 1, 'Petite', 'Jeune chien plein d`énergie, aime courir', 'https://example.com/max.jpg', TRUE, NULL, 1),
-('Chloé', 'Femelle', 'Angora', 'Chat', 6, 'Petite', 'Chat élégant, adore les endroits calmes', 'https://example.com/chloe.jpg', TRUE, NULL, 2),
-('Buddy', 'Mâle', 'Bulldog', 'Chien', 4, 'Moyenne', 'Chien fidèle et protecteur', 'https://example.com/buddy.jpg', TRUE, 2, 1),
-('Zoé', 'Femelle', 'Siamois', 'Chat', 2, 'Petite', 'Chat vif et intelligent', 'https://example.com/zoe.jpg', TRUE, NULL, 2),
-('Simba', 'Mâle', 'Labrador', 'Chien', 3, 'Grand', 'Chien affectueux et joueur', 'https://example.com/simba.jpg', TRUE, 1, 2),
-('Cooper', 'Mâle', 'Beagle', 'Chien', 2, 'Moyenne', 'Chien curieux, adore explorer les environs', 'https://example.com/cooper.jpg', TRUE, NULL, 1),
-('Nala', 'Femelle', 'Angora', 'Chat', 3, 'Petite', 'Chat joyeux, aime la compagnie', 'https://example.com/nala.jpg', TRUE, 1, 1);
+('Oscar', 'Mâle', 'Golden Retriever', 'Chien', 2, 'Grand', 'Chien sociable et affectueux, idéal pour les familles', '/images/animals/Oscar-1.webp', FALSE, 1, 1),
+('Lily', 'Femelle', 'Persan', 'Chat', 5, 'Petit', 'Chat calme, aime se prélasser au soleil', '/images/animals/Lily-2.webp', TRUE, NULL, 2),
+('Charlie', 'Mâle', 'Cocker', 'Chien', 4, 'Petit', 'Chien joueur, parfait pour les petits espaces', '/images/animals/Charlie-3.webp', TRUE, NULL, 3),
+('Maya', 'Femelle', 'Maine Coon', 'Chat', 3, 'Moyen', 'Chat curieux et doux, aime les câlins', '/images/animals/Maya-4.webp', TRUE, NULL, 2),
+('Max', 'Mâle', 'Jack Russell', 'Chien', 1, 'Petit', 'Jeune chien plein d`énergie, aime courir', '/images/animals/Max-5.webp', TRUE, NULL, 1),
+('Chloé', 'Femelle', 'Angora', 'Chat', 6, 'Petit', 'Chat élégant, adore les endroits calmes', '/images/animals/Chloé-6.webp', FALSE, 3, 3),
+('Buddy', 'Mâle', 'Bulldog', 'Chien', 4, 'Moyen', 'Chien fidèle et protecteur', '/images/animals/Buddy-7.webp', TRUE, NULL, 1),
+('Zoé', 'Femelle', 'Siamois', 'Chat', 2, 'Petit', 'Chat vif et intelligent', '/images/animals/Zoé-8.webp', TRUE, NULL, 3),
+('Simba', 'Mâle', 'Labrador', 'Chien', 3, 'Grand', 'Chien affectueux et joueur', '/images/animals/Simba-9.webp', TRUE, NULL, 2),
+('Cooper', 'Mâle', 'Caniche', 'Chien', 2, 'Moyen', 'Chien curieux, adore explorer les environs', '/images/animals/Cooper-10.webp', TRUE, NULL, 3),
+('Nala', 'Femelle', 'Angora', 'Chat', 3, 'Petit', 'Chat joyeux, aime la compagnie', '/images/animals/Nala-11.webp', TRUE, NULL, 3);
 
 -- Seed pour la table request
 INSERT INTO "request" ("status", "family_id", "animal_id", "association_id")
 VALUES 
-('En cours', 1, 1, 1),
-('En attente', 2, 2, 1),
-('Validée', 1, 3, 2),
-('Rejetée', 2, 4, 2);
+('En attente', 2, 2, 2),
+('En attente', 1, 3, 3),
+('Validée', 1, 1, 1),
+('Validée', 3, 6, 3),
+('Rejetée', 3, 4, 2);
 
 -- Fin de la transaction
 COMMIT;
