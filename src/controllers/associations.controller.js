@@ -1,6 +1,6 @@
 import { Association } from "../models/associations.js";
-import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
-import { ValidationError } from "../middlewares/customErrors.js";
+import { validateAndSanitize } from "../utils/validateAndSanitize.js";
+import { ValidationError } from "../utils/customErrors.js";
 
 const associationsController = {
     index: async (req, res) => {

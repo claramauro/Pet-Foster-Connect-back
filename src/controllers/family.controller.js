@@ -1,6 +1,6 @@
 import { Family } from "../models/associations.js";
-import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
-import { ValidationError, NotFoundError } from "../middlewares/customErrors.js";
+import { validateAndSanitize } from "../utils/validateAndSanitize.js";
+import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 
 const familyController = {
     findOne: async (req, res, next) => {
