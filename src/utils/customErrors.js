@@ -4,7 +4,7 @@ export class NotFoundError extends Error {
         this.name = "Not Found";
         this.statusCode = statusCode;
         // A modifier en prod
-        Error.captureStackTrace(this, NotFound);
+        Error.captureStackTrace(this, NotFoundError);
     }
 }
 
@@ -16,5 +16,17 @@ export class ValidationError extends Error {
         this.statusCode = 400;
         // A modifier en prod
         Error.captureStackTrace(this, ValidationError);
+    }
+}
+
+export class ServerError extends Error {
+    constructor(
+        name = "Server Error",
+        message = "Une erreur est survenue. Veuillez réessayer plus tard.",
+        statusCode = 500
+    ) {
+        super(message);
+        this.statusCode = this.statusCode;
+        Error.captureStackTrace(this, ServerError);
     }
 }

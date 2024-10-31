@@ -1,8 +1,8 @@
 import { Association, Animal, Request } from "../models/associations.js";
-import { validateAndSanitize } from "../middlewares/validateAndSanitize.js";
+import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import path from "node:path";
 import fs from "node:fs";
-import { ValidationError, NotFoundError } from "../middlewares/customErrors.js";
+import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {

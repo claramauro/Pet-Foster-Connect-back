@@ -1,5 +1,5 @@
 import { removeImage } from "../utils/deleteImage.js";
-import { NotFoundError } from "./customErrors.js";
+import { NotFoundError } from "../utils/customErrors.js";
 
 const notFound = (req, res, next) => {
     next(new NotFoundError());
