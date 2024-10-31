@@ -26,7 +26,8 @@ export class ServerError extends Error {
         statusCode = 500
     ) {
         super(message);
-        this.statusCode = this.statusCode;
+        this.name = name;
+        this.statusCode = statusCode;
         Error.captureStackTrace(this, ServerError);
     }
 }

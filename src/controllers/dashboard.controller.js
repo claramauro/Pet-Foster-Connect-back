@@ -1,8 +1,7 @@
-import { Association, Animal, Request } from "../models/associations.js";
+import { Association, Animal, Request, sequelize } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import path from "node:path";
-import fs from "node:fs";
 import { ValidationError, NotFoundError } from "../utils/customErrors.js";
+import { renameImage } from "../utils/imageManager.js";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {
@@ -48,15 +47,21 @@ const dashboardController = {
             }
         }
 
-        const animal = await Animal.create(animalData);
+        const animal = await sequelize.transaction(async (transaction) => {
+            const animal = await Animal.create(animalData, { transaction: transaction });
+            // Gestion de l'image téléchargée
+            const newNameImage = `${animal.name}-${animal.id}`;
+            const newImagePath = await renameImage(req.imagePath, newNameImage);
+            req.imagePath = newImagePath;
+            //Ajouter l'url de l'image renommée en BDD
+            await animal.update(
+                { url_image: `/images/animals/${newNameImage}` },
+                { transaction: transaction }
+            );
 
-        // Gestion de l'image téléchargée
-        const newNameImage = `${animal.name}-${animal.id}.webp`;
-        const newImagePath = path.join(req.imagePath, "../", `${newNameImage}`);
-        fs.renameSync(req.imagePath, newImagePath);
-        req.imagePath = newImagePath;
-        //Ajouter l'url de l'image renommée en bdd
-        animal.update({ url_image: `/images/animals/${newNameImage}` });
+            return animal;
+        });
+
         res.status(201).json(animal);
     },
 
