@@ -1,13 +1,15 @@
-import { removeImage } from "../utils/deleteImage.js";
+import { removeImage } from "../utils/imageManager.js";
 import { NotFoundError } from "../utils/customErrors.js";
 
 const notFound = (req, res, next) => {
     next(new NotFoundError());
 };
 
-const errorHandler = (err, req, res, next) => {
-    if (req.imagePath) {
-        removeImage(req.imagePath);
+const errorHandler = async (err, req, res, next) => {
+    console.log(err);
+
+    if (req.absolutePathImage) {
+        await removeImage(req.absolutePathImage);
     }
     const statusCode = err.statusCode || 500;
 

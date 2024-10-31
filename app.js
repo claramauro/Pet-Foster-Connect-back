@@ -11,19 +11,20 @@ import { notFound, errorHandler } from "./src/middlewares/errorHandler.js";
 
 const app = express();
 
-const securePathToAssets = path.join(import.meta.dirname, "public");
-app.use(express.static(securePathToAssets));
-
 app.use(
     cors({
         origin: [
             "http://localhost",
             "http://172.19.0.2",
-            "http://172.19.0.2:5173/",
+            "http://172.19.0.2:5173",
             "http://localhost:5173",
         ],
+        credentials: true, // A ajouter ceci si on utilise des cookies
     })
 );
+
+const securePathToAssets = path.join(import.meta.dirname, "public");
+app.use(express.static(securePathToAssets));
 
 app.use(express.json());
 

@@ -28,17 +28,17 @@
 
 ## TABLE FAMILY
 
-| **Champ**     | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                   |
-| ------------- | ------------------ | -------- | --------------- | --------------------------------- |
-| id            | number             | Primaire | UNIQUE NOT NULL | Identifiant unique de la famille  |
-| name          | string             |          | NOT NULL        | Nom d'une association             |
-| address       | string             |          | NOT NULL        | Adresse de la famille             |
-| zip_code      | string             |          | NOT NULL        | Code postal de la famille         |
-| city          | string             |          | NOT NULL        | Ville de la famille               |
-| department_id | number             |          | NOT NULL        | Code Département de la famille    |
-| phone_number  | string             |          | NOT NULL        | Numéro de téléphone de la famille |
-| description   | string             |          |                 | Description de la famille         |
-| url_image     | string             |          | UNIQUE          | URL de l’image                    |
+| **Champ**     | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                                        |
+| ------------- | ------------------ | -------- | --------------- | ------------------------------------------------------ |
+| id            | number             | Primaire | UNIQUE NOT NULL | Identifiant unique de la famille                       |
+| name          | string             |          | NOT NULL        | Nom d'une association                                  |
+| address       | string             |          | NOT NULL        | Adresse de la famille                                  |
+| zip_code      | string             |          | NOT NULL        | Code postal de la famille                              |
+| city          | string             |          | NOT NULL        | Ville de la famille                                    |
+| department_id | number             |          | NOT NULL        | Code Département de la famille                         |
+| phone_number  | string             |          | NOT NULL        | Numéro de téléphone de la famille                      |
+| description   | string             |          |                 | Description de la famille                              |
+| url_image     | string             |          | DEFAULT         | URL de l’image, url vers une image "neutre" par défaut |
 
 ## TABLE ASSOCIATION
 

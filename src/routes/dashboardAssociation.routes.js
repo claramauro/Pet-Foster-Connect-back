@@ -2,7 +2,7 @@ import { Router } from "express";
 import { dashboardController } from "../controllers/dashboard.controller.js";
 import { catchErrors } from "../middlewares/catchError.js";
 
-import { convertAndSaveImage } from "../middlewares/imageHandlers.js";
+import { convertAndSaveImage } from "../middlewares/imageHandler.js";
 
 const dashboardAssociationRoutes = Router();
 
@@ -16,6 +16,7 @@ dashboardAssociationRoutes.post(
 
 dashboardAssociationRoutes.patch(
     "/association/animals/:id(\\d+)",
+    convertAndSaveImage,
     catchErrors(dashboardController.updateAnimal)
 );
 

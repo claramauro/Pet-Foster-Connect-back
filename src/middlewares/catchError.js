@@ -5,7 +5,7 @@ const catchErrors = (fn) => {
         try {
             await fn(req, res, next);
         } catch (error) {
-            next(new ServerError());
+            next(new ServerError(error));
         }
     };
 };

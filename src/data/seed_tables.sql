@@ -118,7 +118,7 @@ VALUES
 ('Dupont', '12 Rue du Bonheur', '75002', 'Paris', 76, '0712345678', 'Famille aimante cherchant à adopter un animal', '/images/families/Dupont-1.webp'),
 ('Martin', '34 Avenue du Soleil', '69002', 'Lyon', 70, '0765432109', 'Famille prête à accueillir un animal dans le besoin', '/images/families/Martin-2.webp'),
 ('Lefevre', '2 impasse des fleurs', '06000', 'Nice', 6, '0739455660', 'Famille avec enfants pouvant accueillir un animal dans le besoin', '/images/families/Lefevre-3.webp'),
-('Petit', '67 Rue Carnot', '05000', 'Gap', 5, '0788352890', 'Couple à la retraite voulant aider les associations', '/images/families/Petit-4.webp');
+('Petit', '67 Rue Carnot', '05000', 'Gap', 5, '0788352890', 'Couple à la retraite voulant aider les associations', DEFAULT);
 
 -- Seed pour la table user
 INSERT INTO "user" ("email", "password", "role", "family_id", "association_id")
