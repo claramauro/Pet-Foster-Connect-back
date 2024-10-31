@@ -2,4 +2,24 @@
 node_modules/
 .vscode
 .idea
-pg_data/
+
+# Ignorer toutes les images sauf les images associées aux données du seed_tables.sql
+public/images/
+!public/images/animals/Buddy-7.webp
+!public/images/animals/Charlie-3.webp
+!public/images/animals/Chloé-6.webp
+!public/images/animals/Cooper-10.webp
+!public/images/animals/Lily-2.webp
+!public/images/animals/Max-5.webp
+!public/images/animals/Maya-4.webp
+!public/images/animals/Nala-11.webp
+!public/images/animals/Oscar-1.webp
+!public/images/animals/Simba-9.webp
+!public/images/animals/Zoé-8.webp
+!public/images/associations/Animal-Rescue-1.webp
+!public/images/associations/Four-Paws-2.webp
+!public/images/associations/SPA-du-06-3.webp
+!public/images/families/Dupont-1.webp
+!public/images/families/Lefevre-3.webp
+!public/images/families/Martin-2.webp
+!public/images/families/Petit-4.webp
