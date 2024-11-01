@@ -37,6 +37,7 @@ const validateAndSanitize = {
     createAnimalRequest: Joi.object({
         family_id: Joi.number().integer().required(),
         animal_id: Joi.number().integer().required(),
+        association_id: Joi.number().integer().required(),
     }),
     animalSearchFilter: JoiSanitized.object({
         species: JoiSanitized.string().trim().min(1).sanitize().optional(),
@@ -54,7 +55,6 @@ const validateAndSanitize = {
         department_id: JoiSanitized.string().trim().min(1).sanitize().optional(),
         phone_number: JoiSanitized.string().trim().min(1).sanitize().optional(),
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
-        url_image: JoiSanitized.string().trim().min(1).sanitize().optional(),
     }),
     associationSearchFilter: JoiSanitized.object({
         department_id: JoiSanitized.string().trim().min(1).sanitize().optional(),
@@ -69,7 +69,6 @@ const validateAndSanitize = {
         association_id: Joi.number().integer().min(1).required(),
         race: JoiSanitized.string().trim().min(1).sanitize().optional(),
         description: JoiSanitized.string().trim().min(1).sanitize().required(),
-        url_image: JoiSanitized.string().trim().min(1).sanitize().optional(),
         availability: JoiSanitized.boolean().required(),
         family_id: Joi.number().integer().optional(),
     }),
@@ -83,7 +82,6 @@ const validateAndSanitize = {
         department_id: Joi.number().integer().min(1).optional(),
         race: JoiSanitized.string().trim().min(1).sanitize().optional(),
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
-        url_image: JoiSanitized.string().trim().min(1).sanitize().optional(),
         availability: JoiSanitized.boolean(),
         family_id: Joi.number().integer().min(1).optional(),
     }),
