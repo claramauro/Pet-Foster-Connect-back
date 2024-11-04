@@ -15,7 +15,7 @@ const familyController = {
         if (!family) {
             return next(new NotFoundError());
         }
-
+        console.log(req.cookies.auth_token);
         res.json(family);
     },
 
@@ -90,16 +90,19 @@ const familyController = {
         const imagePath = path.join(import.meta.dirname, "../../public", familyToDestroy.url_image);
         const imageName = imagePath.replace("/src/public/images/families/", "");
         await familyToDestroy.destroy();
+      
         if (imageName !== "default_family_img.svg") {
             // on supprime l'image de la famille SI ce n'était pas l'image par défaut
             // (default_family_img.svg)
             await removeImage(imagePath);
         }
+      
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: false, // Secure à passer à true en prod
+        });
+        
         res.status(204).send();
-
-        /*
-        TODO Ajouter la logique pour déconnecter automatiquement l'utilisateur après la suppression de la famille
-         */
     },
 };
 

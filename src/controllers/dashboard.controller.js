@@ -83,7 +83,7 @@ const dashboardController = {
         const oldImageAbsolutePath = path.join(
             import.meta.dirname,
             "../../public",
-            animalToUpdate.url_image
+            animalToUpdate.url_image,
         );
         let relativePathNewImage;
         let isImageChange = false;
@@ -217,8 +217,14 @@ const dashboardController = {
         }
         const imagePath = path.join(import.meta.dirname, "../../public", association.url_image);
         await association.destroy();
+
+
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: false, // Secure à passer à true en prod
+        });
+
         await removeImage(imagePath);
-        // TODO : Déconnecter l'association
 
         return res.sendStatus(204);
     },
