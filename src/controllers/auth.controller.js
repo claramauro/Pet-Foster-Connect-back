@@ -2,12 +2,9 @@ import { Family, Association, User } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError } from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { createAuthToken } from "../utils/createAuthToken.js";
 
 const authController = {
-
-
     register: async (req, res, next) => {
         const { type } = req.params;
 
@@ -72,6 +69,49 @@ const authController = {
             association_id: type === "association" ? createdEntity.id : null,
         });
 
+        const userWithoutPassword = await User.findByPk(user.id, {
+            include: [
+                { association: "association", include: "department" },
+                { association: "family", include: "department" },
+            ],
+            attributes: { exclude: ["password"] },
+        });
+
+        /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
+        const authToken = createAuthToken(userWithoutPassword);
+        res.cookie("auth_token", authToken, { httpOnly: true, secure: false, maxAge: 3 * 60 * 60 * 1000 }); // Secure à passer à true en prod
+
+        res.status(201).json(userWithoutPassword);
+    },
+
+
+    login: async (req, res, next) => {
+        const { error, value } = validateAndSanitize.familyOrAssociationLogin.validate(req.body);
+
+        if (error) {
+            return next(new ValidationError(error));
+        }
+
+        const { email, password } = req.body;
+
+        const user = await User.findOne({
+            where: { email },
+            include: [
+                { association: "association", include: "department" },
+                { association: "family", include: "department" },
+            ],
+        });
+
+        if (!user) {
+            return res.status(401).json({ error: "Email ou mot de passe incorrecte" });
+        }
+
+        const verifyPassword = await bcrypt.compare(password, user.password);
+
+        if (!verifyPassword) {
+            return res.status(401).json({ error: "Email ou mot de passe incorrecte" });
+        }
+
         const userWithoutPassword = user.get({ plain: true });
         delete userWithoutPassword.password;
 
@@ -79,26 +119,17 @@ const authController = {
         const authToken = createAuthToken(userWithoutPassword);
         res.cookie("auth_token", authToken, { httpOnly: true, secure: false, maxAge: 3 * 60 * 60 * 1000 }); // Secure à passer à true en prod
 
-        res.json({ data: createdEntity, user: userWithoutPassword });
-    },
-
-
-    login: async (req, res) => {
-        /*
-        connect and authenticated the user
-        */
+        res.json(userWithoutPassword);
     },
 
     logout: async (req, res) => {
         res.clearCookie("auth_token", {
             httpOnly: true,
-            secure: false,
+            secure: false, // Secure à passer à true en prod
         });
 
         res.status(200).json({ message: "Déconnexion réussie, cookie supprimé." });
     },
-
-
 };
 
 export { authController };

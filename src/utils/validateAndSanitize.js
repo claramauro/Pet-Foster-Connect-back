@@ -108,6 +108,10 @@ const validateAndSanitize = {
         association_id: Joi.number().integer().min(1).optional(),
         family_id: Joi.number().integer().min(1).optional(),
     }),
+    familyOrAssociationLogin: JoiSanitized.object({
+        email: JoiSanitized.string().trim().min(1).email().required(),
+        password: JoiSanitized.string().trim().min(1).required(),
+    }),
 };
 
 export { validateAndSanitize };
