@@ -29,6 +29,7 @@ dashboardAssociationRoutes.get("/association/profile", catchErrors(dashboardCont
 
 dashboardAssociationRoutes.patch(
     "/association/profile",
+    convertAndSaveImage,
     catchErrors(dashboardController.updateProfile)
 );
 

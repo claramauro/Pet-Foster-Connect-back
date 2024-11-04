@@ -28,7 +28,7 @@ const dashboardController = {
         /*
         create and store animal return res.json() new animal
         */
-        if (!req.file) {
+        if (!req.files) {
             return next(new ValidationError("animal_img", "Le champ image est obligatoire."));
         }
 
@@ -99,7 +99,7 @@ const dashboardController = {
 
         let relativePathNewImage;
         let isImageChange = false;
-        if (req.file) {
+        if (req.files) {
             // Si une nouvelle image est téléchargée on récupère son chemin
             // Pour pouvoir mettre à jour l'url dans la bdd
             relativePathNewImage = req.absolutePathImage.replace("/src/public", "");
@@ -164,11 +164,9 @@ const dashboardController = {
          */
 
         // comme pour le premier get : gestion de l'id provisoire via les query
-
         const { id } = req.query;
 
         // Valider avec Joi Validator
-
         const { error, value } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
         if (error) {
             return next(new ValidationError());
@@ -187,9 +185,26 @@ const dashboardController = {
         }
 
         const associationToUpdate = await Association.findByPk(id);
-
         if (!associationToUpdate) {
             return next(new NotFoundError());
+        }
+
+        // Dans le cas où une nouvelle image est téléchargée
+        // On récupère le chemin absolu de l'ancienne image
+        // Pour pouvoir la supprimer après la mise à jour de la bdd
+        const oldImageAbsolutePath = path.join(
+            import.meta.dirname,
+            "../../public",
+            associationToUpdate.url_image
+        );
+
+        let relativePathNewImage;
+        let isImageChange = false;
+        if (req.files) {
+            // Si une nouvelle image est téléchargée on récupère son chemin
+            // Pour pouvoir mettre à jour l'url dans la bdd
+            relativePathNewImage = req.absolutePathImage.replace("/src/public", "");
+            isImageChange = true;
         }
 
         const updatedAssociation = await associationToUpdate.update({
@@ -200,8 +215,13 @@ const dashboardController = {
             department: associationData.department || associationToUpdate.department,
             phone_number: associationData.phone_number || associationToUpdate.phone_number,
             description: associationData.description || associationToUpdate.description,
-            url_img: associationData.url_img || associationToUpdate.url_img,
+            url_image: isImageChange ? relativePathNewImage : associationToUpdate.url_image,
         });
+
+        if (isImageChange) {
+            // Une fois l'association mise à jour en BDD on supprime l'ancienne image
+            await removeImage(oldImageAbsolutePath);
+        }
 
         res.json(updatedAssociation);
     },
