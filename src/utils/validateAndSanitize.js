@@ -46,6 +46,7 @@ const validateAndSanitize = {
         gender: JoiSanitized.string().trim().min(1).sanitize().optional(),
         association_id: JoiSanitized.string().trim().min(1).sanitize().optional(),
         department_id: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        page: JoiSanitized.string().trim().min(1).sanitize().optional(),
     }),
     familyOrAssociationUpdate: JoiSanitized.object({
         name: JoiSanitized.string().trim().min(1).sanitize().optional(),
@@ -59,6 +60,7 @@ const validateAndSanitize = {
     associationSearchFilter: JoiSanitized.object({
         department_id: JoiSanitized.string().trim().min(1).sanitize().optional(),
         species: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        page: JoiSanitized.string().trim().min(1).sanitize().optional(),
     }),
     animalStore: JoiSanitized.object({
         name: JoiSanitized.string().trim().min(1).sanitize().required(),

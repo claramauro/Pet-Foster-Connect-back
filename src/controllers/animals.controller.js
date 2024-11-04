@@ -5,9 +5,8 @@ import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 
 const animalsController = {
     index: async (req, res) => {
-        /*
-       fetch and return  res.json() all animals
-        */
+
+        /* Query pour la page d'accueil et pour récupérer le nombres total d'animaux */
         const animals = await Animal.findAll({
             include: [
                 { association: "association", include: "department" },
@@ -15,9 +14,29 @@ const animalsController = {
             ],
         });
 
-        res.json(animals);
+        /* Query pour l'affichage des animaux en fonction de la page */
+        const currentPage = req.query.page || 1;
+        const limit = 6; // Nombre d'animaux max
+        const offset = (Number(currentPage) - 1) * 6; // Offset de 6 - 12 - 18... en fonction de la page courante
+
+        const paginationAnimals = await Animal.findAll({
+            include: [
+                { association: "association", include: "department" },
+                { association: "family" },
+            ],
+            limit: limit,
+            offset: offset,
+        });
+
+        res.json({
+            allAnimals: animals,
+            paginatedAnimals: paginationAnimals,
+        });
+
+
     },
-    findOne: async (req, res) => {
+
+    findOne: async (req, res, next) => {
         /*
         fetch with req.params and return res.json() one association
          */
@@ -36,7 +55,7 @@ const animalsController = {
         res.json(animal);
     },
 
-    createRequest: async (req, res) => {
+    createRequest: async (req, res, next) => {
         /*
         create request with association_id (user_id) family_id (user_id) and animal_id return res.json() request
          */
@@ -65,7 +84,7 @@ const animalsController = {
         res.status(201).json(request);
     },
 
-    filter: async (req, res) => {
+    filter: async (req, res, next) => {
         /*
         fetch, filter with req.query and return res.json() all corresponding animals
          */
@@ -112,9 +131,22 @@ const animalsController = {
         // On appelle buildWhereClause pour récupérer animalWhere et associationWhere
         const { animalWhere, associationWhere } = buildWhereClause(req.query);
 
-        // On récupère les queries et on les mets en forme via le middleware
+        const currentPage = req.query.page || 1;
+        const limit = 6; // Nombre d'animaux max
+        const offset = (Number(currentPage) - 1) * 6; // Offset de 6 - 12 - 18... en fonction de la page courante
+
+        /* Query pour pour récupérer le nombres total d'animaux */
 
         const animals = await Animal.findAll({
+            include: [
+                { association: "association", include: "department" },
+                { association: "family" },
+            ],
+        });
+
+        // On récupère les queries et on les mets en forme via le middleware
+
+        const paginationAnimals = await Animal.findAll({
             where: animalWhere,
             include: [
                 {
@@ -124,9 +156,13 @@ const animalsController = {
                     include: "department",
                 },
             ],
+            limit: limit,
+            offset: offset,
         });
-
-        res.json(animals);
+        res.json({
+            allAnimals: animals,
+            paginatedAnimals: paginationAnimals,
+        });
     },
 };
 
