@@ -13,7 +13,7 @@ const familyController = {
         if (!family) {
             return next(new NotFoundError());
         }
-
+        console.log(req.cookies.auth_token);
         res.json(family);
     },
 

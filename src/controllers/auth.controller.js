@@ -3,6 +3,7 @@ import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError } from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { createAuthToken } from "../utils/createAuthToken.js";
 
 const authController = {
 
@@ -73,6 +74,10 @@ const authController = {
 
         const userWithoutPassword = user.get({ plain: true });
         delete userWithoutPassword.password;
+
+        /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
+        const authToken = createAuthToken(userWithoutPassword);
+        res.cookie("auth_token", authToken, { httpOnly: true, secure: false, maxAge: 3 * 60 * 60 * 1000 }); // Secure à passer à true en prod
 
         res.json({ data: createdEntity, user: userWithoutPassword });
     },

@@ -3,6 +3,7 @@ import express from "express";
 import { router } from "./src/routes/routes.js";
 import cors from "cors";
 import path from "node:path";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -20,12 +21,12 @@ app.use(
             "http://localhost:5173",
         ],
         credentials: true, // A ajouter ceci si on utilise des cookies
-    })
+    }),
 );
 
 const securePathToAssets = path.join(import.meta.dirname, "public");
 app.use(express.static(securePathToAssets));
-
+app.use(cookieParser());
 app.use(express.json());
 
 app.use(router);
