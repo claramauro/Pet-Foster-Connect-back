@@ -53,11 +53,13 @@ const familyController = {
         }
 
         await familyToDestroy.destroy();
-        res.status(204).send();
 
-        /*
-        TODO Ajouter la logique pour déconnecter automatiquement l'utilisateur après la suppression de la famille
-         */
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: false, // Secure à passer à true en prod
+        });
+        
+        res.status(204).send();
     },
 };
 
