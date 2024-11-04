@@ -1,4 +1,4 @@
-import { Family, Association, User } from "../models/associations.js";
+import { Family, Association, User, sequelize } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError } from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
@@ -37,51 +37,60 @@ const authController = {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        let createdEntity;
-        // Créer soit une famille soit une association selon req.params
-        if (type === "family") {
-            createdEntity = await Family.create({
-                name,
-                address,
-                zip_code,
-                city,
-                department_id,
-                phone_number,
+        const transaction = await sequelize.transaction();
+
+        try {
+            let createdEntity;
+            // Créer soit une famille soit une association selon req.params
+            if (type === "family") {
+                createdEntity = await Family.create({
+                    name,
+                    address,
+                    zip_code,
+                    city,
+                    department_id,
+                    phone_number,
+                }, { transaction });
+            } else if (type === "association") {
+                createdEntity = await Association.create({
+                    name,
+                    address,
+                    zip_code,
+                    city,
+                    department_id,
+                    phone_number,
+                }, { transaction });
+            } else {
+                return res.status(400).json({ error: "Type non valide. Utilisez 'family' ou 'association'." });
+            }
+
+            const user = await User.create({
+                email,
+                password: hashedPassword,
+                role,
+                family_id: type === "family" ? createdEntity.id : null,
+                association_id: type === "association" ? createdEntity.id : null,
+            }, { transaction });
+
+            const userWithoutPassword = await User.findByPk(user.id, {
+                include: [
+                    { association: "association", include: "department" },
+                    { association: "family", include: "department" },
+                ],
+                attributes: { exclude: ["password"] },
             });
-        } else if (type === "association") {
-            createdEntity = await Association.create({
-                name,
-                address,
-                zip_code,
-                city,
-                department_id,
-                phone_number,
-            });
-        } else {
-            return res.status(400).json({ error: "Type non valide. Utilisez 'family' ou 'association'." });
+
+            /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
+            const authToken = createAuthToken(userWithoutPassword);
+            res.cookie("auth_token", authToken, { httpOnly: true, secure: false, maxAge: 3 * 60 * 60 * 1000 }); // Secure à passer à true en prod
+
+            res.status(201).json(userWithoutPassword);
+
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
         }
 
-        const user = await User.create({
-            email,
-            password: hashedPassword,
-            role,
-            family_id: type === "family" ? createdEntity.id : null,
-            association_id: type === "association" ? createdEntity.id : null,
-        });
-
-        const userWithoutPassword = await User.findByPk(user.id, {
-            include: [
-                { association: "association", include: "department" },
-                { association: "family", include: "department" },
-            ],
-            attributes: { exclude: ["password"] },
-        });
-
-        /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
-        const authToken = createAuthToken(userWithoutPassword);
-        res.cookie("auth_token", authToken, { httpOnly: true, secure: false, maxAge: 3 * 60 * 60 * 1000 }); // Secure à passer à true en prod
-
-        res.status(201).json(userWithoutPassword);
     },
 
 
