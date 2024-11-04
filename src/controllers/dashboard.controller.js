@@ -132,17 +132,14 @@ const dashboardController = {
         /*
         delete animal with req.params return "ok"
          */
-
         const { id } = req.params;
-
         const animal = await Animal.findByPk(id);
-
         if (!animal) {
             return next(new NotFoundError());
         }
-
+        const imagePath = path.join(import.meta.dirname, "../../public", animal.url_image);
         await animal.destroy();
-
+        await removeImage(imagePath);
         return res.sendStatus(204);
     },
 
