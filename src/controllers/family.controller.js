@@ -26,7 +26,6 @@ const familyController = {
         if (error) {
             return next(new ValidationError());
         }
-
         const familyData = {};
         // Vérifie que les valeurs ne soit pas ""
         for (const key in req.body) {
@@ -42,7 +41,6 @@ const familyController = {
         if (!familyToUpdate) {
             return next(new NotFoundError());
         }
-
         // Dans le cas où une nouvelle image est téléchargée
         // On récupère le chemin absolu de l'ancienne image
         // Pour pouvoir la supprimer après la mise à jour de la bdd
@@ -52,7 +50,6 @@ const familyController = {
             familyToUpdate.url_image
         );
         const oldImageName = oldImageAbsolutePath.replace("/src/public/images/families/", "");
-
         let relativePathNewImage;
         let isImageChange = false;
         if (Object.keys(req.files).length !== 0) {
@@ -61,7 +58,6 @@ const familyController = {
             relativePathNewImage = req.absolutePathImage.replace("/src/public", "");
             isImageChange = true;
         }
-
         let updatedFamily = await familyToUpdate.update({
             name: familyData.name || familyToUpdate.name,
             address: familyData.gender || familyToUpdate.address,
@@ -72,32 +68,33 @@ const familyController = {
             description: familyData.description || familyToUpdate.description,
             url_image: isImageChange ? relativePathNewImage : familyToUpdate.url_image,
         });
-
         if (isImageChange && oldImageName !== "default_family_img.svg") {
             // Une fois la famille mise à jour en BDD
             // on supprime l'ancienne image SI ce n'était pas l'image par défaut
             // (default_family_img.svg)
             await removeImage(oldImageAbsolutePath);
         }
-
         // Récupérer la famille mise à jour avec le département
         updatedFamily = await updatedFamily.reload({
             include: "department",
         });
-
         res.json(updatedFamily);
     },
 
     destroy: async (req, res, next) => {
         const { id } = req.params;
-
         const familyToDestroy = await Family.findByPk(id);
-
         if (!familyToDestroy) {
             return next(new NotFoundError());
         }
-
+        const imagePath = path.join(import.meta.dirname, "../../public", familyToDestroy.url_image);
+        const imageName = imagePath.replace("/src/public/images/families/", "");
         await familyToDestroy.destroy();
+        if (imageName !== "default_family_img.svg") {
+            // on supprime l'image de la famille SI ce n'était pas l'image par défaut
+            // (default_family_img.svg)
+            await removeImage(imagePath);
+        }
         res.status(204).send();
 
         /*
