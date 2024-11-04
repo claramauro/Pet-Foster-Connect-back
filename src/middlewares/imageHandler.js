@@ -35,7 +35,7 @@ function convertAndSaveImage(req, res, next) {
         if (err) {
             return next(err); // Passer l'erreur au middleware d'erreur
         }
-        if (!req.files) {
+        if (!req.files || Object.keys(req.files).length === 0) {
             return next();
         }
         if (req.files) {

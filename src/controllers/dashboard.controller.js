@@ -28,7 +28,7 @@ const dashboardController = {
         /*
         create and store animal return res.json() new animal
         */
-        if (!req.files) {
+        if (!req.files || Object.keys(req.files).length === 0) {
             return next(new ValidationError("animal_img", "Le champ image est obligatoire."));
         }
 
@@ -92,7 +92,7 @@ const dashboardController = {
         );
         let relativePathNewImage;
         let isImageChange = false;
-        if (req.files) {
+        if (Object.keys(req.files).length !== 0) {
             // Si une nouvelle image est téléchargée on récupère son chemin
             // Pour pouvoir mettre à jour l'url dans la bdd
             relativePathNewImage = req.absolutePathImage.replace("/src/public", "");
@@ -187,7 +187,7 @@ const dashboardController = {
 
         let relativePathNewImage;
         let isImageChange = false;
-        if (req.files) {
+        if (Object.keys(req.files).length !== 0) {
             // Si une nouvelle image est téléchargée on récupère son chemin
             // Pour pouvoir mettre à jour l'url dans la bdd
             relativePathNewImage = req.absolutePathImage.replace("/src/public", "");
@@ -199,7 +199,7 @@ const dashboardController = {
             address: associationData.gender || associationToUpdate.address,
             zip_code: associationData.race || associationToUpdate.zip_code,
             city: associationData.city || associationToUpdate.city,
-            department: associationData.department || associationToUpdate.department,
+            department_id: associationData.department || associationToUpdate.department_id,
             phone_number: associationData.phone_number || associationToUpdate.phone_number,
             description: associationData.description || associationToUpdate.description,
             url_image: isImageChange ? relativePathNewImage : associationToUpdate.url_image,
