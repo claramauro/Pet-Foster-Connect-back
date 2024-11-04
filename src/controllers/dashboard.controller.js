@@ -106,6 +106,9 @@ const dashboardController = {
             family_id: animalData.family_id || animalToUpdate.family_id,
             association_id: animalData.association_id || animalToUpdate.association_id,
         });
+        // Une fois la bdd mise à jour on passe req.absolutePathImage à null (qui contient le chemin de la nouvelle image)
+        // Car si != de null sera supprimé par le errorHandler en cas d'erreur
+        // A ce stade, le chemin de la nouvelle l'image est enregistré dans la BDD donc on ne veut pas supprimer cette nouvelle image
         req.absolutePathImage = null;
         if (isImageChange) {
             // Une fois l'animal mis à jour en BDD on supprime l'ancienne image
@@ -192,6 +195,9 @@ const dashboardController = {
             description: associationData.description || associationToUpdate.description,
             url_image: isImageChange ? relativePathNewImage : associationToUpdate.url_image,
         });
+        // Une fois la bdd mise à jour on passe req.absolutePathImage à null (qui contient le chemin de la nouvelle image)
+        // Car si != de null sera supprimé par le errorHandler en cas d'erreur
+        // A ce stade, le chemin de la nouvelle l'image est enregistré dans la BDD donc on ne veut pas supprimer cette nouvelle image
         req.absolutePathImage = null;
         if (isImageChange) {
             // Une fois l'association mise à jour en BDD on supprime l'ancienne image
