@@ -19,24 +19,16 @@ const familyController = {
         res.json(family);
     },
 
-    update: async (req, res) => {
+    update: async (req, res, next) => {
         const { id } = req.params;
 
         const { error, value } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
         if (error) {
             return next(new ValidationError());
         }
-        const familyData = {};
-        // Vérifie que les valeurs ne soit pas ""
-        for (const key in req.body) {
-            let value = req.body[key];
-            // Set les valeurs à undefined si c'est le cas pour ne pas modifier la bdd
-            if (value === "") {
-                value = undefined;
-            } else {
-                familyData[key] = value;
-            }
-        }
+        const familyData = req.body;
+        console.log(familyData);
+
         const familyToUpdate = await Family.findByPk(id);
         if (!familyToUpdate) {
             return next(new NotFoundError());
@@ -47,7 +39,7 @@ const familyController = {
         const oldImageAbsolutePath = path.join(
             import.meta.dirname,
             "../../public",
-            familyToUpdate.url_image
+            familyToUpdate.url_image,
         );
         const oldImageName = oldImageAbsolutePath.replace("/src/public/images/families/", "");
         let relativePathNewImage;
@@ -90,18 +82,18 @@ const familyController = {
         const imagePath = path.join(import.meta.dirname, "../../public", familyToDestroy.url_image);
         const imageName = imagePath.replace("/src/public/images/families/", "");
         await familyToDestroy.destroy();
-      
+
         if (imageName !== "default_family_img.svg") {
             // on supprime l'image de la famille SI ce n'était pas l'image par défaut
             // (default_family_img.svg)
             await removeImage(imagePath);
         }
-      
+
         res.clearCookie("auth_token", {
             httpOnly: true,
             secure: false, // Secure à passer à true en prod
         });
-        
+
         res.status(204).send();
     },
 };
