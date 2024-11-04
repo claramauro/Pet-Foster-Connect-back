@@ -5,9 +5,8 @@ import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 
 const animalsController = {
     index: async (req, res) => {
-        /*
-       fetch and return  res.json() all animals
-        */
+
+        /* Query pour la page d'accueil et pour récupérer le nombres total d'animaux */
         const animals = await Animal.findAll({
             include: [
                 { association: "association", include: "department" },
@@ -15,8 +14,28 @@ const animalsController = {
             ],
         });
 
-        res.json(animals);
+        /* Query pour l'affichage des animaux en fonction de la page */
+        const currentPage = req.query.page || 1;
+        const limit = 6; // Nombre d'animaux max
+        const offset = (Number(currentPage) - 1) * 6; // Offset de 6 - 12 - 18... en fonction de la page courante
+
+        const paginationAnimals = await Animal.findAll({
+            include: [
+                { association: "association", include: "department" },
+                { association: "family" },
+            ],
+            limit: limit,
+            offset: offset,
+        });
+
+        res.json({
+            allAnimals: animals,
+            paginatedAnimals: paginationAnimals,
+        });
+
+
     },
+
     findOne: async (req, res) => {
         /*
         fetch with req.params and return res.json() one association
