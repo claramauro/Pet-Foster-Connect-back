@@ -62,17 +62,13 @@ const dashboardController = {
         /*
         update animal with req.params return res.json updated animal
          */
-
         // Validation des données
         const { error, value } = validateAndSanitize.animalUpdate.validate(req.body);
         if (error) {
             return next(new ValidationError());
         }
-
         const { id } = req.params;
-
         const animalData = {};
-
         for (const key in req.body) {
             let value = req.body[key];
             // vérifie si undefined ou champ vide
@@ -82,12 +78,10 @@ const dashboardController = {
                 animalData[key] = value;
             }
         }
-
         const animalToUpdate = await Animal.findByPk(id);
         if (!animalToUpdate) {
             return next(new NotFoundError());
         }
-
         // Dans le cas où une nouvelle image est téléchargée
         // On récupère le chemin absolu de l'ancienne image
         // Pour pouvoir la supprimer après la mise à jour de la bdd
@@ -96,7 +90,6 @@ const dashboardController = {
             "../../public",
             animalToUpdate.url_image
         );
-
         let relativePathNewImage;
         let isImageChange = false;
         if (req.files) {
@@ -105,7 +98,6 @@ const dashboardController = {
             relativePathNewImage = req.absolutePathImage.replace("/src/public", "");
             isImageChange = true;
         }
-
         const updatedAnimal = await animalToUpdate.update({
             name: animalData.name || animalToUpdate.name,
             gender: animalData.gender || animalToUpdate.gender,
@@ -119,12 +111,10 @@ const dashboardController = {
             family_id: animalData.family_id || animalToUpdate.family_id,
             association_id: animalData.association_id || animalToUpdate.association_id,
         });
-
         if (isImageChange) {
             // Une fois l'animal mis à jour en BDD on supprime l'ancienne image
             await removeImage(oldImageAbsolutePath);
         }
-
         res.json(updatedAnimal);
     },
 
@@ -227,16 +217,14 @@ const dashboardController = {
         /*
         delete association profile return "ok"
          */
-
         const { id } = req.params;
-
         const association = await Association.findByPk(id);
-
         if (!association) {
             return next(new NotFoundError());
         }
-
+        const imagePath = path.join(import.meta.dirname, "../../public", association.url_image);
         await association.destroy();
+        await removeImage(imagePath);
         // TODO : Déconnecter l'association
 
         return res.sendStatus(204);
