@@ -90,9 +90,12 @@ const authController = {
     },
 
     logout: async (req, res) => {
-        /*
-       disconnect and unauthenticated the user
-         */
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: false,
+        });
+
+        res.status(200).json({ message: "Déconnexion réussie, cookie supprimé." });
     },
 
 
