@@ -90,6 +90,24 @@ const validateAndSanitize = {
     updateRequest: JoiSanitized.object({
         status: JoiSanitized.string().trim().min(1).sanitize().required(),
     }),
+    familyOrAssociationRegister: JoiSanitized.object({
+        /* Famille ou asso */
+        name: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        address: JoiSanitized.string().trim().min(1).sanitize().required(),
+        zip_code: JoiSanitized.string().trim().min(1).sanitize().required(),
+        city: JoiSanitized.string().trim().min(1).sanitize().required(),
+        department_id: Joi.number().integer().min(1).optional(),
+        phone_number: JoiSanitized.string().trim().min(1).sanitize().required(),
+        description: JoiSanitized.string().trim().min(1).sanitize().optional(),
+
+        /* user */
+        email: JoiSanitized.string().trim().min(1).email().required(),
+        password: JoiSanitized.string().trim().min(1).required(),
+        confirmPassword: JoiSanitized.string().trim().min(1).required(),
+        role: JoiSanitized.string().trim().min(1).required(),
+        association_id: Joi.number().integer().min(1).optional(),
+        family_id: Joi.number().integer().min(1).optional(),
+    }),
 };
 
 export { validateAndSanitize };
