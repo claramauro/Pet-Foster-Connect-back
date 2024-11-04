@@ -27,37 +27,35 @@ const upload = multer({
 });
 
 function convertAndSaveImage(req, res, next) {
-    upload.single("animal_img")(req, res, async (err) => {
+    upload.fields([
+        { name: "animal_img", maxCount: 1 },
+        { name: "association_img", maxCount: 1 },
+        { name: "family_img", maxCount: 1 },
+    ])(req, res, async (err) => {
         if (err) {
             return next(err); // Passer l'erreur au middleware d'erreur
         }
-        if (!req.file) {
+        if (!req.files || Object.keys(req.files).length === 0) {
             return next();
         }
-        if (req.file) {
-            let directoryImageName;
-            switch (req.file.fieldname) {
-                case "animal_img":
-                    directoryImageName = "animals";
-                    break;
-                case "association_img":
-                    directoryImageName = "associations";
-                    break;
-                case "family_img":
-                    directoryImageName = "families";
-                    break;
-                default:
-                    break;
-            }
+        if (req.files) {
+            const possibleFields = ["animal_img", "association_img", "family_img"];
+            const currentField = possibleFields.find((field) => req.files[field] !== undefined);
+            const directoryMapping = {
+                animal_img: "animals",
+                association_img: "associations",
+                family_img: "families",
+            };
+            const directoryImageName = directoryMapping[currentField];
             try {
                 // On converti l'image en wepb et on l'enregistre dans /public/images
-                const originalFileName = path.parse(req.file.originalname).name;
+                const originalFileName = path.parse(req.files[currentField][0].originalname).name;
                 const imagePath = path.join(
                     import.meta.dirname,
                     `../../public/images/${directoryImageName}/${originalFileName}-${Date.now()}.webp`
                 );
                 // Voir pour redimensionner l'image ?
-                await sharp(req.file.buffer).webp().toFile(imagePath);
+                await sharp(req.files[currentField][0].buffer).webp().toFile(imagePath);
                 req.absolutePathImage = imagePath;
             } catch (error) {
                 next(error);
