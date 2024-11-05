@@ -5,7 +5,6 @@ import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 
 const animalsController = {
     index: async (req, res) => {
-
         /* Query pour la page d'accueil et pour récupérer le nombres total d'animaux */
         const animals = await Animal.findAll({
             include: [
@@ -32,8 +31,6 @@ const animalsController = {
             allAnimals: animals,
             paginatedAnimals: paginationAnimals,
         });
-
-
     },
 
     findOne: async (req, res, next) => {
@@ -137,16 +134,16 @@ const animalsController = {
 
         /* Query pour pour récupérer le nombres total d'animaux */
 
-        const animals = await Animal.findAll({
-            include: [
-                { association: "association", include: "department" },
-                { association: "family" },
-            ],
-        });
+        // const animals = await Animal.findAll({
+        //     include: [
+        //         { association: "association", include: "department" },
+        //         { association: "family" },
+        //     ],
+        // });
 
         // On récupère les queries et on les mets en forme via le middleware
 
-        const paginationAnimals = await Animal.findAll({
+        const filterAnimals /*paginationAnimals*/ = await Animal.findAll({
             where: animalWhere,
             include: [
                 {
@@ -156,12 +153,15 @@ const animalsController = {
                     include: "department",
                 },
             ],
-            limit: limit,
-            offset: offset,
+            //limit: limit,
+            //offset: offset,
         });
+        const paginatedAnimals = filterAnimals.slice(offset, offset + limit);
+
         res.json({
-            allAnimals: animals,
-            paginatedAnimals: paginationAnimals,
+            totalAnimalCount: filterAnimals.length,
+            //allAnimals: animals,
+            paginatedAnimals: /*paginationAnimals*/ paginatedAnimals,
         });
     },
 };
