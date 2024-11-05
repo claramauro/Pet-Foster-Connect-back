@@ -5,7 +5,6 @@ import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 
 const animalsController = {
     index: async (req, res) => {
-
         /* Query pour la page d'accueil et pour récupérer le nombres total d'animaux */
         const animals = await Animal.findAll({
             include: [
@@ -32,8 +31,6 @@ const animalsController = {
             allAnimals: animals,
             paginatedAnimals: paginationAnimals,
         });
-
-
     },
 
     findOne: async (req, res, next) => {
@@ -135,18 +132,8 @@ const animalsController = {
         const limit = 6; // Nombre d'animaux max
         const offset = (Number(currentPage) - 1) * 6; // Offset de 6 - 12 - 18... en fonction de la page courante
 
-        /* Query pour pour récupérer le nombres total d'animaux */
-
-        const animals = await Animal.findAll({
-            include: [
-                { association: "association", include: "department" },
-                { association: "family" },
-            ],
-        });
-
-        // On récupère les queries et on les mets en forme via le middleware
-
-        const paginationAnimals = await Animal.findAll({
+        // On récupère tous les animaux filtrés par rapport à la requête
+        const filterAnimals = await Animal.findAll({
             where: animalWhere,
             include: [
                 {
@@ -156,12 +143,13 @@ const animalsController = {
                     include: "department",
                 },
             ],
-            limit: limit,
-            offset: offset,
         });
+        // On pagine le résultat des animaux par rapport à la limite (nb d'animaux) et l'offset (correspondant au numéro de page demandé)
+        const paginatedAnimals = filterAnimals.slice(offset, offset + limit);
+        // On renvoie le nombre total d'animaux retourné par la requête filtrée et les animaux paginés
         res.json({
-            allAnimals: animals,
-            paginatedAnimals: paginationAnimals,
+            totalAnimalCount: filterAnimals.length,
+            paginatedAnimals: paginatedAnimals,
         });
     },
 };
