@@ -1,7 +1,11 @@
 import { Association, Animal, Request, sequelize } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError, NotFoundError } from "../utils/customErrors.js";
-import { removeImage } from "../utils/imageManager.js";
+import {
+    removeImage,
+    getAbsolutePathOfImage,
+    getRelativePathOfImage,
+} from "../utils/imageManager.js";
 import path from "node:path";
 
 const dashboardController = {
@@ -47,7 +51,7 @@ const dashboardController = {
                 animalData[key] = value;
             }
         }
-        const relativePathImage = req.absolutePathImage.replace("/src/public", "");
+        const relativePathImage = getRelativePathOfImage(req.absolutePathImage);
         animalData.url_image = relativePathImage;
         const animal = await Animal.create(animalData);
         res.status(201).json(animal);
@@ -80,17 +84,13 @@ const dashboardController = {
         // Dans le cas où une nouvelle image est téléchargée
         // On récupère le chemin absolu de l'ancienne image
         // Pour pouvoir la supprimer après la mise à jour de la bdd
-        const oldImageAbsolutePath = path.join(
-            import.meta.dirname,
-            "../../public",
-            animalToUpdate.url_image,
-        );
+        const oldImageAbsolutePath = getAbsolutePathOfImage(animalToUpdate.url_image);
         let relativePathNewImage;
         let isImageChange = false;
         if (Object.keys(req.files).length !== 0) {
             // Si une nouvelle image est téléchargée on récupère son chemin
             // Pour pouvoir mettre à jour l'url dans la bdd
-            relativePathNewImage = req.absolutePathImage.replace("/src/public", "");
+            relativePathNewImage = getRelativePathOfImage(req.absolutePathImage);
             isImageChange = true;
         }
         const updatedAnimal = await animalToUpdate.update({
@@ -108,7 +108,7 @@ const dashboardController = {
         });
         // Une fois la bdd mise à jour on passe req.absolutePathImage à null (qui contient le chemin de la nouvelle image)
         // Car si != de null sera supprimé par le errorHandler en cas d'erreur
-        // A ce stade, le chemin de la nouvelle l'image est enregistré dans la BDD donc on ne veut pas supprimer cette nouvelle image
+        // A ce stade, le chemin de la nouvelle l'image est enregistré dans la BDD donc on ne veut pas supprimer cette nouvelle image si erreur
         req.absolutePathImage = null;
         if (isImageChange) {
             // Une fois l'animal mis à jour en BDD on supprime l'ancienne image
@@ -126,9 +126,9 @@ const dashboardController = {
         if (!animal) {
             return next(new NotFoundError());
         }
-        const imagePath = path.join(import.meta.dirname, "../../public", animal.url_image);
+        const imageAbsolutePath = getAbsolutePathOfImage(animal.url_image);
         await animal.destroy();
-        await removeImage(imagePath);
+        await removeImage(imageAbsolutePath);
         return res.sendStatus(204);
     },
 
@@ -172,17 +172,13 @@ const dashboardController = {
         // Dans le cas où une nouvelle image est téléchargée
         // On récupère le chemin absolu de l'ancienne image
         // Pour pouvoir la supprimer après la mise à jour de la bdd
-        const oldImageAbsolutePath = path.join(
-            import.meta.dirname,
-            "../../public",
-            associationToUpdate.url_image
-        );
+        const oldImageAbsolutePath = getAbsolutePathOfImage(associationToUpdate.url_image);
         let relativePathNewImage;
         let isImageChange = false;
         if (Object.keys(req.files).length !== 0) {
             // Si une nouvelle image est téléchargée on récupère son chemin
             // Pour pouvoir mettre à jour l'url dans la bdd
-            relativePathNewImage = req.absolutePathImage.replace("/src/public", "");
+            relativePathNewImage = getRelativePathOfImage(req.absolutePathImage);
             isImageChange = true;
         }
         const updatedAssociation = await associationToUpdate.update({
@@ -197,7 +193,7 @@ const dashboardController = {
         });
         // Une fois la bdd mise à jour on passe req.absolutePathImage à null (qui contient le chemin de la nouvelle image)
         // Car si != de null sera supprimé par le errorHandler en cas d'erreur
-        // A ce stade, le chemin de la nouvelle l'image est enregistré dans la BDD donc on ne veut pas supprimer cette nouvelle image
+        // A ce stade, le chemin de la nouvelle l'image est enregistré dans la BDD donc on ne veut pas supprimer cette nouvelle image si erreur
         req.absolutePathImage = null;
         if (isImageChange) {
             // Une fois l'association mise à jour en BDD on supprime l'ancienne image
@@ -215,16 +211,15 @@ const dashboardController = {
         if (!association) {
             return next(new NotFoundError());
         }
-        const imagePath = path.join(import.meta.dirname, "../../public", association.url_image);
+        const imageAbsolutePath = getAbsolutePathOfImage(association.url_image);
         await association.destroy();
-
 
         res.clearCookie("auth_token", {
             httpOnly: true,
             secure: false, // Secure à passer à true en prod
         });
 
-        await removeImage(imagePath);
+        await removeImage(imageAbsolutePath);
 
         return res.sendStatus(204);
     },
