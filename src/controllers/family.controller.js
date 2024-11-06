@@ -1,6 +1,10 @@
 import { Family } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { removeImage } from "../utils/imageManager.js";
+import {
+    getAbsolutePathOfImage,
+    getRelativePathOfImage,
+    removeImage,
+} from "../utils/imageManager.js";
 import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 import path from "node:path";
 
@@ -27,7 +31,6 @@ const familyController = {
             return next(new ValidationError());
         }
         const familyData = req.body;
-        console.log(familyData);
 
         const familyToUpdate = await Family.findByPk(id);
         if (!familyToUpdate) {
@@ -36,18 +39,15 @@ const familyController = {
         // Dans le cas où une nouvelle image est téléchargée
         // On récupère le chemin absolu de l'ancienne image
         // Pour pouvoir la supprimer après la mise à jour de la bdd
-        const oldImageAbsolutePath = path.join(
-            import.meta.dirname,
-            "../../public",
-            familyToUpdate.url_image,
-        );
+        const oldImageAbsolutePath = getAbsolutePathOfImage(familyToUpdate.url_image);
         const oldImageName = oldImageAbsolutePath.replace("/src/public/images/families/", "");
+
         let relativePathNewImage;
         let isImageChange = false;
         if (Object.keys(req.files).length !== 0) {
             // Si une nouvelle image est téléchargée on récupère son chemin
             // Pour pouvoir mettre à jour l'url dans la bdd
-            relativePathNewImage = req.absolutePathImage.replace("/src/public", "");
+            relativePathNewImage = getRelativePathOfImage(req.absolutePathImage);
             isImageChange = true;
         }
         let updatedFamily = await familyToUpdate.update({
@@ -79,14 +79,14 @@ const familyController = {
         if (!familyToDestroy) {
             return next(new NotFoundError());
         }
-        const imagePath = path.join(import.meta.dirname, "../../public", familyToDestroy.url_image);
-        const imageName = imagePath.replace("/src/public/images/families/", "");
+        const imageAbsolutePath = getAbsolutePathOfImage(familyToDestroy.url_image);
+        const imageName = imageAbsolutePath.replace("/src/public/images/families/", "");
         await familyToDestroy.destroy();
 
         if (imageName !== "default_family_img.svg") {
             // on supprime l'image de la famille SI ce n'était pas l'image par défaut
             // (default_family_img.svg)
-            await removeImage(imagePath);
+            await removeImage(imageAbsolutePath);
         }
 
         res.clearCookie("auth_token", {
