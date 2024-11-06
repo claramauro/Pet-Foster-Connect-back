@@ -20,7 +20,9 @@ app.use(
             "http://172.19.0.2:5173",
             "http://localhost:5173",
         ],
-        credentials: true, // A ajouter ceci si on utilise des cookies
+        credentials: true,
+        allowedHeaders: ["Authorization", "Content-Type", "X-Requested-With"],
+        exposedHeaders: ["Authorization"],
     }),
 );
 

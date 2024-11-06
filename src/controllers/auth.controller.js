@@ -32,7 +32,7 @@ const authController = {
         }
 
         if (password !== confirmPassword) {
-            return res.status(400).json({ error: "Les mots de passe ne correspondent pas." });
+            return res.status(400).json({ message: "Les mots de passe ne correspondent pas." });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -62,7 +62,7 @@ const authController = {
                     phone_number,
                 });
             } else {
-                return res.status(400).json({ error: "Type non valide. Utilisez 'family' ou 'association'." });
+                return res.status(400).json({ message: "Type non valide. Utilisez 'family' ou 'association'." });
             }
 
             const user = await User.create({
@@ -82,7 +82,8 @@ const authController = {
             });
 
             /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
-            const authToken = createAuthToken(userWithoutPassword);
+            const authToken = createAuthToken(userWithoutPassword.id, userWithoutPassword.role);
+
             res.setHeader("Authorization", `Bearer ${authToken}`);
 
             res.status(201).json(userWithoutPassword);
@@ -113,20 +114,20 @@ const authController = {
         });
 
         if (!user) {
-            return res.status(401).json({ error: "Email ou mot de passe incorrecte" });
+            return res.status(401).json({ message: "Email ou mot de passe incorrecte" });
         }
 
         const verifyPassword = await bcrypt.compare(password, user.password);
 
         if (!verifyPassword) {
-            return res.status(401).json({ error: "Email ou mot de passe incorrecte" });
+            return res.status(401).json({ message: "Email ou mot de passe incorrecte" });
         }
 
         const userWithoutPassword = user.get({ plain: true });
         delete userWithoutPassword.password;
 
         /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
-        const authToken = createAuthToken(userWithoutPassword);
+        const authToken = createAuthToken(userWithoutPassword.id, userWithoutPassword.role);
         res.setHeader("Authorization", `Bearer ${authToken}`);
 
         res.json(userWithoutPassword);

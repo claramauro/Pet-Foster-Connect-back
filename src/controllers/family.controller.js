@@ -19,12 +19,12 @@ const familyController = {
         if (!family) {
             return next(new NotFoundError());
         }
-        console.log(req.cookies.auth_token);
+
         res.json(family);
     },
 
     update: async (req, res, next) => {
-        const { id } = req.params
+        const { id } = req.params;
 
         const { error, value } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
         if (error) {
