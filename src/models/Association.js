@@ -35,6 +35,15 @@ Association.init(
             type: DataTypes.TEXT,
             unique: true,
         },
+
+        longitude: {
+            type: DataTypes.FLOAT, 
+        },
+
+        latitude: {
+            type: DataTypes.FLOAT,
+        },
+
         created_at: {
             type: DataTypes.DATE,
             allowNull: false,
@@ -42,6 +51,7 @@ Association.init(
         },
         updated_at: DataTypes.DATE,
     },
+
     {
         sequelize,
         tableName: "association",
@@ -49,3 +59,4 @@ Association.init(
 );
 
 export { Association };
+
