@@ -10,7 +10,7 @@ const authController = {
 
         const { error, value } = validateAndSanitize.familyOrAssociationRegister.validate(req.body);
         if (error) {
-            return next(new ValidationError(error));
+            return next(new ValidationError(error.name, error.message));
         }
 
         const {
@@ -37,12 +37,13 @@ const authController = {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const transaction = await sequelize.transaction();
+        // const transaction = await sequelize.transaction();
 
         try {
             let createdEntity;
             // Créer soit une famille soit une association selon req.params
             if (type === "family") {
+
                 createdEntity = await Family.create({
                     name,
                     address,
@@ -50,7 +51,7 @@ const authController = {
                     city,
                     department_id,
                     phone_number,
-                }, { transaction });
+                });
             } else if (type === "association") {
                 createdEntity = await Association.create({
                     name,
@@ -59,7 +60,7 @@ const authController = {
                     city,
                     department_id,
                     phone_number,
-                }, { transaction });
+                });
             } else {
                 return res.status(400).json({ error: "Type non valide. Utilisez 'family' ou 'association'." });
             }
@@ -70,7 +71,7 @@ const authController = {
                 role,
                 family_id: type === "family" ? createdEntity.id : null,
                 association_id: type === "association" ? createdEntity.id : null,
-            }, { transaction });
+            });
 
             const userWithoutPassword = await User.findByPk(user.id, {
                 include: [
@@ -82,12 +83,12 @@ const authController = {
 
             /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
             const authToken = createAuthToken(userWithoutPassword);
-            res.cookie("auth_token", authToken, { httpOnly: true, secure: false, maxAge: 3 * 60 * 60 * 1000 }); // Secure à passer à true en prod
+            res.setHeader("Authorization", `Bearer ${authToken}`);
 
             res.status(201).json(userWithoutPassword);
 
         } catch (error) {
-            await transaction.rollback();
+            // await transaction.rollback();
             next(error);
         }
 
@@ -126,19 +127,19 @@ const authController = {
 
         /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
         const authToken = createAuthToken(userWithoutPassword);
-        res.cookie("auth_token", authToken, { httpOnly: true, secure: false, maxAge: 3 * 60 * 60 * 1000 }); // Secure à passer à true en prod
+        res.setHeader("Authorization", `Bearer ${authToken}`);
 
         res.json(userWithoutPassword);
     },
 
-    logout: async (req, res) => {
-        res.clearCookie("auth_token", {
-            httpOnly: true,
-            secure: false, // Secure à passer à true en prod
-        });
-
-        res.status(200).json({ message: "Déconnexion réussie, cookie supprimé." });
-    },
+    // logout: async (req, res) => {
+    //     res.clearCookie("auth_token", {
+    //         httpOnly: true,
+    //         secure: false, // Secure à passer à true en prod
+    //     });
+    //
+    //     res.status(200).json({ message: "Déconnexion réussie, cookie supprimé." });
+    // },
 };
 
 export { authController };
