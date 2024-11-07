@@ -11,6 +11,7 @@ import "./src/database/connection.js";
 import { notFound, errorHandler } from "./src/middlewares/errorHandler.js";
 
 const app = express();
+app.disable("x-powered-by");
 
 app.use(
     cors({
@@ -23,7 +24,7 @@ app.use(
         credentials: true,
         allowedHeaders: ["Authorization", "Content-Type", "X-Requested-With"],
         exposedHeaders: ["Authorization"],
-    }),
+    })
 );
 
 const securePathToAssets = path.join(import.meta.dirname, "public");

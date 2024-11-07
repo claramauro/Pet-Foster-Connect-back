@@ -174,52 +174,54 @@ associations de protection animale.
 
 ## Animaux
 
-| Verbe | Chemin                          | Request Body                                      | Response Body                     | Code (succès) |
-| ----- | ------------------------------- | ------------------------------------------------- | --------------------------------- | ------------- |
-| GET   | /animals                        |                                                   | la liste de tous les animaux      | 200           |
-| GET   | /animals/:id                    |                                                   | les données d'un animal           | 200           |
-| GET   | /animals/search?filtre={filtre} |                                                   | liste des animaux selon un filtre | 200           |
-| POST  | /animals/request                | id de l'association, de la famille et de l'animal | demande                           | 201           |
+| Verbe | Chemin                          | Request Body                        | Response Body                           | Code (succès) |
+| ----- | ------------------------------- | ----------------------------------- | --------------------------------------- | ------------- |
+| GET   | /animals                        |                                     | la liste de tous les animaux            | 200           |
+| GET   | /animals/:id                    |                                     | les données d'un animal                 | 200           |
+| GET   | /animals/search?filtre={filtre} |                                     | liste des animaux selon le(s) filtre(s) | 200           |
+| POST  | /animals/request                | id de l'association, id de l'animal | La demande créée                        | 201           |
+
+NB : family_id dans le JWT (header de la requête) pour la méthode POST sur la route /animals/request
 
 ## Dashboard
 
-| Verbe  | Chemin                             | Request Body | Response Body                      | Code (succès) |
-| ------ | ---------------------------------- | ------------ | ---------------------------------- | ------------- |
-| GET    | /dashboard/association/animals     |              | liste des animaux de l'association | 200           |
-| POST   | /dashboard/association/animals/    |              | animal ajouté                      | 201           |
-| PATCH  | /dashboard/association/animals/:id |              | animal modifié                     | 200           |
-| DELETE | /dashboard/association/animals/:id |              |                                    | 204           |
-| GET    | /dashboard/association/profile     |              | les données de l'association       | 200           |
-| PATCH  | /dashboard/association/profile     |              | les données de l'association       | 200           |
-| DELETE | /dashboard/association/profile     |              |                                    | 204           |
-| GET    | /dashboard/association/request     |              | les demandes                       | 200           |
-| PATCH  | /dashboard/association/request/:id |              | la demande                         | 200           |
+| Verbe  | Chemin                             | Request Body                      | Response Body                      | Code (succès) |
+| ------ | ---------------------------------- | --------------------------------- | ---------------------------------- | ------------- |
+| GET    | /dashboard/association/animals     |                                   | liste des animaux de l'association | 200           |
+| POST   | /dashboard/association/animals/    | data et image de l'animal         | animal ajouté                      | 201           |
+| PATCH  | /dashboard/association/animals/:id | data (+/- image) de l'animal      | animal modifié                     | 200           |
+| DELETE | /dashboard/association/animals/:id |                                   |                                    | 204           |
+| GET    | /dashboard/association/profile     |                                   | les données de l'association       | 200           |
+| PATCH  | /dashboard/association/profile     | data (+/- image) de l'association | les données de l'association       | 200           |
+| DELETE | /dashboard/association/profile     |                                   |                                    | 204           |
+| GET    | /dashboard/association/request     |                                   | les demandes de l'association      | 200           |
+| PATCH  | /dashboard/association/request/:id |                                   | la demande                         | 200           |
+
+NB : association_id dans le JWT (header de la requête) pour toutes les routes /dashboard
 
 ## Famille
 
-| Verbe  | Chemin      | Request Body | Response Body                     | Code (succès) |
-| ------ | ----------- | ------------ | --------------------------------- | ------------- |
-| GET    | /family/:id |              | les infos sur la famille/demandes | 200           |
-| PATCH  | /family/:id |              | les infos sur la famille          | 200           |
-| DELETE | /family/:id |              |                                   | 204           |
+| Verbe  | Chemin      | Request Body                  | Response Body                      | Code (succès) |
+| ------ | ----------- | ----------------------------- | ---------------------------------- | ------------- |
+| GET    | /family/:id |                               | les données de la famille/demandes | 200           |
+| PATCH  | /family     | data de la famille +/\_ image | les données de la famille          | 200           |
+| DELETE | /family     |                               |                                    | 204           |
+
+NB : family_id dans le JWT (header de la requête) pour toutes les méthode PATCH ET DELETE sur la route /family
 
 ## Inscription
 
-| Verbe | Chemin                      | Request Body | Response Body         | Code (succès) |
-| ----- | --------------------------- | ------------ | --------------------- | ------------- |
-| POST  | /auth/register/?role={role} |              | Inscription confirmée | 201           |
+| Verbe | Chemin               | Request Body                                                             | Response Body         | Code (succès) |
+| ----- | -------------------- | ------------------------------------------------------------------------ | --------------------- | ------------- |
+| POST  | /auth/register/:role | data de la famille ou association (+ image obligatoire pour association) | Inscription confirmée | 201           |
+
+NB : role = "family" ou "association"
 
 ## Connexion
 
-| Verbe | Chemin      | Request Body | Response Body | Code (succès) |
-| ----- | ----------- | ------------ | ------------- | ------------- |
-| POST  | /auth/login |              |               | 200           |
-
-## Déconnexion
-
-| Verbe | Chemin       | Request Body | Response Body | Code (succès) |
-| ----- | ------------ | ------------ | ------------- | ------------- |
-| POST  | /auth/logout |              |               | 200           |
+| Verbe | Chemin      | Request Body         | Response Body | Code (succès) |
+| ----- | ----------- | -------------------- | ------------- | ------------- |
+| POST  | /auth/login | email + mot de passe |               | 200           |
 
 ## Département
 

@@ -9,11 +9,7 @@ export class NotFoundError extends Error {
 }
 
 export class ValidationError extends Error {
-    constructor(
-        fieldName,
-        message,
-        name = "Validation Error"
-    ) {
+    constructor(fieldName, message, name = "Validation Error") {
         super(name);
         this.message = message;
         this.fieldName = fieldName; // nom du champ qui a échoué à la validation
@@ -35,5 +31,25 @@ export class ServerError extends Error {
         this.name = name;
         this.statusCode = statusCode;
         Error.captureStackTrace(this, ServerError);
+    }
+}
+
+export class AuthentificationError extends Error {
+    constructor(message = "Email ou mot de passe incorrect.") {
+        super("Authentification Error");
+        this.message = message;
+        this.statusCode = 401;
+        // À modifier en production
+        Error.captureStackTrace(this, AuthentificationError);
+    }
+}
+
+export class AuthorizationError extends Error {
+    constructor(message = "Accès refusé.") {
+        super("Authorization Error");
+        this.message = message;
+        this.statusCode = 403;
+        // A modifier en prod
+        Error.captureStackTrace(this, AuthorizationError);
     }
 }
