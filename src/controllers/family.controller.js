@@ -24,9 +24,9 @@ const familyController = {
     },
 
     update: async (req, res, next) => {
-        const { id } = req.params;
+        const { family_id: id } = req.user;
 
-        const { error, value } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
+        const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
         if (error) {
             return next(new ValidationError());
         }
@@ -74,7 +74,7 @@ const familyController = {
     },
 
     destroy: async (req, res, next) => {
-        const { id } = req.params;
+        const { family_id: id } = req.user;
         const familyToDestroy = await Family.findByPk(id);
         if (!familyToDestroy) {
             return next(new NotFoundError());
@@ -88,11 +88,6 @@ const familyController = {
             // (default_family_img.svg)
             await removeImage(imageAbsolutePath);
         }
-
-        res.clearCookie("auth_token", {
-            httpOnly: true,
-            secure: false, // Secure à passer à true en prod
-        });
 
         res.status(204).send();
     },
