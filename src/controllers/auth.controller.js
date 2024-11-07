@@ -27,6 +27,7 @@ const authController = {
             password,
             confirmPassword,
             role,
+            description,
         } = req.body;
 
         const existingUser = await User.findOne({ where: { email } });
@@ -40,71 +41,70 @@ const authController = {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // const transaction = await sequelize.transaction();
-
+        const transaction = await sequelize.transaction();
 
         // Création de deux variables en let car valeurs changeront lors de l'interrogation de l'API
 
         let latitude = null;
         let longitude = null;
 
-
         try {
             let createdEntity;
 
-            // Si le type est "association", on utilise le géocodage 
-            if (type === "association") {
+            // Créer soit une famille soit une association selon req.params
+            if (type === "family") {
+                createdEntity = await Family.create(
+                    {
+                        name,
+                        address,
+                        zip_code,
+                        city,
+                        department_id,
+                        phone_number,
+                        description,
+                    },
+                    { transaction }
+                );
+            } else if (type === "association") {
                 try {
-                    const { latitude: geoLat, longitude: geoLon } = await geocodeAddress(`${address}, ${zip_code}, ${city}`);
+                    const { latitude: geoLat, longitude: geoLon } = await geocodeAddress(
+                        `${address}, ${zip_code}, ${city}`
+                    );
                     latitude = geoLat;
                     longitude = geoLon;
                 } catch (error) {
+                    await transaction.rollback();
                     return res.status(400).json({ error: error.message });
                 }
+
+                createdEntity = await Association.create(
+                    {
+                        name,
+                        address,
+                        zip_code,
+                        city,
+                        department_id,
+                        phone_number,
+                        longitude,
+                        latitude,
+                        description,
+                    },
+                    { transaction }
+                );
             }
 
-            // Créer soit une famille soit une association selon req.params
-            if (type === "family") {
+            const user = await User.create(
+                {
+                    email,
+                    password: hashedPassword,
+                    role,
+                    family_id: type === "family" ? createdEntity.id : null,
+                    association_id: type === "association" ? createdEntity.id : null,
+                },
+                { transaction }
+            );
 
-                createdEntity = await Family.create({
-                    name,
-                    address,
-                    zip_code,
-                    city,
-                    department_id,
-                    phone_number,
-
-                // { transaction });
-                });
-
-            } else if (type === "association") {
-                createdEntity = await Association.create({
-                    name,
-                    address,
-                    zip_code,
-                    city,
-                    department_id,
-                    phone_number,
-                    longitude,
-                    latitude,
-                // { transaction });
-                });
-              
-            } else {
-                return res.status(400).json({ message: "Type non valide. Utilisez 'family' ou 'association'." });
-            }
-
-            const user = await User.create({
-                email,
-                password: hashedPassword,
-                role,
-                family_id: type === "family" ? createdEntity.id : null,
-                association_id: type === "association" ? createdEntity.id : null,
-            
-            // { transaction });
-
-            });
-
+            await transaction.commit();
 
             const userWithoutPassword = await User.findByPk(user.id, {
                 include: [
@@ -114,16 +114,13 @@ const authController = {
                 attributes: { exclude: ["password"] },
             });
 
-
             /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
             const authToken = createAuthToken(userWithoutPassword.id, userWithoutPassword.role);
 
             res.setHeader("Authorization", `Bearer ${authToken}`);
-
             res.status(201).json(userWithoutPassword);
-
         } catch (error) {
-            // await transaction.rollback();
+            await transaction.rollback();
             next(error);
         }
     },
