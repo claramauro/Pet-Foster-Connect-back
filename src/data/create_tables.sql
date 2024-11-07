@@ -58,8 +58,8 @@ CREATE TABLE "association"
     "phone_number"  TEXT    NOT NULL,
     "description"   TEXT,
     "url_image"     TEXT     UNIQUE,
-    "longitude"     FLOAT  UNIQUE,
-    "latitude"      FLOAT  UNIQUE,
+    "longitude"     FLOAT,
+    "latitude"      FLOAT,
     "created_at"    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"    TIMESTAMP          DEFAULT CURRENT_TIMESTAMP
 );

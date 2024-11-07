@@ -4,12 +4,11 @@ import { ValidationError } from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
 import { createAuthToken } from "../utils/createAuthToken.js";
 import { geocodeAddress } from "../utils/geocodeAdress.js";
+import { getRelativePathOfImage } from "../utils/imageManager.js";
 
 const authController = {
     register: async (req, res, next) => {
         const { type } = req.params;
-
-        console.log(req.body);
 
         const { error, value } = validateAndSanitize.familyOrAssociationRegister.validate(req.body);
         if (error) {
@@ -44,7 +43,6 @@ const authController = {
         const transaction = await sequelize.transaction();
 
         // Création de deux variables en let car valeurs changeront lors de l'interrogation de l'API
-
         let latitude = null;
         let longitude = null;
 
@@ -53,6 +51,12 @@ const authController = {
 
             // Créer soit une famille soit une association selon req.params
             if (type === "family") {
+                let relativePathImage;
+                // Si la famille a uploadé une image
+                if (Object.keys(req.files).length !== 0) {
+                    relativePathImage = getRelativePathOfImage(req.absolutePathImage);
+                }
+
                 createdEntity = await Family.create(
                     {
                         name,
@@ -62,10 +66,18 @@ const authController = {
                         department_id,
                         phone_number,
                         description,
+                        url_image: relativePathImage ? relativePathImage : undefined,
+                        // si pas d'image url_image = undefined donc champ ignoré par Sequelize (on a une image par défaut définie sur la table)
                     },
                     { transaction }
                 );
             } else if (type === "association") {
+                // Vérifier que l'association a fourni l'image
+                if (!req.files || Object.keys(req.files).length === 0) {
+                    return next(
+                        new ValidationError("association_img", "Le champ image est obligatoire.")
+                    );
+                }
                 try {
                     const { latitude: geoLat, longitude: geoLon } = await geocodeAddress(
                         `${address}, ${zip_code}, ${city}`
@@ -76,7 +88,7 @@ const authController = {
                     await transaction.rollback();
                     return res.status(400).json({ error: error.message });
                 }
-
+                const relativePathImage = getRelativePathOfImage(req.absolutePathImage);
                 createdEntity = await Association.create(
                     {
                         name,
@@ -88,6 +100,7 @@ const authController = {
                         longitude,
                         latitude,
                         description,
+                        url_image: relativePathImage ? relativePathImage : undefined,
                     },
                     { transaction }
                 );
