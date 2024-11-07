@@ -1,6 +1,6 @@
 import { Family, Association, User, sequelize } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { ValidationError } from "../utils/customErrors.js";
+import { AuthentificationError, ValidationError } from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
 import { createAuthToken } from "../utils/createAuthToken.js";
 import { geocodeAddress } from "../utils/geocodeAdress.js";
@@ -31,11 +31,11 @@ const authController = {
 
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
-            return res.status(400).json({ message: "Cet email est déjà utilisé." });
+            return next(new AuthentificationError("Impossible de compléter l'inscription"));
         }
 
         if (password !== confirmPassword) {
-            return res.status(400).json({ message: "Les mots de passe ne correspondent pas." });
+            return next(new AuthentificationError("Les mots de passe ne correspondent pas."));
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -86,7 +86,7 @@ const authController = {
                     longitude = geoLon;
                 } catch (error) {
                     await transaction.rollback();
-                    return res.status(400).json({ error: error.message });
+                    return next(error);
                 }
                 const relativePathImage = getRelativePathOfImage(req.absolutePathImage);
                 createdEntity = await Association.create(
@@ -160,13 +160,13 @@ const authController = {
         });
 
         if (!user) {
-            return res.status(401).json({ message: "Email ou mot de passe incorrecte" });
+            return next(new AuthentificationError());
         }
 
         const verifyPassword = await bcrypt.compare(password, user.password);
 
         if (!verifyPassword) {
-            return res.status(401).json({ message: "Email ou mot de passe incorrecte" });
+            return next(new AuthentificationError());
         }
 
         const userWithoutPassword = user.get({ plain: true });

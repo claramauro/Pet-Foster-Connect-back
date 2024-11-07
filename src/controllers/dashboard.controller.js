@@ -10,12 +10,7 @@ import path from "node:path";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {
-        /*
-       fetch and return res.json() all animals
-        */
-        // Pour l'instant on récupère l'id de l'association avec query
-        // Plus tard avec le système d'authentification/JWT
-        const { id } = req.query;
+        const { association_id: id } = req.user;
         const association = await Association.findByPk(id);
         if (!association) {
             return next();
