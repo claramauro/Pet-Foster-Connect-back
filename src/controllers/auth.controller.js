@@ -126,9 +126,13 @@ const authController = {
                 ],
                 attributes: { exclude: ["password"] },
             });
-
             /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
-            const authToken = createAuthToken(userWithoutPassword.id, userWithoutPassword.role);
+            const authToken = createAuthToken(
+                userWithoutPassword.id,
+                userWithoutPassword.role,
+                userWithoutPassword.family_id,
+                userWithoutPassword.association_id
+            );
 
             res.setHeader("Authorization", `Bearer ${authToken}`);
             res.status(201).json(userWithoutPassword);
@@ -167,9 +171,13 @@ const authController = {
 
         const userWithoutPassword = user.get({ plain: true });
         delete userWithoutPassword.password;
-
         /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
-        const authToken = createAuthToken(userWithoutPassword.id, userWithoutPassword.role);
+        const authToken = createAuthToken(
+            userWithoutPassword.id,
+            userWithoutPassword.role,
+            userWithoutPassword.family_id,
+            userWithoutPassword.association_id
+        );
         res.setHeader("Authorization", `Bearer ${authToken}`);
 
         res.json(userWithoutPassword);
