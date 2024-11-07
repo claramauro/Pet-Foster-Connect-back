@@ -18,9 +18,9 @@ const upload = multer({
         } else {
             return cb(
                 new Error(
-                    "Type de fichier non autorisé, veuillez télécharger une image au format JPEG, PNG ou WebP."
+                    "Type de fichier non autorisé, veuillez télécharger une image au format JPEG, PNG ou WebP.",
                 ),
-                false
+                false,
             ); // Fichier rejeté
         }
     },
@@ -52,7 +52,7 @@ function convertAndSaveImage(req, res, next) {
                 const originalFileName = path.parse(req.files[currentField][0].originalname).name;
                 const imagePath = path.join(
                     import.meta.dirname,
-                    `../../public/images/${directoryImageName}/${originalFileName}-${Date.now()}.webp`
+                    `../../public/images/${directoryImageName}/${originalFileName}-${Date.now()}.webp`,
                 );
                 // Voir pour redimensionner l'image ?
                 await sharp(req.files[currentField][0].buffer).webp().toFile(imagePath);

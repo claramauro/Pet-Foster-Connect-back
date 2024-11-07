@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
 
-const createAuthToken = (user) => {
+const createAuthToken = (id, role) => {
     try {
-        return jwt.sign({ user: user }, process.env.JWT_SECRET, { expiresIn: "3h" });
+        const payload = { id, role };
+
+        return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "3h" });
     } catch (error) {
         console.error("Error generating token:", error);
     }
