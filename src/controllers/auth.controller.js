@@ -3,10 +3,13 @@ import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError } from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
 import { createAuthToken } from "../utils/createAuthToken.js";
+import { geocodeAddress } from "../utils/geocodeAdress.js";
 
 const authController = {
     register: async (req, res, next) => {
         const { type } = req.params;
+
+        console.log(req.body);
 
         const { error, value } = validateAndSanitize.familyOrAssociationRegister.validate(req.body);
         if (error) {
@@ -39,8 +42,27 @@ const authController = {
 
         // const transaction = await sequelize.transaction();
 
+
+        // Création de deux variables en let car valeurs changeront lors de l'interrogation de l'API
+
+        let latitude = null;
+        let longitude = null;
+
+
         try {
             let createdEntity;
+
+            // Si le type est "association", on utilise le géocodage 
+            if (type === "association") {
+                try {
+                    const { latitude: geoLat, longitude: geoLon } = await geocodeAddress(`${address}, ${zip_code}, ${city}`);
+                    latitude = geoLat;
+                    longitude = geoLon;
+                } catch (error) {
+                    return res.status(400).json({ error: error.message });
+                }
+            }
+
             // Créer soit une famille soit une association selon req.params
             if (type === "family") {
 
@@ -51,7 +73,10 @@ const authController = {
                     city,
                     department_id,
                     phone_number,
+
+                // { transaction });
                 });
+
             } else if (type === "association") {
                 createdEntity = await Association.create({
                     name,
@@ -60,7 +85,11 @@ const authController = {
                     city,
                     department_id,
                     phone_number,
+                    longitude,
+                    latitude,
+                // { transaction });
                 });
+              
             } else {
                 return res.status(400).json({ message: "Type non valide. Utilisez 'family' ou 'association'." });
             }
@@ -71,7 +100,11 @@ const authController = {
                 role,
                 family_id: type === "family" ? createdEntity.id : null,
                 association_id: type === "association" ? createdEntity.id : null,
+            
+            // { transaction });
+
             });
+
 
             const userWithoutPassword = await User.findByPk(user.id, {
                 include: [
@@ -80,6 +113,7 @@ const authController = {
                 ],
                 attributes: { exclude: ["password"] },
             });
+
 
             /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
             const authToken = createAuthToken(userWithoutPassword.id, userWithoutPassword.role);
@@ -92,9 +126,7 @@ const authController = {
             // await transaction.rollback();
             next(error);
         }
-
     },
-
 
     login: async (req, res, next) => {
         const { error, value } = validateAndSanitize.familyOrAssociationLogin.validate(req.body);

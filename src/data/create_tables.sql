@@ -57,7 +57,9 @@ CREATE TABLE "association"
     "department_id" INTEGER    NOT NULL,
     "phone_number"  TEXT    NOT NULL,
     "description"   TEXT,
-    "url_image"     TEXT    UNIQUE,
+    "url_image"     TEXT     UNIQUE,
+    "longitude"     FLOAT  UNIQUE,
+    "latitude"      FLOAT  UNIQUE,
     "created_at"    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"    TIMESTAMP          DEFAULT CURRENT_TIMESTAMP
 );
