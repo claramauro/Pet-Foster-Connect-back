@@ -1,17 +1,21 @@
 import jwt from "jsonwebtoken";
 
 const verifyToken = (req, res, next) => {
-    const token = req.cookies.auth_token;
-    
-    try {
-        jwt.verify(token, process.env.JWT_SECRET);
+    const authorization = req.headers.authorization;
 
-    } catch (err) {
-        res.status(401).json({ message: "Invalid or expired token" });
+    if (!authorization) {
+        res.status(401).json({ message: "Missing authorization token" });
         return;
     }
+    const token = authorization.split(" ")[1];
 
-    next();
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ message: "Invalid or expired token" });
+
+        req.user = user; // on assigne le payload décodé à req.user pour le réutiliser
+        next();
+    });
 };
+
 
 export { verifyToken };

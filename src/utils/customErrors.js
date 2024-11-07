@@ -11,7 +11,7 @@ export class NotFoundError extends Error {
 export class ValidationError extends Error {
     constructor(
         fieldName,
-        message = "Les données fournies sont incorrectes",
+        message,
         name = "Validation Error"
     ) {
         super(name);

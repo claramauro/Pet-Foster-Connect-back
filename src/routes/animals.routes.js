@@ -8,6 +8,6 @@ const animalsRoutes = Router();
 animalsRoutes.get("/", catchErrors(animalsController.index));
 animalsRoutes.get("/:id(\\d+)", catchErrors(animalsController.findOne));
 animalsRoutes.get("/search", catchErrors(animalsController.filter));
-animalsRoutes.post("/request", catchErrors(animalsController.createRequest));
+animalsRoutes.post("/request", verifyToken, catchErrors(animalsController.createRequest));
 
 export { animalsRoutes };
