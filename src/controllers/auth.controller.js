@@ -104,6 +104,9 @@ const authController = {
                     },
                     { transaction }
                 );
+            } else {
+                // Si type != de association ou family
+                return next(new ValidationError("Type non autorisé"));
             }
 
             const user = await User.create(
