@@ -106,11 +106,11 @@ INSERT INTO "department" ("id", "code", "name") VALUES
 (101, '974', 'Réunion');
 
 -- Seed pour la table association
-INSERT INTO "association" ("name", "address", "zip_code", "city", "department_id", "phone_number", "description", "url_image")
+INSERT INTO "association" ("name", "address", "zip_code", "city", "department_id", "latitude", "longitude", "phone_number", "description", "url_image")
 VALUES 
-('Animal Rescue', '123 Rue de la Liberté', '75001', 'Paris', 76, '0123456789', 'Organisation dédiée au sauvetage des animaux', '/images/associations/Animal-Rescue-1.webp'),
-('Four Paws', '456 Avenue des Animaux', '69001', 'Lyon', 70, '0987654321', 'Refuge pour animaux de toutes espèces', '/images/associations/Four-Paws-2.webp'),
-('SPA du 06', '20 Chemin du soleil', '06000', 'Nice', 6, '0963739971', 'Refuge d''accueil pour animaux de toutes espèces en attente d''adoption', '/images/associations/SPA-du-06-3.webp');
+('Animal Rescue', '123 Rue de la Liberté', '75001', 'Paris', 76, 48.8566, 2.3522, '0123456789', 'Organisation dédiée au sauvetage des animaux', '/images/associations/Animal-Rescue-1.webp'),
+('Four Paws', '456 Avenue des Animaux', '69001', 'Lyon', 70, 45.7640, 4.8357, '0987654321', 'Refuge pour animaux de toutes espèces', '/images/associations/Four-Paws-2.webp'),
+('SPA du 06', '20 Chemin du soleil', '06000', 'Nice', 6, 43.7102, 7.2620, '0963739971', 'Refuge d''accueil pour animaux de toutes espèces en attente d''adoption', '/images/associations/SPA-du-06-3.webp');
 
 -- Seed pour la table family
 INSERT INTO "family" ("name", "address", "zip_code", "city", "department_id", "phone_number", "description", "url_image")
@@ -123,12 +123,13 @@ VALUES
 -- Seed pour la table user
 INSERT INTO "user" ("email", "password", "role", "family_id", "association_id")
 VALUES 
-('alice@example.com', 'hashed_password1', 'family', 1, NULL),
-('bob@example.com', 'hashed_password2', 'association', NULL, 1),
-('carol@example.com', 'hashed_password3', 'family', 2, NULL),
-('dave@example.com', 'hashed_password4', 'association', NULL, 2),
-('john@example.com', 'hashed_password5', 'family', 3, NULL),
-('spa@example.com', 'hashed_password6', 'association', NULL, 3);
+('family1@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'family', 1, NULL),
+('family2@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'family', 2, NULL),
+('family3@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'family', 3, NULL),
+('family4@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'family', 4, NULL),
+('asso1@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'association', NULL, 1),
+('asso2@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'association', NULL, 2),
+('asso3@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'association', NULL, 3);
 
 -- Seed pour la table animal
 INSERT INTO "animal" ("name", "gender", "race", "species", "age", "size", "description", "url_image", "availability", "family_id", "association_id")

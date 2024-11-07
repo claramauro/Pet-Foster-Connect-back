@@ -1,8 +1,12 @@
 import { AuthorizationError } from "../utils/customErrors.js";
 
-const isFamillyAuthorized = (req, res, next) => {
-    console.log(req.user);
-    next();
+const isFamilyAuthorized = (req, res, next) => {
+    const { role } = req.user;
+    if (role === "family") {
+        return next();
+    } else {
+        return next(new AuthorizationError());
+    }
 };
 
 const isAssociationAuthorized = (req, res, next) => {
@@ -14,4 +18,4 @@ const isAssociationAuthorized = (req, res, next) => {
     }
 };
 
-export { isFamillyAuthorized, isAssociationAuthorized };
+export { isFamilyAuthorized, isAssociationAuthorized };

@@ -16,52 +16,49 @@ dashboardAssociationRoutes.get(
 
 dashboardAssociationRoutes.post(
     "/association/animals",
-    verifyToken,
-    convertAndSaveImage,
+    [verifyToken, isAssociationAuthorized, convertAndSaveImage],
     catchErrors(dashboardController.storeAnimal)
 );
 
 dashboardAssociationRoutes.patch(
     "/association/animals/:id(\\d+)",
-    verifyToken,
-    convertAndSaveImage,
+    [verifyToken, isAssociationAuthorized, convertAndSaveImage],
     catchErrors(dashboardController.updateAnimal)
 );
 
 dashboardAssociationRoutes.delete(
     "/association/animals/:id(\\d+)",
-    verifyToken,
+    [verifyToken, isAssociationAuthorized],
     catchErrors(dashboardController.destroyAnimal)
 );
 
 dashboardAssociationRoutes.get(
     "/association/profile",
-    verifyToken,
+    [verifyToken, isAssociationAuthorized],
     catchErrors(dashboardController.getProfile)
 );
 
 dashboardAssociationRoutes.patch(
     "/association/profile",
-    verifyToken,
-    convertAndSaveImage,
+    [verifyToken, isAssociationAuthorized, convertAndSaveImage],
     catchErrors(dashboardController.updateProfile)
 );
 
 dashboardAssociationRoutes.delete(
-    "/association/profile/:id(\\d+)",
-    verifyToken,
+    "/association/profile",
+    [verifyToken, isAssociationAuthorized],
     catchErrors(dashboardController.destroyProfile)
 );
 
 dashboardAssociationRoutes.get(
-    "/association/request/",
-    verifyToken,
+    "/association/request",
+    [verifyToken, isAssociationAuthorized],
     catchErrors(dashboardController.getRequests)
 );
 
 dashboardAssociationRoutes.patch(
     "/association/request/:id(\\d+)",
-    verifyToken,
+    [verifyToken, isAssociationAuthorized],
     catchErrors(dashboardController.updateRequest)
 );
 

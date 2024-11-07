@@ -53,31 +53,32 @@ const animalsController = {
     },
 
     createRequest: async (req, res, next) => {
-        /*
-        create request with association_id (user_id) family_id (user_id) and animal_id return res.json() request
-         */
-        const { family_id, animal_id } = req.body;
+        const { family_id } = req.user;
+        const { association_id, animal_id } = req.body;
 
         // Validation des entrées et vérification si la famille et l'association existent
-
-        const { error, value } = validateAndSanitize.createAnimalRequest.validate(req.body);
+        const { error } = validateAndSanitize.createAnimalRequest.validate(req.body);
 
         if (error) {
             return next(new ValidationError());
         }
 
         const family = await Family.findByPk(family_id);
-        const animal = await Animal.findByPk(animal_id);
+        const animal = await Animal.findOne({
+            where: {
+                id: animal_id,
+                association_id: association_id,
+            },
+        });
 
         if (!family || !animal) {
-            return next(Error);
+            return next(new NotFoundError());
         }
 
         // Création de la demande
-
         const status = "En attente";
 
-        const request = await Request.create({ status, family_id, animal_id });
+        const request = await Request.create({ status, family_id, animal_id, association_id });
         res.status(201).json(request);
     },
 

@@ -35,7 +35,6 @@ const JoiSanitized = Joi.extend((joi) => ({
 
 const validateAndSanitize = {
     createAnimalRequest: Joi.object({
-        family_id: Joi.number().integer().required(),
         animal_id: Joi.number().integer().required(),
         association_id: Joi.number().integer().required(),
     }),
@@ -68,7 +67,6 @@ const validateAndSanitize = {
         age: JoiSanitized.string().trim().min(1).sanitize().required(),
         size: JoiSanitized.string().trim().min(1).sanitize().required(),
         gender: JoiSanitized.string().trim().min(1).sanitize().required(),
-        association_id: Joi.number().integer().min(1).required(),
         race: JoiSanitized.string().trim().min(1).sanitize().optional(),
         description: JoiSanitized.string().trim().min(1).sanitize().required(),
         availability: JoiSanitized.boolean().required(),
@@ -80,7 +78,6 @@ const validateAndSanitize = {
         age: JoiSanitized.string().trim().min(1).sanitize().optional(),
         size: JoiSanitized.string().trim().min(1).sanitize().optional(),
         gender: JoiSanitized.string().trim().min(1).sanitize().optional(),
-        association_id: Joi.number().integer().min(1).optional(),
         department_id: Joi.number().integer().min(1).optional(),
         race: JoiSanitized.string().trim().min(1).sanitize().optional(),
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
