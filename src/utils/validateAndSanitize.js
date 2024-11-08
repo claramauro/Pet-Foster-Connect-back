@@ -57,6 +57,7 @@ const validateAndSanitize = {
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
     }),
     associationSearchFilter: JoiSanitized.object({
+        association_id: JoiSanitized.string().trim().min(1).optional(),
         department_id: JoiSanitized.string().trim().min(1).sanitize().optional(),
         species: JoiSanitized.string().trim().min(1).sanitize().optional(),
         page: JoiSanitized.string().trim().min(1).sanitize().optional(),

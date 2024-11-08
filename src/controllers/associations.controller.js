@@ -1,4 +1,4 @@
-import { Association } from "../models/associations.js";
+import { Animal, Association, Department } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError } from "../utils/customErrors.js";
 
@@ -10,25 +10,25 @@ const associationsController = {
         const associations = await Association.findAll({
             include: "department",
         });
-    
-          /* Query pour l'affichage des associations en fonction de la page */
-          const currentPage = req.query.page || 1;
-          const limit = 6; // Nombre d'associations max par page
-          const offset = (Number(currentPage) - 1) * limit; // Offset de 6 - 12 - 18... en fonction de la page courante
-  
-          /* Pagination */
-          const paginatedAssociations = await Association.findAll({
+
+        /* Query pour l'affichage des associations en fonction de la page */
+        const currentPage = req.query.page || 1;
+        const limit = 6; // Nombre d'associations max par page
+        const offset = (Number(currentPage) - 1) * limit; // Offset de 6 - 12 - 18... en fonction de la page courante
+
+        /* Pagination */
+        const paginatedAssociations = await Association.findAll({
             include: "department",
-            limit: limit, 
-            offset: offset,  
-          });
-  
-          res.json({
-              allAssociations: associations,
-              paginatedAssociations: paginatedAssociations,
-          });
-      },
-      
+            limit: limit,
+            offset: offset,
+        });
+
+        res.json({
+            allAssociations: associations,
+            paginatedAssociations: paginatedAssociations,
+        });
+    },
+
     findOne: async (req, res, next) => {
         /*
     fetch with req.params and return res.json() one association
@@ -58,6 +58,7 @@ const associationsController = {
             const associationWhere = {};
             const animalWhere = {};
 
+            if (query.association_id) associationWhere.id = query.association_id;
             if (query.department_id) associationWhere.department_id = query.department_id;
             if (query.species) animalWhere.species = query.species;
 
@@ -66,22 +67,27 @@ const associationsController = {
 
         const { associationWhere, animalWhere } = buildWhereClause(req.query);
 
-        
         const currentPage = req.query.page || 1;
 
         const limit = 6; // Nombre d'associations max
         const offset = (Number(currentPage) - 1) * limit; // Pagination
 
         const filterAssociations = await Association.findAll({
+            where: associationWhere,
             include: [
                 {
+                    model: Department,
+                    as: "department", // Alias du modèle Department
+                },
+                {
                     model: Animal,
-                    as: "animals",  // Le modèle Animal est inclus ici
-                    where: animalWhere,  // Application du filtre sur les animaux
-                    include: "department",
+                    as: "animals",  // Alias du modèle Animal
+                    required: Object.keys(animalWhere).length > 0, // Si animalWhere est vide, utilise LEFT JOIN
+                    where: animalWhere,
                 },
             ],
         });
+
 
         // On pagine le résultat des associations par rapport à la limite (nb d'associations) et l'offset (correspondant au numéro de page demandé)
         const paginatedAssociations = filterAssociations.slice(offset, offset + limit);
