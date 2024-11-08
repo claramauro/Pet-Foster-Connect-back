@@ -1,72 +1,61 @@
-import { Animal, Association } from "../models/associations.js";
+import { Association } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError } from "../utils/customErrors.js";
 
 const associationsController = {
     index: async (req, res) => {
-        /* Query pour la page d'accueil et pour récupérer le nombre total d'associations */
+        /*
+       fetch and return  res.json() all associations
+        */
         const associations = await Association.findAll({
-            include: [
-                { association: "department" },
-                { association: "animals" },
-            ],
+            include: "department",
         });
-
-        /* Query pour l'affichage des associations en fonction de la page */
-        const currentPage = req.query.page || 1;
-        const limit = 6; // Nombre d'associations max par page
-        const offset = (Number(currentPage) - 1) * limit; // Offset de 6 - 12 - 18... en fonction de la page courante
-
-        /* Pagination */
-        const paginatedAssociations = await Association.findAll({
-            include: [
-                { association: "department" },
-                { association: "animals" },
-            ],
-            limit: limit,
-            offset: offset,
-        });
-
-        res.json({
-            allAssociations: associations,
-            paginatedAssociations: paginatedAssociations,
-        });
-    },
-
+    
+          /* Query pour l'affichage des associations en fonction de la page */
+          const currentPage = req.query.page || 1;
+          const limit = 6; // Nombre d'associations max par page
+          const offset = (Number(currentPage) - 1) * limit; // Offset de 6 - 12 - 18... en fonction de la page courante
+  
+          /* Pagination */
+          const paginatedAssociations = await Association.findAll({
+              include: [
+                  { association: "department" },
+                  { association: "animals" },
+              ],
+              limit: limit,
+              offset: offset,
+          });
+  
+          res.json({
+              allAssociations: associations,
+              paginatedAssociations: paginatedAssociations,
+          });
+      },
+      
     findOne: async (req, res, next) => {
         /*
-        Fetch one association by ID
-        */
-
+    fetch with req.params and return res.json() one association
+     */
         const { id } = req.params;
-
-        const association = await Association.findOne(id)({
-           
-            include: [
-                "department",  // Include department from the Association model
-                {
-                    association: "animals",  // Include animals
-                    include: "department",  // Include department for animals if needed
-                }
-            ],
+        const association = await Association.findByPk(id, {
+            include: "department",
         });
-
         if (!association) {
-            return next(new NotFoundError());  // Si aucune association n'est trouvée, on renvoie une erreur NotFoundError
+            return next();
         }
-
-        res.json(association);  // Return the found association
+        res.json(association);
     },
 
     filter: async (req, res, next) => {
         /*
-        Fetch, filter associations based on query parameters, and return the results
-        */
+        fetch, filter with req.query and return res.json() all corresponding associations
+         */
+
         const buildWhereClause = (query) => {
-            // Validation of the data using the filter validation
+            // Validation des données
             const { error, value } = validateAndSanitize.associationSearchFilter.validate(query);
             if (error) {
-                return next(new ValidationError());  // Return validation error if any
+                return next(new ValidationError());
             }
 
             const associationWhere = {};
@@ -80,6 +69,7 @@ const associationsController = {
 
         const { associationWhere, animalWhere } = buildWhereClause(req.query);
 
+        
         const currentPage = req.query.page || 1;
 
         const limit = 6; // Nombre d'associations max
