@@ -1,36 +1,46 @@
 import { Association, Animal, Request, sequelize } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { ValidationError, NotFoundError, AuthorizationError } from "../utils/customErrors.js";
+import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 import {
     removeImage,
     getAbsolutePathOfImage,
     getRelativePathOfImage,
 } from "../utils/imageManager.js";
+import path from "node:path";
+import { generateSlug } from "../utils/generateSlug.js";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
-        const association = await Association.findByPk(associationId);
+        /*
+       fetch and return res.json() all animals
+        */
+        // Pour l'instant on récupère l'id de l'association avec query
+        // Plus tard avec le système d'authentification/JWT
+        const { id } = req.query;
+        const association = await Association.findByPk(id);
         if (!association) {
             return next();
         }
         const animals = await Animal.findAll({
             where: {
-                association_id: associationId,
+                association_id: id,
             },
         });
         res.json(animals);
     },
 
     storeAnimal: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
+
+        /*
+        create and store animal return res.json() new animal
+        */
         if (!req.files || Object.keys(req.files).length === 0) {
             return next(new ValidationError("animal_img", "Le champ image est obligatoire."));
         }
         // Valider les entrées avec Joi
-        const { error } = validateAndSanitize.animalStore.validate(req.body);
+        const { error, value } = validateAndSanitize.animalStore.validate(req.body);
         if (error) {
-            return next(new ValidationError());
+            return next(new ValidationError(error));
         }
         const animalData = {};
         for (const key in req.body) {
@@ -43,21 +53,38 @@ const dashboardController = {
                 animalData[key] = value;
             }
         }
-        animalData["association_id"] = associationId;
         const relativePathImage = getRelativePathOfImage(req.absolutePathImage);
         animalData.url_image = relativePathImage;
-        const animal = await Animal.create(animalData);
+
+        const transaction = await sequelize.transaction();
+
+        let animal;
+
+        try {
+            animal = await Animal.create(animalData);
+            const slug = generateSlug(animal.name, animal.id)
+            await animal.update({
+                slug : slug
+                },
+                { transaction }
+                );
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
+        }
         res.status(201).json(animal);
     },
 
     updateAnimal: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
+        /*
+        update animal with req.params return res.json updated animal
+         */
         // Validation des données
-        const { error } = validateAndSanitize.animalUpdate.validate(req.body);
+        const { error, value } = validateAndSanitize.animalUpdate.validate(req.body);
         if (error) {
             return next(new ValidationError());
         }
-        const { id: animalId } = req.params;
+        const { id } = req.params;
         const animalData = {};
         for (const key in req.body) {
             let value = req.body[key];
@@ -68,16 +95,9 @@ const dashboardController = {
                 animalData[key] = value;
             }
         }
-        const animalToUpdate = await Animal.findByPk(animalId);
+        const animalToUpdate = await Animal.findByPk(id);
         if (!animalToUpdate) {
             return next(new NotFoundError());
-        }
-        if (animalToUpdate.association_id !== associationId) {
-            return next(
-                new AuthorizationError(
-                    "Cet animal ne fait pas partie de votre association. Modification non autorisée."
-                )
-            );
         }
         // Dans le cas où une nouvelle image est téléchargée
         // On récupère le chemin absolu de l'ancienne image
@@ -102,6 +122,7 @@ const dashboardController = {
             url_image: isImageChange ? relativePathNewImage : animalToUpdate.url_image,
             availability: animalData.availability || animalToUpdate.availability,
             family_id: animalData.family_id || animalToUpdate.family_id,
+            association_id: animalData.association_id || animalToUpdate.association_id,
         });
         // Une fois la bdd mise à jour on passe req.absolutePathImage à null (qui contient le chemin de la nouvelle image)
         // Car si != de null sera supprimé par le errorHandler en cas d'erreur
@@ -115,18 +136,13 @@ const dashboardController = {
     },
 
     destroyAnimal: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
-        const { id: animalId } = req.params;
-        const animal = await Animal.findByPk(animalId);
+        /*
+        delete animal with req.params return "ok"
+         */
+        const { id } = req.params;
+        const animal = await Animal.findByPk(id);
         if (!animal) {
             return next(new NotFoundError());
-        }
-        if (animal.association_id !== associationId) {
-            return next(
-                new AuthorizationError(
-                    "Cet animal ne fait pas partie de votre association. Suppression non autorisée."
-                )
-            );
         }
         const imageAbsolutePath = getAbsolutePathOfImage(animal.url_image);
         await animal.destroy();
@@ -135,8 +151,11 @@ const dashboardController = {
     },
 
     getProfile: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
-        const association = await Association.findByPk(associationId);
+        /*
+       fetch and return res.json() association profile
+        */
+        const { id } = req.query;
+        const association = await Association.findByPk(id);
         if (!association) {
             return next(new NotFoundError());
         }
@@ -144,9 +163,13 @@ const dashboardController = {
     },
 
     updateProfile: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
+        /*
+        update association profile return res.json updated profile
+         */
+        // comme pour le premier get : gestion de l'id provisoire via les query
+        const { id } = req.query;
         // Valider avec Joi Validator
-        const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
+        const { error, value } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
         if (error) {
             return next(new ValidationError());
         }
@@ -160,7 +183,7 @@ const dashboardController = {
                 associationData[key] = value;
             }
         }
-        const associationToUpdate = await Association.findByPk(associationId);
+        const associationToUpdate = await Association.findByPk(id);
         if (!associationToUpdate) {
             return next(new NotFoundError());
         }
@@ -198,13 +221,21 @@ const dashboardController = {
     },
 
     destroyProfile: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
-        const association = await Association.findByPk(associationId);
+        /*
+        delete association profile return "ok"
+         */
+        const { id } = req.params;
+        const association = await Association.findByPk(id);
         if (!association) {
             return next(new NotFoundError());
         }
         const imageAbsolutePath = getAbsolutePathOfImage(association.url_image);
         await association.destroy();
+
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: false, // Secure à passer à true en prod
+        });
 
         await removeImage(imageAbsolutePath);
 
@@ -212,34 +243,37 @@ const dashboardController = {
     },
 
     getRequests: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
-        const association = await Association.findByPk(associationId);
+        /*
+       fetch and return res.json() all requests
+        */
+        const { id } = req.query;
+        const association = await Association.findByPk(id);
         if (!association) {
             return next(new NotFoundError());
         }
         const requests = await Request.findAll({
             where: {
-                association_id: associationId,
+                association_id: id,
             },
             include: ["family", "animal"],
         });
         res.json(requests);
     },
 
-    updateRequest: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
-        const { id: requestId } = req.params;
+    updateRequest: async (req, res) => {
+        /*
+        update request with req.params return res.json updated request
+         */
+        const { id } = req.params;
+
         // JOI validation
-        const { error } = validateAndSanitize.updateRequest.validate(req.body);
+
+        const { error, value } = validateAndSanitize.updatedRequest.validate(req.body);
         if (error) {
             return next(new ValidationError());
         }
 
-        const request = await Request.findOne(requestId, {
-            where: {
-                association_id: associationId,
-            },
-        });
+        const request = await Request.findByPk(id);
         if (!request) {
             return next(new NotFoundError());
         }

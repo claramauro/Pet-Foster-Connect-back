@@ -35,6 +35,11 @@ Family.init(
             type: DataTypes.TEXT,
             unique: true,
         },
+
+        slug: {
+            type: DataTypes.TEXT,
+            unique: true,
+        },
         created_at: {
             type: DataTypes.DATE,
             allowNull: false,
