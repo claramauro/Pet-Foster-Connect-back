@@ -5,12 +5,18 @@ import {
     getRelativePathOfImage,
     removeImage,
 } from "../utils/imageManager.js";
-import { ValidationError, NotFoundError } from "../utils/customErrors.js";
-import path from "node:path";
+import { ValidationError, NotFoundError, AuthorizationError } from "../utils/customErrors.js";
 
 const familyController = {
     findOne: async (req, res, next) => {
         const { id } = req.params;
+        const { family_id } = req.user;
+
+        // Une famille n'a accès qu'à la page de sa famille
+        // Une association a accès à la page de toutes les familles
+        if (family_id && family_id != id) {
+            return next(new AuthorizationError());
+        }
 
         const family = await Family.findByPk(id, {
             include: "department",
