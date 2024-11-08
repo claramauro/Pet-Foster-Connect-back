@@ -18,12 +18,9 @@ const associationsController = {
   
           /* Pagination */
           const paginatedAssociations = await Association.findAll({
-              include: [
-                  { association: "department" },
-                  { association: "animals" },
-              ],
-              limit: limit,
-              offset: offset,
+            include: "department",
+            limit: limit, 
+            offset: offset,  
           });
   
           res.json({
@@ -76,9 +73,7 @@ const associationsController = {
         const offset = (Number(currentPage) - 1) * limit; // Pagination
 
         const filterAssociations = await Association.findAll({
-            where: associationWhere,  // Application du filtre
             include: [
-                "department",
                 {
                     model: Animal,
                     as: "animals",  // Le modèle Animal est inclus ici
