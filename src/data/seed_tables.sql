@@ -105,16 +105,20 @@ VALUES (1, '01', 'Ain'),
        (100, '972', 'Martinique'),
        (101, '974', 'Réunion');
 
--- Seed pour la table association
+-- Seed pour la table association avec le champ email_association
 INSERT INTO "association" ("name", "address", "zip_code", "city", "department_id", "latitude", "longitude",
-                           "phone_number", "description", "url_image", "slug")
-VALUES ('Animal Rescue', '123 Rue de la Liberté', '75001', 'Paris', 76, 48.8566, 2.3522, '0123456789',
-        'Organisation dédiée au sauvetage des animaux', '/images/associations/Animal-Rescue-1.webp', 'animal-rescue-1'),
-       ('Four Paws', '456 Avenue des Animaux', '69001', 'Lyon', 70, 45.7640, 4.8357, '0987654321',
-        'Refuge pour animaux de toutes espèces', '/images/associations/Four-Paws-2.webp', 'four-paws-2'),
-       ('SPA du 06', '20 Chemin du soleil', '06000', 'Nice', 6, 43.7102, 7.2620, '0963739971',
-        'Refuge d''accueil pour animaux de toutes espèces en attente d''adoption',
-        '/images/associations/SPA-du-06-3.webp', 'spa-du-06-3');
+                           "phone_number", "description", "url_image", "slug", "email_association")
+VALUES ('Animal Rescue', '123 Rue de la Liberté', '75001', 'Paris', 76, 48.8566, 2.3522,
+        '0123456789', 'Organisation dédiée au sauvetage des animaux',
+        '/images/associations/Animal-Rescue-1.webp', 'animal-rescue-1', 'contact@animalrescue.fr'),
+
+       ('Four Paws', '456 Avenue des Animaux', '69001', 'Lyon', 70, 45.7640, 4.8357,
+        '0987654321', 'Refuge pour animaux de toutes espèces',
+        '/images/associations/Four-Paws-2.webp', 'four-paws-2', 'info@fourpaws.fr'),
+
+       ('SPA du 06', '20 Chemin du soleil', '06000', 'Nice', 6, 43.7102, 7.2620,
+        '0963739971', 'Refuge d''accueil pour animaux de toutes espèces en attente d''adoption',
+        '/images/associations/SPA-du-06-3.webp', 'spa-du-06-3', 'contact@spa06.fr');
 
 -- Seed pour la table family
 INSERT INTO "family" ("name", "address", "zip_code", "city", "department_id", "phone_number", "description",
