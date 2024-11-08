@@ -36,6 +36,11 @@ Association.init(
             unique: true,
         },
 
+        slug: {
+            type: DataTypes.TEXT,
+            unique: true,
+        },
+
         longitude: {
             type: DataTypes.FLOAT, 
         },

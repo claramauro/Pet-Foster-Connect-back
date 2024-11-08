@@ -37,6 +37,12 @@ Animal.init(
             type: DataTypes.TEXT,
             unique: true,
         },
+
+        slug : {
+            type: DataTypes.TEXT,
+            unique: true,
+        },
+        
         availability: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
@@ -62,3 +68,4 @@ Animal.init(
 );
 
 export { Animal };
+

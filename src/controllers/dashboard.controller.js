@@ -6,6 +6,7 @@ import {
     getAbsolutePathOfImage,
     getRelativePathOfImage,
 } from "../utils/imageManager.js";
+import { generateSlug } from "../utils/generateSlug.js";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {
@@ -46,7 +47,23 @@ const dashboardController = {
         animalData["association_id"] = associationId;
         const relativePathImage = getRelativePathOfImage(req.absolutePathImage);
         animalData.url_image = relativePathImage;
-        const animal = await Animal.create(animalData);
+
+        const transaction = await sequelize.transaction();
+
+        let animal;
+
+        try {
+            animal = await Animal.create(animalData);
+            const slug = generateSlug(animal.name, animal.id)
+            await animal.update({
+                slug : slug
+                },
+                { transaction }
+                );
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
+        }
         res.status(201).json(animal);
     },
 

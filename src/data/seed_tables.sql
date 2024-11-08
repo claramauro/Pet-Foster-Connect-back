@@ -106,74 +106,73 @@ INSERT INTO "department" ("id", "code", "name") VALUES
 (101, '974', 'Réunion');
 
 -- Seed pour la table association
-INSERT INTO "association" ("name", "address", "zip_code", "city", "department_id", "latitude", "longitude", "phone_number", "description", "url_image")
+INSERT INTO "association" ("name", "address", "zip_code", "city", "department_id", "latitude", "longitude", "phone_number", "description", "url_image", "slug")
 VALUES 
-('Animal Rescue', '123 Rue de la Liberté', '75001', 'Paris', 76, 48.8566, 2.3522, '0123456789', 'Organisation dédiée au sauvetage des animaux', '/images/associations/Animal-Rescue-1.webp'),
-('Four Paws', '456 Avenue des Animaux', '69001', 'Lyon', 70, 45.7640, 4.8357, '0987654321', 'Refuge pour animaux de toutes espèces', '/images/associations/Four-Paws-2.webp'),
-('SPA du 06', '20 Chemin du soleil', '06000', 'Nice', 6, 43.7102, 7.2620, '0963739971', 'Refuge d''accueil pour animaux de toutes espèces en attente d''adoption', '/images/associations/SPA-du-06-3.webp');
+('Animal Rescue', '123 Rue de la Liberté', '75001', 'Paris', 76, 48.8566, 2.3522, '0123456789', 'Organisation dédiée au sauvetage des animaux', '/images/associations/Animal-Rescue-1.webp', 'animal-rescue-1'),
+('Four Paws', '456 Avenue des Animaux', '69001', 'Lyon', 70, 45.7640, 4.8357, '0987654321', 'Refuge pour animaux de toutes espèces', '/images/associations/Four-Paws-2.webp', 'four-paws-2'),
+('SPA du 06', '20 Chemin du soleil', '06000', 'Nice', 6, 43.7102, 7.2620, '0963739971', 'Refuge d''accueil pour animaux de toutes espèces en attente d''adoption', '/images/associations/SPA-du-06-3.webp', 'spa-du-06-3');
 
 -- Seed pour la table family
-INSERT INTO "family" ("name", "address", "zip_code", "city", "department_id", "phone_number", "description", "url_image")
+INSERT INTO "family" ("name", "address", "zip_code", "city", "department_id", "phone_number", "description", "url_image", "slug")
 VALUES 
-('Dupont', '12 Rue du Bonheur', '75002', 'Paris', 76, '0712345678', 'Famille aimante cherchant à adopter un animal', '/images/families/Dupont-1.webp'),
-('Martin', '34 Avenue du Soleil', '69002', 'Lyon', 70, '0765432109', 'Famille prête à accueillir un animal dans le besoin', '/images/families/Martin-2.webp'),
-('Lefevre', '2 impasse des fleurs', '06000', 'Nice', 6, '0739455660', 'Famille avec enfants pouvant accueillir un animal dans le besoin', '/images/families/Lefevre-3.webp'),
-('Petit', '67 Rue Carnot', '05000', 'Gap', 5, '0788352890', 'Couple à la retraite voulant aider les associations', DEFAULT);
+('Dupont', '12 Rue du Bonheur', '75002', 'Paris', 76, '0712345678', 'Famille aimante cherchant à adopter un animal', '/images/families/Dupont-1.webp', 'dupont-1'),
+('Martin', '34 Avenue du Soleil', '69002', 'Lyon', 70, '0765432109', 'Famille prête à accueillir un animal dans le besoin', '/images/families/Martin-2.webp', 'martin-2'),
+('Lefevre', '2 impasse des fleurs', '06000', 'Nice', 6, '0739455660', 'Famille avec enfants pouvant accueillir un animal dans le besoin', '/images/families/Lefevre-3.webp', 'lefevre-3'),
+('Petit', '67 Rue Carnot', '05000', 'Gap', 5, '0788352890', 'Couple à la retraite voulant aider les associations', DEFAULT, 'petit-4');
 
 -- Seed pour la table user
 INSERT INTO "user" ("email", "password", "role", "family_id", "association_id")
 VALUES 
-('family1@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'family', 1, NULL),
-('family2@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'family', 2, NULL),
-('family3@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'family', 3, NULL),
-('family4@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'family', 4, NULL),
-('asso1@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'association', NULL, 1),
-('asso2@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'association', NULL, 2),
-('asso3@example.com', '$2b$10$XpyQLAyN6lolsgqjcpchxuj2ersGQZnNSb7BM1YfIVtlqa8fiDyrm', 'association', NULL, 3);
+('alice@example.com', 'hashed_password1', 'family', 1, NULL),
+('bob@example.com', 'hashed_password2', 'association', NULL, 1),
+('carol@example.com', 'hashed_password3', 'family', 2, NULL),
+('dave@example.com', 'hashed_password4', 'association', NULL, 2),
+('john@example.com', 'hashed_password5', 'family', 3, NULL),
+('spa@example.com', 'hashed_password6', 'association', NULL, 3);
 
 -- Seed pour la table animal
-INSERT INTO "animal" ("name", "gender", "race", "species", "age", "size", "description", "url_image", "availability", "family_id", "association_id")
+INSERT INTO "animal" ("name", "gender", "race", "species", "age", "size", "description", "url_image", "availability", "family_id", "association_id", "slug")
 VALUES 
-('Oscar', 'Mâle', 'Golden Retriever', 'Chien', 2, 'Grand', 'Chien sociable et affectueux, idéal pour les familles', '/images/animals/Oscar-1.webp', FALSE, 1, 1),
-('Lily', 'Femelle', 'Persan', 'Chat', 5, 'Petit', 'Chat calme, aime se prélasser au soleil', '/images/animals/Lily-2.webp', TRUE, NULL, 2),
-('Charlie', 'Mâle', 'Cocker', 'Chien', 4, 'Petit', 'Chien joueur, parfait pour les petits espaces', '/images/animals/Charlie-3.webp', TRUE, NULL, 3),
-('Maya', 'Femelle', 'Maine Coon', 'Chat', 3, 'Moyen', 'Chat curieux et doux, aime les câlins', '/images/animals/Maya-4.webp', TRUE, NULL, 2),
-('Max', 'Mâle', 'Jack Russell', 'Chien', 1, 'Petit', 'Jeune chien plein d`énergie, aime courir', '/images/animals/Max-5.webp', TRUE, NULL, 1),
-('Chloé', 'Femelle', 'Angora', 'Chat', 6, 'Petit', 'Chat élégant, adore les endroits calmes', '/images/animals/Chloé-6.webp', FALSE, 3, 3),
-('Buddy', 'Mâle', 'Bulldog', 'Chien', 4, 'Moyen', 'Chien fidèle et protecteur', '/images/animals/Buddy-7.webp', TRUE, NULL, 1),
-('Zoé', 'Femelle', 'Siamois', 'Chat', 2, 'Petit', 'Chat vif et intelligent', '/images/animals/Zoé-8.webp', TRUE, NULL, 3),
-('Simba', 'Mâle', 'Labrador', 'Chien', 3, 'Grand', 'Chien affectueux et joueur', '/images/animals/Simba-9.webp', TRUE, NULL, 2),
-('Cooper', 'Mâle', 'Caniche', 'Chien', 2, 'Moyen', 'Chien curieux, adore explorer les environs', '/images/animals/Cooper-10.webp', TRUE, NULL, 3),
-('Nala', 'Femelle', 'Angora', 'Chat', 3, 'Petit', 'Chat joyeux, aime la compagnie', '/images/animals/Nala-11.webp', TRUE, NULL, 3),
-('Bella', 'Femelle', 'Labrador', 'Chien', 4, 'Grand', 'Chienne douce, idéale pour les familles', '/images/animals/Bella-12.webp', TRUE, NULL, 2),
-('Milo', 'Mâle', 'Siamois', 'Chat', 1, 'Petit', 'Chat joueur et curieux', '/images/animals/Milo-13.webp', TRUE, NULL, 1),
-('Ruby', 'Femelle', 'Golden Retriever', 'Chien', 5, 'Grand', 'Chienne affectueuse et calme', '/images/animals/Ruby-14.webp', TRUE, NULL, 1),
-('Rocky', 'Mâle', 'Bouvier Bernois', 'Chien', 6, 'Grand', 'Chien protecteur et loyal', '/images/animals/Rocky-15.webp', TRUE, NULL, 3),
-('Lucy', 'Femelle', 'Bengal', 'Chat', 3, 'Petit', 'Chat active, aime les jeux et les défis', '/images/animals/Lucy-16.webp', TRUE, NULL, 2),
-('Jake', 'Mâle', 'Beagle', 'Chien', 2, 'Moyen', 'Chien affectueux, adore les promenades', '/images/animals/Jake-17.webp', TRUE, NULL, 3),
-('Mimi', 'Femelle', 'Chartreux', 'Chat', 4, 'Petit', 'Chatte calme, aime les câlins', '/images/animals/Mimi-18.webp', TRUE, NULL, 2),
-('Duke', 'Mâle', 'Dobermann', 'Chien', 5, 'Grand', 'Chien courageux et protecteur', '/images/animals/Duke-19.webp', TRUE, NULL, 1),
-('Ginger', 'Femelle', 'British Shorthair', 'Chat', 3, 'Petit', 'Chatte douce et tranquille', '/images/animals/Ginger-20.webp', TRUE, NULL, 1),
-('Toby', 'Mâle', 'Shih Tzu', 'Chien', 2, 'Petit', 'Chien joueur, aime la compagnie des enfants', '/images/animals/Toby-21.webp', TRUE, NULL, 2),
-('Maya', 'Femelle', 'Persan', 'Chat', 3, 'Petit', 'Chat aimante, adore être entourée', '/images/animals/Maya-22.webp', TRUE, NULL, 3),
-('Zeus', 'Mâle', 'Rottweiler', 'Chien', 4, 'Grand', 'Chien loyal, excellent gardien', '/images/animals/Zeus-23.webp', TRUE, NULL, 1),
-('Lola', 'Femelle', 'Teckel', 'Chien', 3, 'Petit', 'Chienne curieuse, adore explorer', '/images/animals/Lola-24.webp', TRUE, NULL, 2),
-('Leo', 'Mâle', 'Chartreux', 'Chat', 2, 'Petit', 'Chat sociable et actif', '/images/animals/Leo-25.webp', TRUE, NULL, 3),
-('Rex', 'Mâle', 'Boxer', 'Chien', 4, 'Moyen', 'Chien joueur, adore les enfants', '/images/animals/Rex-26.webp', TRUE, NULL, 2),
-('Molly', 'Femelle', 'Sphynx', 'Chat', 3, 'Petit', 'Chat sans poils, très affectueuse', '/images/animals/Molly-27.webp', TRUE, NULL, 1),
-('Jack', 'Mâle', 'Berger Allemand', 'Chien', 5, 'Grand', 'Chien intelligent, excellent protecteur', '/images/animals/Jack-28.webp', TRUE, NULL, 1),
-('Daisy', 'Femelle', 'Maine Coon', 'Chat', 4, 'Moyen', 'Chat affectueux, adore les câlins', '/images/animals/Daisy-29.webp', TRUE, NULL, 3),
-('Sam', 'Mâle', 'Husky', 'Chien', 3, 'Grand', 'Chien énergique, aime le plein air', '/images/animals/Sam-30.webp', TRUE, NULL, 2),
-('Shadow', 'Mâle', 'Border Collie', 'Chien', 2, 'Moyen', 'Chien intelligent et obéissant, adore les activités en plein air', '/images/animals/Shadow-31.webp', TRUE, NULL, 1),
-('Bella', 'Femelle', 'Ragdoll', 'Chat', 3, 'Moyen', 'Chatte calme et affectueuse, parfaite pour un foyer tranquille', '/images/animals/Bella-32.webp', TRUE, NULL, 2),
-('Max', 'Mâle', 'Shiba Inu', 'Chien', 4, 'Petit', 'Chien indépendant et curieux, idéal pour les espaces réduits', '/images/animals/Max-33.webp', TRUE, NULL, 3),
-('Cleo', 'Femelle', 'Siamois', 'Chat', 5, 'Petit', 'Chatte vive et intelligente, adore les jeux interactifs', '/images/animals/Cleo-34.webp', TRUE, NULL, 1),
-('Buddy', 'Mâle', 'Terrier', 'Chien', 1, 'Petit', 'Chien énergique, parfait pour les familles avec enfants', '/images/animals/Buddy-35.webp', TRUE, NULL, 2),
-('Luna', 'Femelle', 'Himalayen', 'Chat', 4, 'Petit', 'Chatte douce et calme, aime les endroits paisibles', '/images/animals/Luna-36.webp', TRUE, NULL, 3),
-('Bruno', 'Mâle', 'Dogue Argentin', 'Chien', 3, 'Grand', 'Chien loyal et protecteur, idéal pour les foyers avec jardin', '/images/animals/Bruno-37.webp', TRUE, NULL, 1),
-('Misty', 'Femelle', 'Chartreux', 'Chat', 2, 'Petit', 'Chatte affectueuse, aime la compagnie et les câlins', '/images/animals/Misty-38.webp', TRUE, NULL, 2),
-('Rocky', 'Mâle', 'Basset Hound', 'Chien', 6, 'Moyen', 'Chien calme et amical, adore les promenades', '/images/animals/Rocky-39.webp', TRUE, NULL, 3),
-('Zara', 'Femelle', 'Scottish Fold', 'Chat', 1, 'Petit', 'Chatte curieuse et joueuse, aime explorer les nouveaux espaces', '/images/animals/Zara-40.webp', TRUE, NULL, 1);
+('Oscar', 'Mâle', 'Golden Retriever', 'Chien', 2, 'Grand', 'Chien sociable et affectueux, idéal pour les familles', '/images/animals/Oscar-1.webp', FALSE, 1, 1, 'oscar-1'),
+('Lily', 'Femelle', 'Persan', 'Chat', 5, 'Petit', 'Chat calme, aime se prélasser au soleil', '/images/animals/Lily-2.webp', TRUE, NULL, 2, 'lily-2'),
+('Charlie', 'Mâle', 'Cocker', 'Chien', 4, 'Petit', 'Chien joueur, parfait pour les petits espaces', '/images/animals/Charlie-3.webp', TRUE, NULL, 3, 'charlie-3'),
+('Maya', 'Femelle', 'Maine Coon', 'Chat', 3, 'Moyen', 'Chat curieux et doux, aime les câlins', '/images/animals/Maya-4.webp', TRUE, NULL, 2, 'maya-4'),
+('Max', 'Mâle', 'Jack Russell', 'Chien', 1, 'Petit', 'Jeune chien plein d`énergie, aime courir', '/images/animals/Max-5.webp', TRUE, NULL, 1, 'max-5'),
+('Chloé', 'Femelle', 'Angora', 'Chat', 6, 'Petit', 'Chat élégant, adore les endroits calmes', '/images/animals/Chloé-6.webp', FALSE, 3, 3, 'chloe-6'),
+('Buddy', 'Mâle', 'Bulldog', 'Chien', 4, 'Moyen', 'Chien fidèle et protecteur', '/images/animals/Buddy-7.webp', TRUE, NULL, 1, 'buddy-7'),
+('Zoé', 'Femelle', 'Siamois', 'Chat', 2, 'Petit', 'Chat vif et intelligent', '/images/animals/Zoé-8.webp', TRUE, NULL, 3, 'zoe-8'),
+('Simba', 'Mâle', 'Labrador', 'Chien', 3, 'Grand', 'Chien affectueux et joueur', '/images/animals/Simba-9.webp', TRUE, NULL, 2, 'simba-9'),
+('Cooper', 'Mâle', 'Caniche', 'Chien', 2, 'Moyen', 'Chien curieux, adore explorer les environs', '/images/animals/Cooper-10.webp', TRUE, NULL, 3, 'cooper-10'),
+('Nala', 'Femelle', 'Angora', 'Chat', 3, 'Petit', 'Chat joyeux, aime la compagnie', '/images/animals/Nala-11.webp', TRUE, NULL, 3, 'nala-11'),
+('Bella', 'Femelle', 'Labrador', 'Chien', 4, 'Grand', 'Chienne douce, idéale pour les familles', '/images/animals/Bella-12.webp', TRUE, NULL, 2, 'bella-12'),
+('Milo', 'Mâle', 'Siamois', 'Chat', 1, 'Petit', 'Chat joueur et curieux', '/images/animals/Milo-13.webp', TRUE, NULL, 1, 'milo-13'),
+('Ruby', 'Femelle', 'Golden Retriever', 'Chien', 5, 'Grand', 'Chienne affectueuse et calme', '/images/animals/Ruby-14.webp', TRUE, NULL, 1, 'ruby-14'),
+('Rocky', 'Mâle', 'Bouvier Bernois', 'Chien', 6, 'Grand', 'Chien protecteur et loyal', '/images/animals/Rocky-15.webp', TRUE, NULL, 3, 'rocky-15'),
+('Lucy', 'Femelle', 'Bengal', 'Chat', 3, 'Petit', 'Chat active, aime les jeux et les défis', '/images/animals/Lucy-16.webp', TRUE, NULL, 2, 'lucy-16'),
+('Jake', 'Mâle', 'Beagle', 'Chien', 2, 'Moyen', 'Chien affectueux, adore les promenades', '/images/animals/Jake-17.webp', TRUE, NULL, 3, 'jake-17'),
+('Mimi', 'Femelle', 'Chartreux', 'Chat', 4, 'Petit', 'Chatte calme, aime les câlins', '/images/animals/Mimi-18.webp', TRUE, NULL, 2, 'mimi-18'),
+('Duke', 'Mâle', 'Dobermann', 'Chien', 5, 'Grand', 'Chien courageux et protecteur', '/images/animals/Duke-19.webp', TRUE, NULL, 1, 'duke-19'),
+('Ginger', 'Femelle', 'British Shorthair', 'Chat', 3, 'Petit', 'Chatte douce et tranquille', '/images/animals/Ginger-20.webp', TRUE, NULL, 1, 'ginger-20'),
+('Toby', 'Mâle', 'Shih Tzu', 'Chien', 2, 'Petit', 'Chien joueur, aime la compagnie des enfants', '/images/animals/Toby-21.webp', TRUE, NULL, 2, 'toby-21'),
+('Maya', 'Femelle', 'Persan', 'Chat', 3, 'Petit', 'Chat aimante, adore être entourée', '/images/animals/Maya-22.webp', TRUE, NULL, 3, 'maya-22'),
+('Zeus', 'Mâle', 'Rottweiler', 'Chien', 4, 'Grand', 'Chien loyal, excellent gardien', '/images/animals/Zeus-23.webp', TRUE, NULL, 1, 'zeus-23'),
+('Lola', 'Femelle', 'Teckel', 'Chien', 3, 'Petit', 'Chienne curieuse, adore explorer', '/images/animals/Lola-24.webp', TRUE, NULL, 2, 'lola-24'),
+('Leo', 'Mâle', 'Chartreux', 'Chat', 2, 'Petit', 'Chat sociable et actif', '/images/animals/Leo-25.webp', TRUE, NULL, 3, 'leo-25'),
+('Rex', 'Mâle', 'Boxer', 'Chien', 4, 'Moyen', 'Chien joueur, adore les enfants', '/images/animals/Rex-26.webp', TRUE, NULL, 2, 'rex-26'),
+('Molly', 'Femelle', 'Sphynx', 'Chat', 3, 'Petit', 'Chat sans poils, très affectueuse', '/images/animals/Molly-27.webp', TRUE, NULL, 1, 'molly-27'),
+('Jack', 'Mâle', 'Berger Allemand', 'Chien', 5, 'Grand', 'Chien intelligent, excellent protecteur', '/images/animals/Jack-28.webp', TRUE, NULL, 1, 'jack-28'),
+('Daisy', 'Femelle', 'Maine Coon', 'Chat', 4, 'Moyen', 'Chat affectueux, adore les câlins', '/images/animals/Daisy-29.webp', TRUE, NULL, 3, 'daisy-29'),
+('Sam', 'Mâle', 'Husky', 'Chien', 3, 'Grand', 'Chien énergique, aime le plein air', '/images/animals/Sam-30.webp', TRUE, NULL, 2, 'sam-30'),
+('Shadow', 'Mâle', 'Border Collie', 'Chien', 2, 'Moyen', 'Chien intelligent et obéissant, adore les activités en plein air', '/images/animals/Shadow-31.webp', TRUE, NULL, 1, 'shadow-31'),
+('Bella', 'Femelle', 'Ragdoll', 'Chat', 3, 'Moyen', 'Chatte calme et affectueuse, parfaite pour un foyer tranquille', '/images/animals/Bella-32.webp', TRUE, NULL, 2, 'bella-32'),
+('Max', 'Mâle', 'Shiba Inu', 'Chien', 4, 'Petit', 'Chien indépendant et curieux, idéal pour les espaces réduits', '/images/animals/Max-33.webp', TRUE, NULL, 3, 'max-33'),
+('Cleo', 'Femelle', 'Siamois', 'Chat', 5, 'Petit', 'Chatte vive et intelligente, adore les jeux interactifs', '/images/animals/Cleo-34.webp', TRUE, NULL, 1, 'cleo-34'),
+('Buddy', 'Mâle', 'Terrier', 'Chien', 1, 'Petit', 'Chien énergique, parfait pour les jeunes familles', '/images/animals/Buddy-35.webp', TRUE, NULL, 3, 'buddy-35'),
+('Luna', 'Femelle', 'Himalayen', 'Chat', 4, 'Petit', 'Chatte douce et calme, aime les endroits paisibles', '/images/animals/Luna-36.webp', TRUE, NULL, 3, 'luna-36'),
+('Bruno', 'Mâle', 'Dogue Argentin', 'Chien', 3, 'Grand', 'Chien loyal et protecteur, idéal pour les foyers avec jardin', '/images/animals/Bruno-37.webp', TRUE, NULL, 1, 'bruno-37'),
+('Misty', 'Femelle', 'Chartreux', 'Chat', 2, 'Petit', 'Chatte affectueuse, aime la compagnie et les câlins', '/images/animals/Misty-38.webp', TRUE, NULL, 2, 'misty-38'),
+('Rocky', 'Mâle', 'Basset Hound', 'Chien', 6, 'Moyen', 'Chien calme et amical, adore les promenades', '/images/animals/Rocky-39.webp', TRUE, NULL, 3, 'rocky-39'),
+('Zara', 'Femelle', 'Scottish Fold', 'Chat', 1, 'Petit', 'Chatte curieuse et joueuse, aime explorer les nouveaux espaces', '/images/animals/Zara-40.webp', TRUE, NULL, 1, 'zara-40');
 
 -- Seed pour la table request
 INSERT INTO "request" ("status", "family_id", "animal_id", "association_id")
@@ -186,3 +185,4 @@ VALUES
 
 -- Fin de la transaction
 COMMIT;
+

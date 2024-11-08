@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { createAuthToken } from "../utils/createAuthToken.js";
 import { geocodeAddress } from "../utils/geocodeAdress.js";
 import { getRelativePathOfImage } from "../utils/imageManager.js";
+import { generateSlug } from "../utils/generateSlug.js";
 
 const authController = {
     register: async (req, res, next) => {
@@ -108,6 +109,14 @@ const authController = {
                 // Si type != de association ou family
                 return next(new ValidationError("Type non autorisé"));
             }
+
+            const slug = generateSlug(createdEntity.name, createdEntity.id);
+
+            await createdEntity.update({
+                slug : slug
+                },
+                { transaction }
+                ); 
 
             const user = await User.create(
                 {

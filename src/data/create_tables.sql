@@ -16,6 +16,7 @@ CREATE TABLE "animal"
     "size"           TEXT      NOT NULL,
     "description"    TEXT      NOT NULL,
     "url_image"      TEXT UNIQUE,
+    "slug"           TEXT  UNIQUE,
     "availability"   BOOLEAN   NOT NULL,
     "family_id"      INTEGER,
     "association_id" INTEGER   NOT NULL,
@@ -44,6 +45,7 @@ CREATE TABLE "family"
     "phone_number"  TEXT      NOT NULL,
     "description"   TEXT,
     "url_image"     TEXT DEFAULT '/images/families/default_family_img.svg',
+    "slug"          TEXT  UNIQUE,
     "created_at"    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"    TIMESTAMP          DEFAULT CURRENT_TIMESTAMP
 );
@@ -58,8 +60,9 @@ CREATE TABLE "association"
     "phone_number"  TEXT    NOT NULL,
     "description"   TEXT,
     "url_image"     TEXT     UNIQUE,
-    "longitude"     FLOAT,
-    "latitude"      FLOAT,
+    "slug"          TEXT  UNIQUE,
+    "longitude"     FLOAT  UNIQUE,
+    "latitude"      FLOAT  UNIQUE,
     "created_at"    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"    TIMESTAMP          DEFAULT CURRENT_TIMESTAMP
 );
