@@ -1,7 +1,8 @@
 import { Model, DataTypes, literal } from "sequelize";
 import { sequelize } from "../database/connection.js";
 
-class Association extends Model {}
+class Association extends Model {
+}
 
 Association.init(
     {
@@ -28,6 +29,10 @@ Association.init(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
+        email_association: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
         description: {
             type: DataTypes.TEXT,
         },
@@ -42,7 +47,7 @@ Association.init(
         },
 
         longitude: {
-            type: DataTypes.FLOAT, 
+            type: DataTypes.FLOAT,
         },
 
         latitude: {
@@ -60,7 +65,7 @@ Association.init(
     {
         sequelize,
         tableName: "association",
-    }
+    },
 );
 
 export { Association };
