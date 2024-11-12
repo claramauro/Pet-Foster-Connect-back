@@ -2,7 +2,6 @@ import { Animal, Request, Family, Association } from "../models/associations.js"
 import { Sequelize } from "sequelize";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError, NotFoundError } from "../utils/customErrors.js";
-import { sendAccommodationRequestForAnimal } from "../utils/sendEmail/SendAccommodationRequestForAnimal.js";
 
 const animalsController = {
     index: async (req, res) => {
@@ -81,21 +80,11 @@ const animalsController = {
             return next(new NotFoundError());
         }
 
-        // Récupérer l'email de l'association :
-
-        const associationEmail = association.email_association;
-
         // Création de la demande
 
         const status = "En attente";
 
         const request = await Request.create({ status, family_id, animal_id, association_id });
-
-        // Envoi de la demande d'hébergement à l'email de l'association
-
-         const emailSent = await sendAccommodationRequestForAnimal(associationEmail);
-
-        console.log(sendAccommodationRequestForAnimal);
 
         res.status(201).json(request);
 
