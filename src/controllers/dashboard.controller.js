@@ -54,12 +54,14 @@ const dashboardController = {
 
         try {
             animal = await Animal.create(animalData);
-            const slug = generateSlug(animal.name, animal.id)
-            await animal.update({
-                slug : slug
+            const slug = generateSlug(animal.name, animal.id);
+            await animal.update(
+                {
+                    slug: slug,
                 },
                 { transaction }
-                );
+            );
+            await transaction.commit();
         } catch (error) {
             await transaction.rollback();
             next(error);
@@ -133,6 +135,7 @@ const dashboardController = {
 
     destroyAnimal: async (req, res, next) => {
         const { association_id: associationId } = req.user;
+
         const { id: animalId } = req.params;
         const animal = await Animal.findByPk(animalId);
         if (!animal) {
