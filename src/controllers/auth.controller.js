@@ -6,6 +6,7 @@ import { createAuthToken } from "../utils/createAuthToken.js";
 import { geocodeAddress } from "../utils/geocodeAdress.js";
 import { getRelativePathOfImage } from "../utils/imageManager.js";
 import { generateSlug } from "../utils/generateSlug.js";
+import { sendConfirmationEmailDev } from "../utils/sendEmail/sendConfirmationEmailDev.js";
 
 const authController = {
     register: async (req, res, next) => {
@@ -130,6 +131,8 @@ const authController = {
                 },
                 { transaction },
             );
+
+            await sendConfirmationEmailDev(email);
 
             await transaction.commit();
 
