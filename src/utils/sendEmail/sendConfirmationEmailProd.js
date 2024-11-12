@@ -11,7 +11,7 @@ dotenv.config();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-async function sendConfirmationEmailProd(email) {
+async function sendConfirmationEmailProd(email,destinary) {
 
   // Créer l'email
 
