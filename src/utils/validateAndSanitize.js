@@ -53,6 +53,7 @@ const validateAndSanitize = {
         zip_code: JoiSanitized.string().trim().min(1).sanitize().optional(),
         city: JoiSanitized.string().trim().min(1).sanitize().optional(),
         department_id: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        email_association: JoiSanitized.string().trim().min(1).sanitize().optional(),
         phone_number: JoiSanitized.string().trim().min(1).sanitize().optional(),
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
     }),

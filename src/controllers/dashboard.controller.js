@@ -54,12 +54,12 @@ const dashboardController = {
 
         try {
             animal = await Animal.create(animalData);
-            const slug = generateSlug(animal.name, animal.id)
+            const slug = generateSlug(animal.name, animal.id);
             await animal.update({
-                slug : slug
+                    slug: slug,
                 },
-                { transaction }
-                );
+                { transaction },
+            );
         } catch (error) {
             await transaction.rollback();
             next(error);
@@ -92,8 +92,8 @@ const dashboardController = {
         if (animalToUpdate.association_id !== associationId) {
             return next(
                 new AuthorizationError(
-                    "Cet animal ne fait pas partie de votre association. Modification non autorisée."
-                )
+                    "Cet animal ne fait pas partie de votre association. Modification non autorisée.",
+                ),
             );
         }
         // Dans le cas où une nouvelle image est téléchargée
@@ -141,8 +141,8 @@ const dashboardController = {
         if (animal.association_id !== associationId) {
             return next(
                 new AuthorizationError(
-                    "Cet animal ne fait pas partie de votre association. Suppression non autorisée."
-                )
+                    "Cet animal ne fait pas partie de votre association. Suppression non autorisée.",
+                ),
             );
         }
         const imageAbsolutePath = getAbsolutePathOfImage(animal.url_image);
@@ -193,7 +193,7 @@ const dashboardController = {
             relativePathNewImage = getRelativePathOfImage(req.absolutePathImage);
             isImageChange = true;
         }
-        const updatedAssociation = await associationToUpdate.update({
+        let updatedAssociation = await associationToUpdate.update({
             name: associationData.name || associationToUpdate.name,
             address: associationData.gender || associationToUpdate.address,
             zip_code: associationData.race || associationToUpdate.zip_code,
@@ -211,6 +211,11 @@ const dashboardController = {
             // Une fois l'association mise à jour en BDD on supprime l'ancienne image
             await removeImage(oldImageAbsolutePath);
         }
+
+        updatedAssociation = await updatedAssociation.reload({
+            include: "department",
+        });
+        
         res.json(updatedAssociation);
     },
 
