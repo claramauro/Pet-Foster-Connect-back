@@ -11,7 +11,7 @@ animalsRoutes.get("/:id(\\d+)", catchErrors(animalsController.findOne));
 animalsRoutes.get("/search", catchErrors(animalsController.filter));
 animalsRoutes.post(
     "/request",
-    [verifyToken, isFamilyAuthorized],
+   // [verifyToken, isFamilyAuthorized],
     catchErrors(animalsController.createRequest)
 );
 

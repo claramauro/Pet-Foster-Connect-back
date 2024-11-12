@@ -10,69 +10,67 @@ import { generateSlug } from "../utils/generateSlug.js";
 
 const dashboardController = {
 
-    getAnimals: async (req, res, next) => 
-    {
-    const { association_id: associationId } = req.user;
+    getAnimals: async (req, res, next) => {
 
-    const association = await Association.findByPk(associationId);
-    if (!association) {
-        return next();
-    }
+        try {
+            const { association_id: associationId } = req.user;
+    
+            // Récupérer l'association à partir de son ID
 
-    const animals = await Animal.findAll({
-        where: {
-            association_id: associationId,
-        },
-    });
+            const association = await Association.findByPk(associationId);
+            if (!association) {
+                return next(new NotFoundError('Association non trouvée'));
+            }
+    
+            // Pagination : validation du paramètre `page`
 
-    // Récupérer le nombre total d'animaux pour l'association
+            const currentPage = parseInt(req.query.page, 10) || 1; // Page courante, au moins 1
+            const limit = 6; // Nombre d'animaux par page
+            const offset = (currentPage - 1) * limit; // Calculer l'offset en fonction de la page
+    
+            // Récupérer les animaux paginés avec leurs relations
 
-    const totalCount = await Animal.count({
-        where: { association_id: associationId }
-    });
+            const paginationAnimals = await Animal.findAll({
+                include: [
+                    { 
+                        association: "association", 
+                        include: "department" // Inclure la table `department` associée à l'association
+                    },
+                    { 
+                        association: "family" // Inclure la table `family` pour chaque animal
+                    },
+                    { 
+                        association: "requests", // Inclure les demandes associées à l'animal
+                        required: false, // Inclure même si un animal n'a pas de demandes
+                    },
+                ],
+                where: { association_id: associationId },
+                limit: limit, // Limiter le nombre d'animaux par page
+                offset: offset, // Calculer l'offset pour la pagination
+            });
+    
+            // Calculer le nombre total d'animaux pour l'association
 
-      // Pagination : validation du paramètre `page`
+            const totalCount = await Animal.count({
+                where: { association_id: associationId }
+            });
+    
+            // Renvoyer les résultats paginés avec informations sur la pagination
 
-    const currentPage = parseInt(req.query.page, 10) || 1; // Page courante, au moins 1
-    const limit = 6; // Nombre d'animaux max
-    const offset = (Number(currentPage) - 1) * 6; // Offset de 6 - 12 - 18... en fonction de la page courante
-
-    // Récupérer les animaux avec pagination et leurs demandes associées
-
-    const paginationAnimals = await Animal.findAll({
-        include: [
-            { 
-                association: "association", 
-                include: "department" // Inclure la table `department` associée à l'association
-            },
-            { 
-                association: "family" // Inclure la table `family` pour chaque animal
-            },
-            { 
-                association: "requests", // Inclure les demandes associées à l'animal
-                required: false, // On inclut les animaux même s'ils n'ont pas de demandes
-            },
-        ],
-        where: { association_id: associationId },
-        limit: limit,
-        offset: offset,
-    });
-
-    // Calculer le nombre total de pages
-
-    const totalPages = Math.ceil(totalCount / limit);
-
-    // Renvoyer les résultats avec les demandes et la pagination
-
-    res.json({
-        allAnimals: animals, // Tous les animaux de l'association (sans pagination)
-        paginatedAnimals: paginationAnimals, // Animaux paginés avec leurs demandes
-        totalCount: totalCount, // Nombre total d'animaux
-        currentPage: currentPage, // Page courante
-        totalPages: totalPages, // Nombre total de pages
-    });
+            res.json({
+                paginatedAnimals: paginationAnimals, // Les animaux paginés avec leurs demandes et relations
+                currentPage: currentPage, // Page courante
+                totalCount: totalCount, // Nombre total d'animaux
+                limit: limit, // Nombre d'animaux par page
+            });
+            
+        } catch (error) {
+            // Gestion des erreurs
+            console.error('Erreur lors de la récupération des animaux:', error);
+            return next(error); // Lancer l'erreur au middleware de gestion des erreurs
+        }
     },
-
+    
     storeAnimal: async (req, res, next) => {
         const { association_id: associationId } = req.user;
         if (!req.files || Object.keys(req.files).length === 0) {
