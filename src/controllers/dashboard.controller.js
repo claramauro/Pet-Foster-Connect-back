@@ -9,68 +9,18 @@ import {
 import { generateSlug } from "../utils/generateSlug.js";
 
 const dashboardController = {
-
-    getAnimals: async (req, res, next) => 
-    {
-    const { association_id: associationId } = req.user;
-
-    const association = await Association.findByPk(associationId);
-    if (!association) {
-        return next();
-    }
-
-    const animals = await Animal.findAll({
-        where: {
-            association_id: associationId,
-        },
-    });
-
-    // Récupérer le nombre total d'animaux pour l'association
-
-    const totalCount = await Animal.count({
-        where: { association_id: associationId }
-    });
-
-      // Pagination : validation du paramètre `page`
-
-    const currentPage = parseInt(req.query.page, 10) || 1; // Page courante, au moins 1
-    const limit = 6; // Nombre d'animaux max
-    const offset = (Number(currentPage) - 1) * 6; // Offset de 6 - 12 - 18... en fonction de la page courante
-
-    // Récupérer les animaux avec pagination et leurs demandes associées
-
-    const paginationAnimals = await Animal.findAll({
-        include: [
-            { 
-                association: "association", 
-                include: "department" // Inclure la table `department` associée à l'association
+    getAnimals: async (req, res, next) => {
+        const { association_id: associationId } = req.user;
+        const association = await Association.findByPk(associationId);
+        if (!association) {
+            return next();
+        }
+        const animals = await Animal.findAll({
+            where: {
+                association_id: associationId,
             },
-            { 
-                association: "family" // Inclure la table `family` pour chaque animal
-            },
-            { 
-                association: "requests", // Inclure les demandes associées à l'animal
-                required: false, // On inclut les animaux même s'ils n'ont pas de demandes
-            },
-        ],
-        where: { association_id: associationId },
-        limit: limit,
-        offset: offset,
-    });
-
-    // Calculer le nombre total de pages
-
-    const totalPages = Math.ceil(totalCount / limit);
-
-    // Renvoyer les résultats avec les demandes et la pagination
-
-    res.json({
-        allAnimals: animals, // Tous les animaux de l'association (sans pagination)
-        paginatedAnimals: paginationAnimals, // Animaux paginés avec leurs demandes
-        totalCount: totalCount, // Nombre total d'animaux
-        currentPage: currentPage, // Page courante
-        totalPages: totalPages, // Nombre total de pages
-    });
+        });
+        res.json(animals);
     },
 
     storeAnimal: async (req, res, next) => {
@@ -104,12 +54,14 @@ const dashboardController = {
 
         try {
             animal = await Animal.create(animalData);
-            const slug = generateSlug(animal.name, animal.id)
-            await animal.update({
-                slug : slug
+            const slug = generateSlug(animal.name, animal.id);
+            await animal.update(
+                {
+                    slug: slug,
                 },
                 { transaction }
-                );
+            );
+            await transaction.commit();
         } catch (error) {
             await transaction.rollback();
             next(error);
@@ -183,6 +135,7 @@ const dashboardController = {
 
     destroyAnimal: async (req, res, next) => {
         const { association_id: associationId } = req.user;
+
         const { id: animalId } = req.params;
         const animal = await Animal.findByPk(animalId);
         if (!animal) {
