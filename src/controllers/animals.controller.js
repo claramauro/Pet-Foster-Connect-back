@@ -63,31 +63,23 @@ const animalsController = {
             return next(new ValidationError());
         }
 
-        const [family, animal, association] = await Promise.all([
-
-            Family.findByPk(family_id),  // Récupère la famille par son ID
-            Animal.findOne({
-                where: {
-                    id: animal_id,
-                    association_id: association_id,  // Vérifier que l'animal appartient à l'association
-                },
-            }), // Récupère l'animal par son ID et association_id
-            Association.findByPk(association_id), // Récupère l'association par son ID
-        ]);
-
+        const family = await Family.findByPk(family_id);
+        const animal = await Animal.findOne({
+            where: {
+                id: animal_id,
+                association_id: association_id,
+            },
+        });
 
         if (!family || !animal) {
             return next(new NotFoundError());
         }
 
         // Création de la demande
-
         const status = "En attente";
 
         const request = await Request.create({ status, family_id, animal_id, association_id });
-
         res.status(201).json(request);
-
     },
 
     filter: async (req, res, next) => {
