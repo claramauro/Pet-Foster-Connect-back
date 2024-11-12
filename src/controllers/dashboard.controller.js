@@ -108,6 +108,8 @@ const dashboardController = {
                 },
                 { transaction }
                 );
+        await transaction.commit();
+        
         } catch (error) {
             await transaction.rollback();
             next(error);
