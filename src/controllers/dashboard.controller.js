@@ -162,85 +162,97 @@ const dashboardController = {
     },
 
     updateProfile: async (req, res, next) => {
-        const { association_id: associationId, id: userId } = req.user;
+        const transaction = await sequelize.transaction();
 
-        // Valider avec Joi Validator
-        const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
-        if (error) {
-            return next(new ValidationError());
-        }
-        const associationData = {};
-        for (const key in req.body) {
-            let value = req.body[key];
-            // vérifie si undefined ou champ vide
-            if (value === "" || !value) {
-                value = null;
-            } else {
-                associationData[key] = value;
+        try {
+            const { association_id: associationId, id: userId } = req.user;
+
+            // Valider avec Joi Validator
+            const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
+            if (error) {
+                await transaction.rollback();
+                return next(new ValidationError());
             }
-        }
-        
-        let hashedPassword;
-        if (associationData.password) {
-            if (associationData.password !== associationData.confirmPassword) {
-                return next(new AuthentificationError("Les mots de passe ne correspondent pas."));
+
+            const associationData = {};
+            for (const key in req.body) {
+                let value = req.body[key];
+                if (value === "" || !value) {
+                    value = null;
+                } else {
+                    associationData[key] = value;
+                }
             }
-            hashedPassword = await bcrypt.hash(associationData.password, 10);
+
+            let hashedPassword;
+            if (associationData.password) {
+                if (associationData.password !== associationData.confirmPassword) {
+                    await transaction.rollback();
+                    return next(new AuthentificationError("Les mots de passe ne correspondent pas."));
+                }
+                hashedPassword = await bcrypt.hash(associationData.password, 10);
+            }
+
+            const associationToUpdate = await Association.findByPk(associationId, { transaction });
+            if (!associationToUpdate) {
+                await transaction.rollback();
+                return next(new NotFoundError());
+            }
+
+            const oldImageAbsolutePath = getAbsolutePathOfImage(associationToUpdate.url_image);
+            let relativePathNewImage;
+            let isImageChange = false;
+            if (Object.keys(req.files).length !== 0) {
+                relativePathNewImage = getRelativePathOfImage(req.absolutePathImage);
+                isImageChange = true;
+            }
+
+            let updatedAssociation = await associationToUpdate.update(
+                {
+                    name: associationData.name || associationToUpdate.name,
+                    address: associationData.gender || associationToUpdate.address,
+                    zip_code: associationData.race || associationToUpdate.zip_code,
+                    city: associationData.city || associationToUpdate.city,
+                    department_id: associationData.department || associationToUpdate.department_id,
+                    phone_number: associationData.phone_number || associationToUpdate.phone_number,
+                    description: associationData.description || associationToUpdate.description,
+                    url_image: isImageChange ? relativePathNewImage : associationToUpdate.url_image,
+                },
+                { transaction },
+            );
+
+            req.absolutePathImage = null;
+            if (isImageChange) {
+                await removeImage(oldImageAbsolutePath);
+            }
+
+            const userToUpdate = await User.findByPk(userId, { transaction });
+            if (!userToUpdate) {
+                await transaction.rollback();
+                return next(new NotFoundError());
+            }
+
+            await userToUpdate.update(
+                {
+                    email: associationData.email,
+                    password: hashedPassword,
+                },
+                { transaction },
+            );
+
+            updatedAssociation = await updatedAssociation.reload({
+                include: "department",
+                transaction,
+            });
+
+            await transaction.commit();
+
+            res.json(updatedAssociation);
+
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
         }
-
-        const associationToUpdate = await Association.findByPk(associationId);
-        if (!associationToUpdate) {
-            return next(new NotFoundError());
-        }
-        // Dans le cas où une nouvelle image est téléchargée
-        // On récupère le chemin absolu de l'ancienne image
-        // Pour pouvoir la supprimer après la mise à jour de la bdd
-        const oldImageAbsolutePath = getAbsolutePathOfImage(associationToUpdate.url_image);
-        let relativePathNewImage;
-        let isImageChange = false;
-        if (Object.keys(req.files).length !== 0) {
-            // Si une nouvelle image est téléchargée on récupère son chemin
-            // Pour pouvoir mettre à jour l'url dans la bdd
-            relativePathNewImage = getRelativePathOfImage(req.absolutePathImage);
-            isImageChange = true;
-        }
-        let updatedAssociation = await associationToUpdate.update({
-            name: associationData.name || associationToUpdate.name,
-            address: associationData.gender || associationToUpdate.address,
-            zip_code: associationData.race || associationToUpdate.zip_code,
-            city: associationData.city || associationToUpdate.city,
-            department_id: associationData.department || associationToUpdate.department_id,
-            phone_number: associationData.phone_number || associationToUpdate.phone_number,
-            description: associationData.description || associationToUpdate.description,
-            url_image: isImageChange ? relativePathNewImage : associationToUpdate.url_image,
-        });
-        // Une fois la bdd mise à jour on passe req.absolutePathImage à null (qui contient le chemin de la nouvelle image)
-        // Car si != de null sera supprimé par le errorHandler en cas d'erreur
-        // A ce stade, le chemin de la nouvelle l'image est enregistré dans la BDD donc on ne veut pas supprimer cette nouvelle image si erreur
-        req.absolutePathImage = null;
-        if (isImageChange) {
-            // Une fois l'association mise à jour en BDD on supprime l'ancienne image
-            await removeImage(oldImageAbsolutePath);
-        }
-
-        /* Mise à jours user */
-        const userToUpdate = await User.findByPk(userId);
-        if (!userToUpdate) {
-            return next(new NotFoundError());
-        }
-
-        await userToUpdate.update({
-            email: associationData.email,
-            password: hashedPassword,
-        });
-
-
-        updatedAssociation = await updatedAssociation.reload({
-            include: "department",
-        });
-
-
-        res.json(updatedAssociation);
     },
 
     destroyProfile: async (req, res, next) => {
