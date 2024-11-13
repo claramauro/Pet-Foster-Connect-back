@@ -10,20 +10,68 @@ import { generateSlug } from "../utils/generateSlug.js";
 import bcrypt from "bcrypt";
 
 const dashboardController = {
+  
     getAnimals: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
-        const association = await Association.findByPk(associationId);
-        if (!association) {
-            return next();
-        }
-        const animals = await Animal.findAll({
-            where: {
-                association_id: associationId,
-            },
-        });
-        res.json(animals);
-    },
 
+        try {
+            const { association_id: associationId } = req.user;
+    
+            // Récupérer l'association à partir de son ID
+
+            const association = await Association.findByPk(associationId);
+            if (!association) {
+                return next(new NotFoundError('Association non trouvée'));
+            }
+    
+            // Pagination : validation du paramètre `page`
+
+            const currentPage = parseInt(req.query.page, 10) || 1; // Page courante, au moins 1
+            const limit = 6; // Nombre d'animaux par page
+            const offset = (currentPage - 1) * limit; // Calculer l'offset en fonction de la page
+    
+            // Récupérer les animaux paginés avec leurs relations
+
+            const paginationAnimals = await Animal.findAll({
+                include: [
+                    { 
+                        association: "association", 
+                        include: "department" // Inclure la table `department` associée à l'association
+                    },
+                    { 
+                        association: "family" // Inclure la table `family` pour chaque animal
+                    },
+                    { 
+                        association: "requests", // Inclure les demandes associées à l'animal
+                        required: false, // Inclure même si un animal n'a pas de demandes
+                    },
+                ],
+                where: { association_id: associationId },
+                limit: limit, // Limiter le nombre d'animaux par page
+                offset: offset, // Calculer l'offset pour la pagination
+            });
+    
+            // Calculer le nombre total d'animaux pour l'association
+
+            const totalCount = await Animal.count({
+                where: { association_id: associationId }
+            });
+    
+            // Renvoyer les résultats paginés avec informations sur la pagination
+
+            res.json({
+                paginatedAnimals: paginationAnimals, // Les animaux paginés avec leurs demandes et relations
+                currentPage: currentPage, // Page courante
+                totalCount: totalCount, // Nombre total d'animaux
+                limit: limit, // Nombre d'animaux par page
+            });
+            
+        } catch (error) {
+            // Gestion des erreurs
+            console.error('Erreur lors de la récupération des animaux:', error);
+            return next(error); // Lancer l'erreur au middleware de gestion des erreurs
+        }
+    },
+    
     storeAnimal: async (req, res, next) => {
         const { association_id: associationId } = req.user;
         if (!req.files || Object.keys(req.files).length === 0) {
@@ -56,11 +104,15 @@ const dashboardController = {
         try {
             animal = await Animal.create(animalData);
             const slug = generateSlug(animal.name, animal.id);
-            await animal.update({
+
+            await animal.update(
+                {
                     slug: slug,
                 },
-                { transaction },
+                { transaction }
+
             );
+            await transaction.commit();
         } catch (error) {
             await transaction.rollback();
             next(error);
@@ -134,6 +186,7 @@ const dashboardController = {
 
     destroyAnimal: async (req, res, next) => {
         const { association_id: associationId } = req.user;
+
         const { id: animalId } = req.params;
         const animal = await Animal.findByPk(animalId);
         if (!animal) {
