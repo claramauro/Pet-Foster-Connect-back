@@ -56,6 +56,9 @@ const validateAndSanitize = {
         email_association: JoiSanitized.string().trim().min(1).sanitize().optional(),
         phone_number: JoiSanitized.string().trim().min(1).sanitize().optional(),
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        email: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        password: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        confirmPassword: JoiSanitized.string().trim().min(1).sanitize().optional(),
     }),
     associationSearchFilter: JoiSanitized.object({
         association_id: JoiSanitized.string().trim().min(1).optional(),

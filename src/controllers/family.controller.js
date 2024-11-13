@@ -1,11 +1,12 @@
-import { Family } from "../models/associations.js";
+import { Family, User } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import {
     getAbsolutePathOfImage,
     getRelativePathOfImage,
     removeImage,
 } from "../utils/imageManager.js";
-import { ValidationError, NotFoundError, AuthorizationError } from "../utils/customErrors.js";
+import { ValidationError, NotFoundError, AuthorizationError, AuthentificationError } from "../utils/customErrors.js";
+import bcrypt from "bcrypt";
 
 const familyController = {
     findOne: async (req, res, next) => {
@@ -30,12 +31,22 @@ const familyController = {
     },
 
     update: async (req, res, next) => {
-        const { family_id: id } = req.user;
+        const { family_id: id, id: userId } = req.user;
         const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
         if (error) {
             return next(new ValidationError());
         }
         const familyData = req.body;
+
+        console.log(familyData);
+
+        let hashedPassword;
+        if (familyData.password) {
+            if (familyData.password !== familyData.confirmPassword) {
+                return next(new AuthentificationError("Les mots de passe ne correspondent pas."));
+            }
+            hashedPassword = await bcrypt.hash(familyData.password, 10);
+        }
 
         const familyToUpdate = await Family.findByPk(id);
         if (!familyToUpdate) {
@@ -71,6 +82,18 @@ const familyController = {
             // (default_family_img.svg)
             await removeImage(oldImageAbsolutePath);
         }
+
+        /* Mise à jours user */
+        const userToUpdate = await User.findByPk(userId);
+        if (!userToUpdate) {
+            return next(new NotFoundError());
+        }
+
+        await userToUpdate.update({
+            email: familyData.email,
+            password: hashedPassword,
+        });
+
         // Récupérer la famille mise à jour avec le département
         updatedFamily = await updatedFamily.reload({
             include: "department",

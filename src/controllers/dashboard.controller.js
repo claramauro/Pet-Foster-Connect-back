@@ -1,12 +1,13 @@
-import { Association, Animal, Request, sequelize } from "../models/associations.js";
+import { Association, Animal, Request, sequelize, User } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { ValidationError, NotFoundError, AuthorizationError } from "../utils/customErrors.js";
+import { ValidationError, NotFoundError, AuthorizationError, AuthentificationError } from "../utils/customErrors.js";
 import {
     removeImage,
     getAbsolutePathOfImage,
     getRelativePathOfImage,
 } from "../utils/imageManager.js";
 import { generateSlug } from "../utils/generateSlug.js";
+import bcrypt from "bcrypt";
 
 const dashboardController = {
     getAnimals: async (req, res, next) => {
@@ -161,7 +162,8 @@ const dashboardController = {
     },
 
     updateProfile: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
+        const { association_id: associationId, id: userId } = req.user;
+
         // Valider avec Joi Validator
         const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
         if (error) {
@@ -177,6 +179,15 @@ const dashboardController = {
                 associationData[key] = value;
             }
         }
+        
+        let hashedPassword;
+        if (associationData.password) {
+            if (associationData.password !== associationData.confirmPassword) {
+                return next(new AuthentificationError("Les mots de passe ne correspondent pas."));
+            }
+            hashedPassword = await bcrypt.hash(associationData.password, 10);
+        }
+
         const associationToUpdate = await Association.findByPk(associationId);
         if (!associationToUpdate) {
             return next(new NotFoundError());
@@ -212,10 +223,23 @@ const dashboardController = {
             await removeImage(oldImageAbsolutePath);
         }
 
+        /* Mise à jours user */
+        const userToUpdate = await User.findByPk(userId);
+        if (!userToUpdate) {
+            return next(new NotFoundError());
+        }
+
+        await userToUpdate.update({
+            email: associationData.email,
+            password: hashedPassword,
+        });
+
+
         updatedAssociation = await updatedAssociation.reload({
             include: "department",
         });
-        
+
+
         res.json(updatedAssociation);
     },
 
