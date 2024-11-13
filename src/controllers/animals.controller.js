@@ -198,53 +198,6 @@ const animalsController = {
             paginatedAnimals: paginatedAnimals,
         });
     },
-
-        // Mettre à jour le statut de l'animal : Indisponbile à disponible
-
-        update: async (req, res, next) => {
-        
-                // Récupérer l'id de l'animal à partir des paramètres de la requête
-
-                const { animal_id } = req.params;
-        
-                // Chercher l'animal par son ID
-
-                const animal = await Animal.findByPk(animal_id);
-        
-                // Si l'animal n'existe pas
-
-                if (!animal) {
-                    return next(new NotFoundError('Animal introuvable'));
-                }
-        
-                // Vérifier que l'animal est "Indisponible" et relié à une famille
-                
-                if (animal.status !== "Indisponible" || !animal.family_id) 
-                {
-                    return next(new ValidationError("L'animal doit être 'Indisponible' et avoir une famille associée"));
-                }
-        
-                // Mise à jour du statut de l'animal : "Indisponible" à "Disponible" et suppression de la famille associée
-
-                await Animal.update(
-                    {
-                        status: "Disponible", // Mettre à jour le statut de l'animal à "Disponible"
-                        family_id: null,      // Supprimer la famille associée
-                    },
-                    {
-                        where: { id: animal_id }, // Spécifier l'animal à mettre à jour par son ID
-                    }
-                );
-        
-                // Récupérer l'animal mis à jour (pour retourner les nouvelles valeurs)
-                const updatedAnimal = await Animal.findByPk(animal_id);
-        
-                // Retourner une réponse avec l'animal mis à jour
-                res.status(200).json({
-                    message: "Statut de l'animal mis à jour avec succès.",
-                    animal: updatedAnimal,
-                });
-            }
-        }
+};
 
 export { animalsController };
