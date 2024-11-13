@@ -2,6 +2,7 @@ import { Animal, Request, Family, Association } from "../models/associations.js"
 import { Sequelize } from "sequelize";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError, NotFoundError } from "../utils/customErrors.js";
+import { sendEmailAssociationForRequestAnimalDev } from "../utils/sendEmail/SendEmailAssociationForRequestAnimalDev.js";
 
 const animalsController = {
     index: async (req, res) => {
@@ -76,9 +77,53 @@ const animalsController = {
         }
 
         // Création de la demande
+
         const status = "En attente";
 
         const request = await Request.create({ status, family_id, animal_id, association_id });
+
+        // Récupérer email association
+
+        // Recherche de l'association dans la base de données pour récupérer l'email
+
+         const association = await Association.findByPk(association_id);  // Assurez-vous que l'Association a un champ email
+              if (!association) {
+                  return next(new NotFoundError('Association introuvable'));
+              }
+
+        const emailAssociation =  association.email_association;
+
+        // Avoir le nom de de la famille demandant l'hébergement
+
+        const familyName = family.name; 
+
+        // Avoir le nom de l'animal objet de l'hébergement
+
+        const animalName = animal.name;
+
+        // Pour obtenir l'image de l'animal 
+
+        const imageAnimal = animal.url_image;
+
+        // Pour obtenir l'espèces de l'animal
+
+        const species = animal.species.toLowerCase();
+
+        // Objet 
+
+        const emailContent =  {
+            familyName,        // Nom de la famille
+            animalName,        // Nom de l'animal       
+            imageAnimal,       // Image de l'animal
+            species,
+        };
+
+        // Envoi de l'email à l'association pour l'informer de la demande
+
+        await sendEmailAssociationForRequestAnimalDev(emailAssociation, emailContent);
+
+        // Réponse avec la demande créée et statut 201 (création réussie)
+
         res.status(201).json(request);
     },
 
