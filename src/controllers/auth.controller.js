@@ -132,7 +132,10 @@ const authController = {
                 { transaction },
             );
 
-            await sendConfirmationEmailDev(email);
+
+            const destinary = name;
+
+            await sendConfirmationEmailDev(email, destinary);
 
             await transaction.commit();
 

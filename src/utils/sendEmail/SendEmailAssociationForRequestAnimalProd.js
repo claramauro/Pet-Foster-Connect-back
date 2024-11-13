@@ -11,15 +11,14 @@ dotenv.config();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-async function sendConfirmationEmailProd(email,destinary) {
+async function sendEmailAssociationForRequestAnimalProd(email, emailContent) {
 
   // Créer l'email
 
   const msg = {
     to: email,  // Email du destinataire
     from: 'noreplypetfosterconnect@gmail.com', // Email de l'expéditeur
-    subject: 'Confirmation de votre compte', // Sujet de l'email 
-    text: 'Ceci est un message de test envoyé via SendGrid.', // Text de l'email 
+    subject: "Demande d'hébergement pour un animal", // Sujet de l'email 
     html: `<!DOCTYPE html>
     <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="fr">
     
@@ -135,9 +134,7 @@ async function sendConfirmationEmailProd(email,destinary) {
                                                                 <td class="pad" style="vertical-align: middle; color: #000000; font-family: inherit; font-size: 14px; text-align: center;">
                                                                     <table class="icons-outer" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; display: inline-table;">
                                                                         <tr>
-                                                                            <td style="vertical-align: middle; text-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 5px; padding-right: 5px;"><a href="http://localhost:5173" target="_blank" style="text-decoration: none; color: #ffffff;" rel="noopener">
-                                                                            <img class="icon" src="https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/i8tzhiib/kp3/yda/fpl/logo_name.png" alt="company logo" height="auto" width="238" align="center" style="display: block; height: auto; margin: 0 auto; border: 0;">
-                                                                          </a></td>
+                                                                            <td style="vertical-align: middle; text-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 5px; padding-right: 5px;"><a href="http://localhost:5173" target="_blank" style="text-decoration: none; color: #ffffff;" rel="noopener"><img class="icon" src="https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/i8tzhiib/kp3/yda/fpl/logo_name.png" alt="company logo" height="auto" width="238" align="center" style="display: block; height: auto; margin: 0 auto; border: 0;"></a></td>
                                                                         </tr>
                                                                     </table>
                                                                 </td>
@@ -147,7 +144,7 @@ async function sendConfirmationEmailProd(email,destinary) {
                                                         <table class="heading_block block-4" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                                             <tr>
                                                                 <td class="pad" style="text-align:center;width:100%;">
-                                                                    <h1 style="margin: 0; color: #011627; direction: ltr; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 42px; font-weight: 700; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0; mso-line-height-alt: 50.4px;"><span class="tinyMce-placeholder" style="word-break: break-word;">Merci ${destinary} pour votre inscription !</span></h1>
+                                                                    <h1 style="margin: 2; color: #011627; direction: ltr; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 42px; font-weight: 700; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0; mso-line-height-alt: 50.4px;"><span class="tinyMce-placeholder" style="word-break: break-word;">Vous avez reçu une demande d'hébergement de la famille ${emailContent.familyName} pour l'animal ${emailContent.animalName}.</span></h1>
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -161,8 +158,7 @@ async function sendConfirmationEmailProd(email,destinary) {
     <v:textbox inset="0px,0px,0px,5px">
     <center dir="false" style="color:#ffffff;font-family:sans-serif;font-size:16px">
     <![endif]-->
-                                                                            <div style="background-color:#f67d22;border-bottom:1px solid #011627;border-left:1px solid #011627;border-radius:0px;border-right:1px solid #011627;border-top:1px solid #011627;color:#ffffff;display:inline-block;font-family:Source Sans Pro, Tahoma, Verdana, Segoe, sans-serif;font-size:16px;font-weight:400;mso-border-alt:none;padding-bottom:5px;padding-top:0px;text-align:center;text-decoration:none;width:auto;word-break:keep-all;"><span style="word-break: break-word; padding-left: 30px; padding-right: 30px; font-size: 16px; display: inline-block; letter-spacing: normal;"><span style="word-break: break-word; line-height: 32px;">CONFIRMER VOTRE COMPTE</span></span></div><!--[if mso]></center></v:textbox></v:roundrect><![endif]-->
-                                                                        </a></div>
+                                                            
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -170,9 +166,7 @@ async function sendConfirmationEmailProd(email,destinary) {
                                                         <table class="image_block block-7" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                                             <tr>
                                                                 <td class="pad" style="width:100%;padding-right:0px;padding-left:0px;">
-                                                                    <div class="alignment" align="center" style="line-height:10px">
-                                                                        <div class="fullWidth" style="max-width: 361.6px;"><img src="https://d1oco4z2z1fhwp.cloudfront.net/templates/default/6786/dog_with_banana.png" style="display: block; height: auto; border: 0; width: 100%;" width="361.6" alt="Dog wearing jacket" title="Dog wearing jacket" height="auto"></div>
-                                                                    </div>
+                                    
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -200,9 +194,10 @@ async function sendConfirmationEmailProd(email,destinary) {
                                                                 <td class="pad" style="vertical-align: middle; color: #000000; font-family: inherit; font-size: 14px; text-align: left;">
                                                                     <table class="icons-outer" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; display: inline-table;">
                                                                         <tr>
-                                                                            <td style="vertical-align: middle; text-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 5px; padding-right: 5px;"><<a href="http://localhost:5173" target="_blank" style="text-decoration: none; color: #ffffff;" rel="noopener">
+                                                                            <td style="vertical-align: middle; text-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 5px; padding-right: 5px;"><a href="http://localhost:5173" target="_blank" style="text-decoration: none; color: #ffffff;" rel="noopener">
                                                                             <img class="icon" src="https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/i8tzhiib/kp3/yda/fpl/logo_name.png" alt="company logo" height="auto" width="238" align="center" style="display: block; height: auto; margin: 0 auto; border: 0;">
                                                                           </a>
+                                                                          </td>
                                                                         </tr>
                                                                     </table>
                                                                 </td>
@@ -359,4 +354,4 @@ async function sendConfirmationEmailProd(email,destinary) {
     });
 
 
-export { sendConfirmationEmailProd };
+export { sendEmailAssociationForRequestAnimalProd };
