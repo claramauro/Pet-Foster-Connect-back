@@ -98,7 +98,7 @@ const validateAndSanitize = {
         department_id: Joi.number().integer().min(1).optional(),
         phone_number: JoiSanitized.string().trim().min(1).sanitize().required(),
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
-        email_association: JoiSanitized.string().trim().min(1).sanitize(),
+        email_association: JoiSanitized.string().trim().min(1).sanitize().optional(),
 
         /* user */
         email: JoiSanitized.string().trim().min(1).email().required(),

@@ -8,6 +8,7 @@ const authRoutes = Router();
 
 authRoutes.post("/register/:type", convertAndSaveImage, catchErrors(authController.register));
 authRoutes.post("/login", catchErrors(authController.login));
-// authRoutes.post("/logout", catchErrors(authController.logout));
+authRoutes.get("/family/:familyId", catchErrors(authController.getFamilyUser));
+authRoutes.get("/association/:associationId", catchErrors(authController.getAssociationUser));
 
 export { authRoutes };

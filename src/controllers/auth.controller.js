@@ -1,6 +1,6 @@
 import { Family, Association, User, sequelize } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { AuthentificationError, ValidationError } from "../utils/customErrors.js";
+import { AuthentificationError, NotFoundError, ValidationError } from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
 import { createAuthToken } from "../utils/createAuthToken.js";
 import { geocodeAddress } from "../utils/geocodeAdress.js";
@@ -10,7 +10,6 @@ import { generateSlug } from "../utils/generateSlug.js";
 const authController = {
     register: async (req, res, next) => {
         const { type } = req.params;
-
         const { error, value } = validateAndSanitize.familyOrAssociationRegister.validate(req.body);
         if (error) {
             return next(new ValidationError(error.name, error.message));
@@ -197,14 +196,33 @@ const authController = {
         res.json(userWithoutPassword);
     },
 
-    // logout: async (req, res) => {
-    //     res.clearCookie("auth_token", {
-    //         httpOnly: true,
-    //         secure: false, // Secure à passer à true en prod
-    //     });
-    //
-    //     res.status(200).json({ message: "Déconnexion réussie, cookie supprimé." });
-    // },
+    getFamilyUser: async (req, res, next) => {
+        const { familyId } = req.params;
+        const user = await User.findOne({
+            where: { family_id: familyId },
+            attributes: { exclude: ["password"] },
+        });
+
+        if (!user) {
+            return next(new NotFoundError());
+        }
+
+        res.status(200).json(user);
+    },
+
+    getAssociationUser: async (req, res, next) => {
+        const { associationId } = req.params;
+        const user = await User.findOne({
+            where: { association_id: associationId },
+            attributes: { exclude: ["password"] },
+        });
+
+        if (!user) {
+            return next(new NotFoundError());
+        }
+
+        res.status(200).json(user);
+    },
 };
 
 export { authController };
