@@ -117,20 +117,27 @@ const familyController = {
     },
 
     destroy: async (req, res, next) => {
-        const { family_id: id } = req.user;
-        const familyToDestroy = await Family.findByPk(id);
+        const { family_id: familyId, id: userId } = req.user;
+        const familyToDestroy = await Family.findByPk(familyId);
         if (!familyToDestroy) {
             return next(new NotFoundError());
         }
         const imageAbsolutePath = getAbsolutePathOfImage(familyToDestroy.url_image);
         const imageName = imageAbsolutePath.replace("/src/public/images/families/", "");
-        await familyToDestroy.destroy();
+
 
         if (imageName !== "default_family_img.svg") {
             // on supprime l'image de la famille SI ce n'était pas l'image par défaut
             // (default_family_img.svg)
             await removeImage(imageAbsolutePath);
         }
+
+        const userToDestroy = await Family.findByPk(userId);
+        if (!userToDestroy) {
+            return next(new NotFoundError());
+        }
+
+        await userToDestroy.destroy();
 
         res.status(204).send();
     },

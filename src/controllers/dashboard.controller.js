@@ -1,4 +1,4 @@
-import { Association, Animal, Request, sequelize, User } from "../models/associations.js";
+import { Association, Animal, Request, sequelize, User, Family } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError, NotFoundError, AuthorizationError, AuthentificationError } from "../utils/customErrors.js";
 import {
@@ -256,15 +256,20 @@ const dashboardController = {
     },
 
     destroyProfile: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
+        const { association_id: associationId, id: userId } = req.user;
         const association = await Association.findByPk(associationId);
         if (!association) {
             return next(new NotFoundError());
         }
         const imageAbsolutePath = getAbsolutePathOfImage(association.url_image);
-        await association.destroy();
-
         await removeImage(imageAbsolutePath);
+
+        const userToDestroy = await Family.findByPk(userId);
+        if (!userToDestroy) {
+            return next(new NotFoundError());
+        }
+
+        await userToDestroy.destroy();
 
         return res.sendStatus(204);
     },
