@@ -53,8 +53,12 @@ const validateAndSanitize = {
         zip_code: JoiSanitized.string().trim().min(1).sanitize().optional(),
         city: JoiSanitized.string().trim().min(1).sanitize().optional(),
         department_id: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        email_association: JoiSanitized.string().trim().min(1).sanitize().optional(),
         phone_number: JoiSanitized.string().trim().min(1).sanitize().optional(),
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        email: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        password: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        confirmPassword: JoiSanitized.string().trim().min(1).sanitize().optional(),
     }),
     associationSearchFilter: JoiSanitized.object({
         association_id: JoiSanitized.string().trim().min(1).optional(),
@@ -97,7 +101,7 @@ const validateAndSanitize = {
         department_id: Joi.number().integer().min(1).optional(),
         phone_number: JoiSanitized.string().trim().min(1).sanitize().required(),
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
-        email_association: JoiSanitized.string().trim().min(1).sanitize(),
+        email_association: JoiSanitized.string().trim().min(1).sanitize().optional(),
 
         /* user */
         email: JoiSanitized.string().trim().min(1).email().required(),
