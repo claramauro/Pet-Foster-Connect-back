@@ -85,7 +85,7 @@ CREATE TABLE "department"
 );
 
 ALTER TABLE "animal"
-    ADD FOREIGN KEY ("family_id") REFERENCES "family" ("id") SET NULL;
+    ADD FOREIGN KEY ("family_id") REFERENCES "family" ("id") ON DELETE SET NULL;
 
 ALTER TABLE "animal"
     ADD FOREIGN KEY ("association_id") REFERENCES "association" ("id") ON DELETE CASCADE;
@@ -106,9 +106,9 @@ ALTER TABLE "user"
     ADD FOREIGN KEY ("association_id") REFERENCES "association" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "family"
-    ADD FOREIGN KEY ("department_id") REFERENCES "department" ("id") SET NULL;
+    ADD FOREIGN KEY ("department_id") REFERENCES "department" ("id") ON DELETE SET NULL;
 
 ALTER TABLE "association"
-    ADD FOREIGN KEY ("department_id") REFERENCES "department" ("id") SET NULL;
+    ADD FOREIGN KEY ("department_id") REFERENCES "department" ("id") ON DELETE SET NULL;
 
 COMMIT;
