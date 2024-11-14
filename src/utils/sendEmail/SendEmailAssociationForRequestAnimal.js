@@ -1,21 +1,21 @@
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
 
 dotenv.config();
 
-async function sendEmailAssociationForRequestAnimalDev(email, emailContent) {
+async function sendEmailAssociationForRequestAnimal(email, emailContent) {
     try {
         // Détails du transporteur
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
-                user: process.env.GMAIL_EMAIL, 
+                user: process.env.GMAIL_EMAIL,
                 pass: process.env.GMAIL_PASSWORD,  // Utilisez un mot de passe d'application si l'authentification 2FA est activée
-            }
+            },
         });
 
         // Options de l'email
-        
+
         const mailOptions = {
             from: process.env.GMAIL_EMAIL,   // Email de l'expéditeur
             to: email,  // Email du destinataire
@@ -338,16 +338,16 @@ async function sendEmailAssociationForRequestAnimalDev(email, emailContent) {
                 </table><!-- End -->
             </body>
             
-            </html>`
-        }
-        
+            </html>`,
+        };
+
 
         // Envoi de l'email et résultats
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email envoyé:', info.response);  // Affichage de la réponse
+        console.log("Email envoyé:", info.response);  // Affichage de la réponse
 
         // Résultat de l'envoi
-        return { success: true, message: 'Email envoyé avec succès' };
+        return { success: true, message: "Email envoyé avec succès" };
     } catch (error) {
         console.error("Erreur lors de l'envoi du mail:", error);  // Gestion des erreurs
         console.error("Détails de l'erreur:", error.response);  // Détails supplémentaires de l'erreur
@@ -355,4 +355,4 @@ async function sendEmailAssociationForRequestAnimalDev(email, emailContent) {
     }
 }
 
-export { sendEmailAssociationForRequestAnimalDev};
+export { sendEmailAssociationForRequestAnimal };

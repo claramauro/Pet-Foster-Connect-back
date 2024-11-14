@@ -2,7 +2,7 @@ import { Animal, Request, Family, Association } from "../models/associations.js"
 import { Sequelize } from "sequelize";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { ValidationError, NotFoundError } from "../utils/customErrors.js";
-import { sendEmailAssociationForRequestAnimalDev } from "../utils/sendEmail/SendEmailAssociationForRequestAnimalDev.js";
+import { sendEmailAssociationForRequestAnimal } from "../utils/sendEmail/SendEmailAssociationForRequestAnimal.js";
 
 const animalsController = {
     index: async (req, res) => {
@@ -86,22 +86,22 @@ const animalsController = {
 
         // Recherche de l'association dans la base de données pour récupérer l'email
 
-         const association = await Association.findByPk(association_id);  // Assurez-vous que l'Association a un champ email
-              if (!association) {
-                  return next(new NotFoundError('Association introuvable'));
-              }
+        const association = await Association.findByPk(association_id); // Assurez-vous que l'Association a un champ email
+        if (!association) {
+            return next(new NotFoundError("Association introuvable"));
+        }
 
-        const emailAssociation =  association.email_association;
+        const emailAssociation = association.email_association;
 
         // Avoir le nom de de la famille demandant l'hébergement
 
-        const familyName = family.name; 
+        const familyName = family.name;
 
         // Avoir le nom de l'animal objet de l'hébergement
 
         const animalName = animal.name;
 
-        // Pour obtenir l'image de l'animal 
+        // Pour obtenir l'image de l'animal
 
         const imageAnimal = animal.url_image;
 
@@ -109,18 +109,18 @@ const animalsController = {
 
         const species = animal.species.toLowerCase();
 
-        // Objet 
+        // Objet
 
-        const emailContent =  {
-            familyName,        // Nom de la famille
-            animalName,        // Nom de l'animal       
-            imageAnimal,       // Image de l'animal
+        const emailContent = {
+            familyName, // Nom de la famille
+            animalName, // Nom de l'animal
+            imageAnimal, // Image de l'animal
             species,
         };
 
         // Envoi de l'email à l'association pour l'informer de la demande
 
-        await sendEmailAssociationForRequestAnimalDev(emailAssociation, emailContent);
+        await sendEmailAssociationForRequestAnimal(emailAssociation, emailContent);
 
         // Réponse avec la demande créée et statut 201 (création réussie)
 
