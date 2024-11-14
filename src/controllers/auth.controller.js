@@ -1,12 +1,12 @@
 import { Family, Association, User, sequelize } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { AuthentificationError, NotFoundError, ValidationError } from "../utils/customErrors.js";
+import { AuthentificationError, NotFoundError, ServerError, ValidationError } from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
 import { createAuthToken } from "../utils/createAuthToken.js";
 import { geocodeAddress } from "../utils/geocodeAdress.js";
 import { getRelativePathOfImage } from "../utils/imageManager.js";
 import { generateSlug } from "../utils/generateSlug.js";
-import { sendConfirmationEmailDev } from "../utils/sendEmail/sendConfirmationEmailDev.js";
+import { sendMailResetPassword } from "../utils/sendEmail/sendMailResetPassword.js";
 
 const authController = {
     register: async (req, res, next) => {
@@ -131,11 +131,6 @@ const authController = {
                 { transaction },
             );
 
-
-            const destinary = name;
-
-            await sendConfirmationEmailDev(email, destinary);
-
             await transaction.commit();
 
             const userWithoutPassword = await User.findByPk(user.id, {
@@ -228,6 +223,24 @@ const authController = {
         }
 
         res.status(200).json(user);
+    },
+
+    resetPassword: async (req, res, next) => {
+        const { email } = req.body;
+
+        const user = await User.findOne({ where: { email: email } });
+
+        if (!user) {
+            return next(new NotFoundError());
+        }
+
+        const responseEmail = await sendMailResetPassword(email);
+
+        if (responseEmail.success === false) {
+            return next(new ServerError());
+        }
+
+        res.json({ message: "Email envoyé. (Vérifiez les mails indésirables)" });
     },
 };
 
