@@ -2,7 +2,7 @@ import { Animal, Family, Association, Request, User } from "../models/associatio
 import { Sequelize } from "sequelize";
 import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { sendEmailAssociationForRequestAnimalDev } from "../utils/sendEmail/SendEmailAssociationForRequestAnimalDev.js";
+import { sendEmailAssociationForRequestAnimal } from "../utils/sendEmail/SendEmailAssociationForRequestAnimal.js";
 
 const requestsController = {
 
@@ -43,16 +43,16 @@ const requestsController = {
 
         // Recherche de l'association dans la base de données pour récupérer l'email
 
-         const association = await Association.findByPk(association_id);  // Assurez-vous que l'Association a un champ email
-              if (!association) {
-                  return next(new NotFoundError('Association introuvable'));
-              }
+        const association = await Association.findByPk(association_id);  // Assurez-vous que l'Association a un champ email
+        if (!association) {
+            return next(new NotFoundError("Association introuvable"));
+        }
 
-        const emailAssociation =  association.email_association;
+        const emailAssociation = association.email_association;
 
         // Avoir le nom de de la famille demandant l'hébergement
 
-        const familyName = family.name; 
+        const familyName = family.name;
 
         // Avoir le nom de l'animal objet de l'hébergement
 
@@ -68,7 +68,7 @@ const requestsController = {
 
         // Objet 
 
-        const emailContent =  {
+        const emailContent = {
             familyName,        // Nom de la famille
             animalName,        // Nom de l'animal       
             imageAnimal,       // Image de l'animal
@@ -77,46 +77,46 @@ const requestsController = {
 
         // Envoi de l'email à l'association pour l'informer de la demande
 
-        await sendEmailAssociationForRequestAnimalDev(emailAssociation, emailContent);
+        await sendEmailAssociationForRequestAnimal(emailAssociation, emailContent);
 
         // Réponse avec la demande créée et statut 201 (création réussie)
 
         res.status(201).json(request);
     },
 
-    
+
     // Avoir la liste des demandes
 
     getRequestsFamily: async (req, res, next) => {
 
-            // Extraire familyId et userId depuis le token décodé
+        // Extraire familyId et userId depuis le token décodé
 
-            const { family_id: familyId } = req.user;
-    
-            // Recherche de la famille par son ID
-            const family = await Family.findByPk(familyId);
-            if (!family) {
-                return next(new NotFoundError('Famille non trouvée'));  // Retourner une erreur si la famille n'est pas trouvée
-            }
-    
-            // Recherche des demandes associées à cette famille
+        const { family_id: familyId } = req.user;
 
-            const requestsFamily = await Request.findAll({
-                where: { family_id: familyId },
-                include: [
-                    { model: Animal, as: "animal" }, 
-                    { model: Association, as: "association", include: [{ model: User, as: "user" }] }, // Inclure User dans Association
-                    { model: Family, as: "family", include: [{ model: User, as: "user" }] },  // Inclure User dans Family
-                ],
-                order: [["created_at", "ASC"]], // Tri par created_at
-            });
-    
-            // Retourner les demandes et l'email de l'utilisateur
-            res.json({ requestsFamily });
+        // Recherche de la famille par son ID
+        const family = await Family.findByPk(familyId);
+        if (!family) {
+            return next(new NotFoundError("Famille non trouvée"));  // Retourner une erreur si la famille n'est pas trouvée
+        }
 
-        },
+        // Recherche des demandes associées à cette famille
 
-            // Supprimer une demande 
+        const requestsFamily = await Request.findAll({
+            where: { family_id: familyId },
+            include: [
+                { model: Animal, as: "animal" },
+                { model: Association, as: "association", include: [{ model: User, as: "user" }] }, // Inclure User dans Association
+                { model: Family, as: "family", include: [{ model: User, as: "user" }] },  // Inclure User dans Family
+            ],
+            order: [["created_at", "ASC"]], // Tri par created_at
+        });
+
+        // Retourner les demandes et l'email de l'utilisateur
+        res.json({ requestsFamily });
+
+    },
+
+    // Supprimer une demande 
 
     destroyRequestFamily: async (req, res, next) => {
         const { id: requestId } = req.params;
@@ -147,14 +147,14 @@ const requestsController = {
         const requestsAssociations = await Request.findAll({
             where: { association_id: associationId },
             include: [
-                { model: Animal, as: "animal" }, 
+                { model: Animal, as: "animal" },
                 { model: Association, as: "association", include: [{ model: User, as: "user" }] }, // Inclure User dans Association
                 { model: Family, as: "family", include: [{ model: User, as: "user" }] },  // Inclure User dans Family
             ],
-             order: [
-        ["animal_id", "ASC"], // Tri initial par animal_id
-        ["created_at", "ASC"], // Tri par created_at
-         ],
+            order: [
+                ["animal_id", "ASC"], // Tri initial par animal_id
+                ["created_at", "ASC"], // Tri par created_at
+            ],
         });
 
         res.json(requestsAssociations);
@@ -167,7 +167,7 @@ const requestsController = {
         const { id: requestId } = req.params;
 
         // JOI validation
-        
+
         const { error } = validateAndSanitize.updateRequestAssociation.validate(req.body);
         if (error) {
             return next(new ValidationError());
