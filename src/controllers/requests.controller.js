@@ -121,16 +121,47 @@ const requestsController = {
             return next(new ValidationError());
         }
 
+        const statusList = ["En attente", "Acceptée", "Refusée", "Terminée"]; // Si changement à mettre à jour dans le front également (ManageRequest - Dashboard)
+        const newStatus = req.body.status;
+
+        const foundStatus = statusList.find((status) => status === newStatus);
+        if (!foundStatus) {
+            return next(new ValidationError("Ce statut n'est pas autorisé"));
+        }
+
         const request = await Request.findOne({
             where: { id: requestId, association_id: associationId },
         });
-
         if (!request) {
             return next(new NotFoundError());
         }
 
-        const newStatus = req.body.status;
         const updatedRequestAssociation = await request.update({ status: newStatus });
+
+        const animal = await Animal.findByPk(request.animal_id);
+        if (!animal) {
+            return next(new NotFoundError());
+        }
+
+        if (newStatus === "Acceptée") {
+            await animal.update({ family_id: request.family_id, availability: false });
+        }
+        if (newStatus === "En attente" || newStatus === "Refusée" || newStatus === "Terminée") {
+            if (animal.family_id === request.family_id) {
+                await animal.update({ family_id: null });
+            }
+        }
+
+        // Rechercher si il existe deja une demande accepté (même association_id et animal_id avec status accepté)
+        // Passer cette demande à Terminée (ou Refusée ?)
+        // Renvoyer toutes les requêtes ? Ou renvoyer les requêtes modifiées seulement
+
+        console.log(animal);
+
+        // En attente : family-id null si family_id sur animal = family id
+        // Validé : ajouter family_id sur animal et indisponible
+        // Refusé : family-id null si family_id sur animal = family id
+        // Terminée : family-id null si family_id sur animal = family id
 
         res.json(updatedRequestAssociation);
     },
