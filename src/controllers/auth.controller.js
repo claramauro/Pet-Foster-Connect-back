@@ -277,7 +277,7 @@ const authController = {
             return next(new AuthentificationError("Missing authorization token"));
         }
         const token = authorization.split(" ")[1];
-        
+
         const decoded = jwt.verify(token, process.env.JWT_RESET_PASSWORD_SECRET);
 
         if (!decoded) {
@@ -285,7 +285,7 @@ const authController = {
         }
 
         /* Vérifie l'email de l'utilisateur */
-        const userToUpdate = await User.findByPk(email);
+        const userToUpdate = await User.findOne({ where: { email: email } });
 
         if (!userToUpdate) {
             return next(new NotFoundError());
@@ -297,7 +297,7 @@ const authController = {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        await userToUpdate.update({password: hashedPassword});
+        await userToUpdate.update({ password: hashedPassword });
 
         res.json({ message: "Modification prise en compte" });
     },
