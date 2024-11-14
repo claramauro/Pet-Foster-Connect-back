@@ -85,7 +85,7 @@ const validateAndSanitize = {
         availability: JoiSanitized.boolean(),
         family_id: Joi.number().integer().min(1).optional(),
     }),
-    updateRequest: JoiSanitized.object({
+    updateRequestAssociation: JoiSanitized.object({
         status: JoiSanitized.string().trim().min(1).sanitize().required(),
     }),
     familyOrAssociationRegister: JoiSanitized.object({
