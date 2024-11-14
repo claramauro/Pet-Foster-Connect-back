@@ -270,6 +270,13 @@ const authController = {
         const { email } = req.params;
         const { password, confirmPassword } = req.body;
 
+        // Validation des entrées et vérification si la famille et l'association existent
+        const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
+
+        if (error) {
+            return next(new ValidationError());
+        }
+
         /* Vérifie le token dans les header */
         const authorization = req.headers.authorization;
 
