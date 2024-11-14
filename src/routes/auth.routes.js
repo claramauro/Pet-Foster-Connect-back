@@ -11,4 +11,10 @@ authRoutes.post("/login", catchErrors(authController.login));
 authRoutes.get("/family/:familyId", catchErrors(authController.getFamilyUser));
 authRoutes.get("/association/:associationId", catchErrors(authController.getAssociationUser));
 
+/* Reset password*/
+
+authRoutes.post("/resetpassword", catchErrors(authController.resetPassword));
+authRoutes.get("/resetpassword/confirm", catchErrors(authController.resetPasswordConfirm));
+authRoutes.patch("/updatepassword/:email", catchErrors(authController.updatePassword));
+
 export { authRoutes };

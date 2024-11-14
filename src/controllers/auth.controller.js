@@ -1,12 +1,19 @@
 import { Family, Association, User, sequelize } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { AuthentificationError, NotFoundError, ValidationError } from "../utils/customErrors.js";
+import {
+    AuthentificationError,
+    AuthorizationError,
+    NotFoundError,
+    ServerError,
+    ValidationError,
+} from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
 import { createAuthToken } from "../utils/createAuthToken.js";
 import { geocodeAddress } from "../utils/geocodeAdress.js";
 import { getRelativePathOfImage } from "../utils/imageManager.js";
 import { generateSlug } from "../utils/generateSlug.js";
-import { sendConfirmationEmailDev } from "../utils/sendEmail/sendConfirmationEmailDev.js";
+import { sendMailResetPassword } from "../utils/sendEmail/sendMailResetPassword.js";
+import jwt from "jsonwebtoken";
 
 const authController = {
     register: async (req, res, next) => {
@@ -131,11 +138,6 @@ const authController = {
                 { transaction },
             );
 
-
-            const destinary = name;
-
-            await sendConfirmationEmailDev(email, destinary);
-
             await transaction.commit();
 
             const userWithoutPassword = await User.findByPk(user.id, {
@@ -229,6 +231,85 @@ const authController = {
 
         res.status(200).json(user);
     },
+
+    resetPassword: async (req, res, next) => {
+        const { email } = req.body;
+
+        const user = await User.findOne({ where: { email: email } });
+
+        if (!user) {
+            return next(new NotFoundError());
+        }
+
+        const responseEmail = await sendMailResetPassword(email);
+
+        if (responseEmail.success === false) {
+            return next(new ServerError());
+        }
+
+        res.json({ message: "Email envoyé. (Vérifiez les mails indésirables)" });
+    },
+
+    resetPasswordConfirm: async (req, res, next) => {
+        const token = req.query.token;
+
+        if (!token) {
+            return next(new NotFoundError());
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_RESET_PASSWORD_SECRET);
+
+        if (!decoded) {
+            return next(new AuthorizationError("Ce lien est expiré"));
+        }
+
+        return res.json(decoded);
+    },
+
+    updatePassword: async (req, res, next) => {
+        const { email } = req.params;
+        const { password, confirmPassword } = req.body;
+
+        // Validation des entrées et vérification si la famille et l'association existent
+        const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
+
+        if (error) {
+            return next(new ValidationError());
+        }
+
+        /* Vérifie le token dans les header */
+        const authorization = req.headers.authorization;
+
+        if (!authorization) {
+            return next(new AuthentificationError("Missing authorization token"));
+        }
+        const token = authorization.split(" ")[1];
+
+        const decoded = jwt.verify(token, process.env.JWT_RESET_PASSWORD_SECRET);
+
+        if (!decoded) {
+            return next(new AuthorizationError("Ce lien est expiré"));
+        }
+
+        /* Vérifie l'email de l'utilisateur */
+        const userToUpdate = await User.findOne({ where: { email: email } });
+
+        if (!userToUpdate) {
+            return next(new NotFoundError());
+        }
+
+        if (password !== confirmPassword) {
+            return next(new AuthentificationError("Les mots de passe ne correspondent pas."));
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await userToUpdate.update({ password: hashedPassword });
+
+        res.json({ message: "Modification prise en compte" });
+    },
+
 };
+
 
 export { authController };
