@@ -326,43 +326,6 @@ const dashboardController = {
 
         return res.sendStatus(204);
     },
-
-    getRequests: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
-        const association = await Association.findByPk(associationId);
-        if (!association) {
-            return next(new NotFoundError());
-        }
-        const requests = await Request.findAll({
-            where: {
-                association_id: associationId,
-            },
-            include: ["family", "animal"],
-        });
-        res.json(requests);
-    },
-
-    updateRequest: async (req, res, next) => {
-        const { association_id: associationId } = req.user;
-        const { id: requestId } = req.params;
-        // JOI validation
-        const { error } = validateAndSanitize.updateRequest.validate(req.body);
-        if (error) {
-            return next(new ValidationError());
-        }
-
-        const request = await Request.findOne(requestId, {
-            where: {
-                association_id: associationId,
-            },
-        });
-        if (!request) {
-            return next(new NotFoundError());
-        }
-        const newStatus = req.body.status;
-        const updatedRequest = await request.update({ status: newStatus });
-        res.json(updatedRequest);
-    },
-};
+}
 
 export { dashboardController };
