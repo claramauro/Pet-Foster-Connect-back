@@ -233,12 +233,29 @@ VALUES ('Oscar', 'Mâle', 'Golden Retriever', 'Chien', 2, 'Grand',
         'zara-40');
 
 -- Seed pour la table request
-INSERT INTO "request" ("status", "family_id", "animal_id", "association_id")
-VALUES ('En attente', 2, 2, 2),
-       ('En attente', 1, 3, 3),
-       ('Validée', 1, 1, 1),
-       ('Validée', 3, 6, 3),
-       ('Rejetée', 3, 4, 2);
+INSERT INTO "request" ("status", "family_id", "animal_id", "association_id", "created_at")
+VALUES ('En attente', 3, 12, 2, '2024-09-29T15:13:42.480Z'),
+       ('En attente', 2, 19, 1, '2024-10-20T15:13:42.480Z'),
+       ('Acceptée', 1, 1, 1, '2024-10-23T15:13:42.480Z'),
+       ('En attente', 2, 25, 3, '2024-10-25T15:13:42.480Z'),
+       ('En attente', 1, 3, 3, '2024-10-28T15:13:42.480Z'),
+       ('En attente', 2, 3, 1, '2024-10-29T10:00:42.480Z'),
+       ('En attente', 1, 3, 1, '2024-11-01T15:13:42.480Z'),
+       ('En attente', 1, 19, 1, '2024-11-02T15:13:42.480Z'),
+       ('En attente', 2, 2, 2, '2024-11-04T15:13:42.480Z'),
+       ('En attente', 3, 25, 3, '2024-11-04T20:13:42.480Z'),
+       ('Rejetée', 3, 4, 2, '2024-11-04T15:13:42.480Z'),
+       ('En attente', 2, 12, 2, '2024-11-05T19:13:42.480Z'),
+       ('En attente', 2, 3, 3, '2024-11-08T15:13:42.480Z'),
+       ('En attente', 3, 3, 1, '2024-11-09T15:13:42.480Z'),
+       ('En attente', 1, 2, 2, '2024-11-10T15:10:42.480Z'),
+       ('En attente', 1, 25, 3, '2024-11-10T15:13:42.480Z'),
+       ('En attente', 3, 2, 2, '2024-11-11T15:13:42.480Z'),
+       ('En attente', 3, 3, 3, '2024-11-13T12:34:42.480Z'),
+       ('En attente', 3, 19, 1, '2024-11-13T15:13:42.480Z'),
+       ('Acceptée', 3, 6, 3, '2024-11-13T15:13:42.480Z'),
+       ('En attente', 1, 12, 2, '2024-11-14T14:13:42.480Z');
+
 
 -- Fin de la transaction
 COMMIT;
