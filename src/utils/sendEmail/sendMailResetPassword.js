@@ -7,7 +7,7 @@ dotenv.config();
 async function sendMailResetPassword(email) {
 
     /* Création du token avec une expiration à 30 min */
-    const resetToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "30m" });
+    const resetToken = jwt.sign({ email }, process.env.JWT_RESET_PASSWORD_SECRET, { expiresIn: "30m" });
 
     console.log(resetToken);
 

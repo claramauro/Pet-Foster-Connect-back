@@ -257,14 +257,51 @@ const authController = {
             return next(new NotFoundError());
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_RESET_PASSWORD_SECRET);
 
         if (!decoded) {
-            return next(new AuthorizationError());
+            return next(new AuthorizationError("Ce lien est expiré"));
         }
 
         return res.json(decoded);
     },
+
+    updatePassword: async (req, res, next) => {
+        const { email } = req.params;
+        const { password, confirmPassword } = req.body;
+
+        /* Vérifie le token dans les header */
+        const authorization = req.headers.authorization;
+
+        if (!authorization) {
+            return next(new AuthentificationError("Missing authorization token"));
+        }
+        const token = authorization.split(" ")[1];
+        
+        const decoded = jwt.verify(token, process.env.JWT_RESET_PASSWORD_SECRET);
+
+        if (!decoded) {
+            return next(new AuthorizationError("Ce lien est expiré"));
+        }
+
+        /* Vérifie l'email de l'utilisateur */
+        const userToUpdate = await User.findByPk(email);
+
+        if (!userToUpdate) {
+            return next(new NotFoundError());
+        }
+
+        if (password !== confirmPassword) {
+            return next(new AuthentificationError("Les mots de passe ne correspondent pas."));
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await userToUpdate.update({password: hashedPassword});
+
+        res.json({ message: "Modification prise en compte" });
+    },
+
 };
 
 
