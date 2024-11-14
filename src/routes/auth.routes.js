@@ -14,5 +14,7 @@ authRoutes.get("/association/:associationId", catchErrors(authController.getAsso
 /* Reset password*/
 
 authRoutes.post("/resetpassword", catchErrors(authController.resetPassword));
+authRoutes.get("/resetpassword/confirm", catchErrors(authController.resetPasswordConfirm));
+authRoutes.patch("/updatepassword/:email", catchErrors(authController.updatePassword));
 
 export { authRoutes };

@@ -1,12 +1,19 @@
 import { Family, Association, User, sequelize } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { AuthentificationError, NotFoundError, ServerError, ValidationError } from "../utils/customErrors.js";
+import {
+    AuthentificationError,
+    AuthorizationError,
+    NotFoundError,
+    ServerError,
+    ValidationError,
+} from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
 import { createAuthToken } from "../utils/createAuthToken.js";
 import { geocodeAddress } from "../utils/geocodeAdress.js";
 import { getRelativePathOfImage } from "../utils/imageManager.js";
 import { generateSlug } from "../utils/generateSlug.js";
 import { sendMailResetPassword } from "../utils/sendEmail/sendMailResetPassword.js";
+import jwt from "jsonwebtoken";
 
 const authController = {
     register: async (req, res, next) => {
@@ -242,6 +249,23 @@ const authController = {
 
         res.json({ message: "Email envoyé. (Vérifiez les mails indésirables)" });
     },
+
+    resetPasswordConfirm: async (req, res, next) => {
+        const token = req.query.token;
+
+        if (!token) {
+            return next(new NotFoundError());
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        if (!decoded) {
+            return next(new AuthorizationError());
+        }
+
+        return res.json(decoded);
+    },
 };
+
 
 export { authController };

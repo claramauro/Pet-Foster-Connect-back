@@ -9,8 +9,10 @@ async function sendMailResetPassword(email) {
     /* Création du token avec une expiration à 30 min */
     const resetToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "30m" });
 
+    console.log(resetToken);
+
     /* Création du lien de réinitialisation du mot de passe avec le token */
-    const resetLink = `${process.env.REACT_URL}/reinitialisation-mot-de-passe/${resetToken}`;
+    const resetLink = `${process.env.REACT_URL}/reinitialisation-mot-de-passe?token=${resetToken}`;
 
     try {
         // Détails du transporteur
