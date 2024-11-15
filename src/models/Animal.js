@@ -46,7 +46,6 @@ Animal.init(
         availability: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: true,
         },
         family_id: {
             type: DataTypes.INTEGER,

@@ -8,6 +8,8 @@ import { notFound, errorHandler } from "./src/middlewares/errorHandler.js";
 
 dotenv.config();
 
+import "./src/database/connection.js";
+
 const app = express();
 app.disable("x-powered-by");
 
