@@ -1,6 +1,11 @@
 import { Association, Animal, Request, sequelize, User, Family } from "../models/associations.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { ValidationError, NotFoundError, AuthorizationError, AuthentificationError } from "../utils/customErrors.js";
+import {
+    ValidationError,
+    NotFoundError,
+    AuthorizationError,
+    AuthentificationError,
+} from "../utils/customErrors.js";
 import {
     removeImage,
     getAbsolutePathOfImage,
@@ -10,52 +15,50 @@ import { generateSlug } from "../utils/generateSlug.js";
 import bcrypt from "bcrypt";
 
 const dashboardController = {
-  
     getAnimals: async (req, res, next) => {
-
         try {
             const { association_id: associationId } = req.user;
-    
+
             // Récupérer l'association à partir de son ID
 
             const association = await Association.findByPk(associationId);
             if (!association) {
-                return next(new NotFoundError('Association non trouvée'));
+                return next(new NotFoundError("Association non trouvée"));
             }
-    
+
             // Pagination : validation du paramètre `page`
 
             const currentPage = parseInt(req.query.page, 10) || 1; // Page courante, au moins 1
             const limit = 6; // Nombre d'animaux par page
             const offset = (currentPage - 1) * limit; // Calculer l'offset en fonction de la page
-    
+
             // Récupérer les animaux paginés avec leurs relations
 
             const paginationAnimals = await Animal.findAll({
                 include: [
-                    { 
-                        association: "association", 
-                        include: "department" // Inclure la table `department` associée à l'association
+                    {
+                        association: "association",
+                        include: "department", // Inclure la table `department` associée à l'association
                     },
-                    { 
-                        association: "family" // Inclure la table `family` pour chaque animal
+                    {
+                        association: "family", // Inclure la table `family` pour chaque animal
                     },
-                    { 
+                    {
                         association: "requests", // Inclure les demandes associées à l'animal
-                        required: false, // Inclure même si un animal n'a pas de demandes
+                        required: false, // Inclure l'animal même s'il n'a pas de demandes
                     },
                 ],
                 where: { association_id: associationId },
                 limit: limit, // Limiter le nombre d'animaux par page
                 offset: offset, // Calculer l'offset pour la pagination
             });
-    
+
             // Calculer le nombre total d'animaux pour l'association
 
             const totalCount = await Animal.count({
-                where: { association_id: associationId }
+                where: { association_id: associationId },
             });
-    
+
             // Renvoyer les résultats paginés avec informations sur la pagination
 
             res.json({
@@ -64,14 +67,13 @@ const dashboardController = {
                 totalCount: totalCount, // Nombre total d'animaux
                 limit: limit, // Nombre d'animaux par page
             });
-            
         } catch (error) {
             // Gestion des erreurs
-            console.error('Erreur lors de la récupération des animaux:', error);
+            console.error("Erreur lors de la récupération des animaux:", error);
             return next(error); // Lancer l'erreur au middleware de gestion des erreurs
         }
     },
-    
+
     storeAnimal: async (req, res, next) => {
         const { association_id: associationId } = req.user;
         if (!req.files || Object.keys(req.files).length === 0) {
@@ -110,7 +112,6 @@ const dashboardController = {
                     slug: slug,
                 },
                 { transaction }
-
             );
             await transaction.commit();
         } catch (error) {
@@ -138,15 +139,29 @@ const dashboardController = {
                 animalData[key] = value;
             }
         }
-        const animalToUpdate = await Animal.findByPk(animalId);
+        const animalToUpdate = await Animal.findByPk(animalId, {
+            include: [
+                {
+                    association: "association",
+                    include: "department", // Inclure la table `department` associée à l'association
+                },
+                {
+                    association: "family",
+                },
+                {
+                    association: "requests", // Inclure les demandes associées à l'animal
+                    required: false, // Inclure l'animal même s'il n'a pas de demandes
+                },
+            ],
+        });
         if (!animalToUpdate) {
             return next(new NotFoundError());
         }
         if (animalToUpdate.association_id !== associationId) {
             return next(
                 new AuthorizationError(
-                    "Cet animal ne fait pas partie de votre association. Modification non autorisée.",
-                ),
+                    "Cet animal ne fait pas partie de votre association. Modification non autorisée."
+                )
             );
         }
         // Dans le cas où une nouvelle image est téléchargée
@@ -195,8 +210,8 @@ const dashboardController = {
         if (animal.association_id !== associationId) {
             return next(
                 new AuthorizationError(
-                    "Cet animal ne fait pas partie de votre association. Suppression non autorisée.",
-                ),
+                    "Cet animal ne fait pas partie de votre association. Suppression non autorisée."
+                )
             );
         }
         const imageAbsolutePath = getAbsolutePathOfImage(animal.url_image);
@@ -241,7 +256,9 @@ const dashboardController = {
             if (associationData.password) {
                 if (associationData.password !== associationData.confirmPassword) {
                     await transaction.rollback();
-                    return next(new AuthentificationError("Les mots de passe ne correspondent pas."));
+                    return next(
+                        new AuthentificationError("Les mots de passe ne correspondent pas.")
+                    );
                 }
                 hashedPassword = await bcrypt.hash(associationData.password, 10);
             }
@@ -271,7 +288,7 @@ const dashboardController = {
                     description: associationData.description || associationToUpdate.description,
                     url_image: isImageChange ? relativePathNewImage : associationToUpdate.url_image,
                 },
-                { transaction },
+                { transaction }
             );
 
             req.absolutePathImage = null;
@@ -290,7 +307,7 @@ const dashboardController = {
                     email: associationData.email,
                     password: hashedPassword,
                 },
-                { transaction },
+                { transaction }
             );
 
             updatedAssociation = await updatedAssociation.reload({
@@ -301,7 +318,6 @@ const dashboardController = {
             await transaction.commit();
 
             res.json(updatedAssociation);
-
         } catch (error) {
             await transaction.rollback();
             next(error);
@@ -326,6 +342,6 @@ const dashboardController = {
 
         return res.sendStatus(204);
     },
-}
+};
 
 export { dashboardController };
