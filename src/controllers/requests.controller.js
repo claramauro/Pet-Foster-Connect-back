@@ -121,11 +121,10 @@ const requestsController = {
             return next(new ValidationError());
         }
 
-        const statusList = ["En attente", "Acceptée", "Refusée", "Terminée"]; // Si changement à mettre à jour dans le front également (ManageRequest - Dashboard)
+        const statusList = ["En attente", "Acceptée", "Refusée", "Terminée"]; // Si changement des status, à mettre à jour dans le front également (ManageRequest - Dashboard)
         const newStatus = req.body.status;
 
-        const foundStatus = statusList.find((status) => status === newStatus);
-        if (!foundStatus) {
+        if (!statusList.includes(newStatus)) {
             return next(new ValidationError("Ce statut n'est pas autorisé"));
         }
 
@@ -148,7 +147,7 @@ const requestsController = {
                 { transaction }
             );
             if (newStatus === "Acceptée") {
-                // Vérifié si il n'y a pas déjà une demande Accepté pour cet animal.
+                // Vérifier si il n'y a pas déjà une demande Accepté pour cet animal.
                 const acceptedRequests = await Request.findAll(
                     {
                         where: {
@@ -161,12 +160,9 @@ const requestsController = {
                 );
                 if (acceptedRequests.length >= 1) {
                     // Ne pas mettre a jour le status
-                    await transaction.rollback();
-                    return next(
-                        new ValidationError(
-                            "status",
-                            "Une demande est déjà acceptée pour cet animal, modification du statut annulé."
-                        )
+                    throw new ValidationError(
+                        "status",
+                        "Une demande est déjà acceptée pour cet animal, modification du statut annulé."
                     );
                 }
 
