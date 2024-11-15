@@ -90,6 +90,17 @@ const animalsController = {
             if (query.gender) animalWhere.gender = query.gender;
             if (query.association_id) animalWhere.association_id = query.association_id;
 
+             // Filtrer les animaux par disponibilité 
+
+             if (query.availability) {
+                if (query.availability === "Disponible") {
+                    animalWhere.availability = true;  // Animaux disponible 
+
+                } else if (query.availability === "Non disponible") {
+                    animalWhere.availability = false;  // Animaux non disponibles
+                }
+            }
+
             // Gestion association et animalWhere pour chercher la localisation via l'association
             if (query.department_id) associationWhereClause.department_id = query.department_id;
             if (query.association) associationWhereClause.id = query.association; //
