@@ -17,7 +17,7 @@ CREATE TABLE "animal"
     "description"    TEXT      NOT NULL,
     "url_image"      TEXT UNIQUE,
     "slug"           TEXT UNIQUE,
-    "availability"   BOOLEAN   NOT NULL,
+    "availability"   BOOLEAN   NOT NULL, 
     "family_id"      INTEGER,
     "association_id" INTEGER   NOT NULL,
     "created_at"     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

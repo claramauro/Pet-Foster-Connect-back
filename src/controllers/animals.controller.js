@@ -8,6 +8,9 @@ const animalsController = {
     index: async (req, res) => {
         /* Query pour la page d'accueil et pour récupérer le nombres total d'animaux */
         const animals = await Animal.findAll({
+            where: {
+                availability : true,  // Ajouter un filtre pour ne récupérer que les animaux disponibles
+              },
             include: [
                 { association: "association", include: "department" },
                 { association: "family" },
@@ -20,7 +23,11 @@ const animalsController = {
         const offset = (Number(currentPage) - 1) * 6; // Offset de 6 - 12 - 18... en fonction de la page courante
 
         const paginationAnimals = await Animal.findAll({
-            include: [
+            where: {
+                availability : true,  // Ajouter un filtre pour ne récupérer que les animaux disponibles
+              },
+              include: [
+
                 { association: "association", include: "department" },
                 { association: "family" },
             ],
@@ -89,18 +96,6 @@ const animalsController = {
             if (query.size) animalWhere.size = query.size;
             if (query.gender) animalWhere.gender = query.gender;
             if (query.association_id) animalWhere.association_id = query.association_id;
-
-
-            // Filtrer les animaux par disponibilité 
-
-            if (query.availability) {
-                if (query.availability === "Disponible") {
-                    animalWhere.availability = true;  // Animaux disponible 
-                    
-                } else if (query.availability === "Non disponible") {
-                    animalWhere.availability = false;  // Animaux non disponibles
-                }
-            }
 
             // Gestion association et animalWhere pour chercher la localisation via l'association
             if (query.department_id) associationWhereClause.department_id = query.department_id;
