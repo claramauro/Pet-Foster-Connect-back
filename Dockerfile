@@ -6,4 +6,4 @@ WORKDIR /src
 
 COPY . .
 
-CMD ["sh", "-c", "npm install && npm run dev --host 0.0.0.0"]
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then npm start; else npm run dev --host 0.0.0.0; fi"]
