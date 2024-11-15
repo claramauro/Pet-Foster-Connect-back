@@ -6,7 +6,6 @@ import { sendEmailAssociationForRequestAnimal } from "../utils/sendEmail/SendEma
 
 const animalsController = {
     index: async (req, res) => {
-        /* Query pour la page d'accueil et pour récupérer le nombres total d'animaux */
         const animals = await Animal.findAll({
             include: [
                 { association: "association", include: "department" },
@@ -35,9 +34,6 @@ const animalsController = {
     },
 
     findOne: async (req, res, next) => {
-        /*
-        fetch with req.params and return res.json() one association
-         */
         const { id } = req.params;
         const animal = await Animal.findByPk(id, {
             include: [
@@ -54,16 +50,8 @@ const animalsController = {
     },
 
     filter: async (req, res, next) => {
-        /*
-        fetch, filter with req.query and return res.json() all corresponding animals
-         */
-
-        // Middleware de gestion des queries pour vérifier si undefined ou non + transformer age récupéré en intervale (inférieur ou égal) - Ce middleware vient construire la requ$ete where qu'on va passer à sequelize
-
         const buildWhereClause = (query) => {
-            // On vient valider et sanitizer les entrées de la query
-
-            const { error, value } = validateAndSanitize.animalSearchFilter.validate(query);
+            const { error } = validateAndSanitize.animalSearchFilter.validate(query);
             if (error) {
                 return next(error);
             }
@@ -90,15 +78,9 @@ const animalsController = {
             if (query.gender) animalWhere.gender = query.gender;
             if (query.association_id) animalWhere.association_id = query.association_id;
 
-             // Filtrer les animaux par disponibilité 
-
-             if (query.availability) {
-                if (query.availability === "Disponible") {
-                    animalWhere.availability = true;  // Animaux disponible 
-
-                } else if (query.availability === "Non disponible") {
-                    animalWhere.availability = false;  // Animaux non disponibles
-                }
+            // Filtrer les animaux par disponibilité
+            if (query.availability) {
+                animalWhere.availability = query.availability;
             }
 
             // Gestion association et animalWhere pour chercher la localisation via l'association
@@ -110,6 +92,7 @@ const animalsController = {
 
         // On appelle buildWhereClause pour récupérer animalWhere et associationWhere
         const { animalWhere, associationWhere } = buildWhereClause(req.query);
+        console.log(animalWhere);
 
         const currentPage = req.query.page || 1;
         const limit = 6; // Nombre d'animaux max
