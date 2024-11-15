@@ -46,6 +46,7 @@ const validateAndSanitize = {
         association_id: JoiSanitized.string().trim().min(1).sanitize().optional(),
         department_id: JoiSanitized.string().trim().min(1).sanitize().optional(),
         page: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        availability: JoiSanitized.boolean().optional(),
     }),
     familyOrAssociationUpdate: JoiSanitized.object({
         name: JoiSanitized.string().trim().min(1).sanitize().optional(),
