@@ -50,16 +50,4 @@ dashboardAssociationRoutes.delete(
     catchErrors(dashboardController.destroyProfile)
 );
 
-dashboardAssociationRoutes.get(
-    "/association/request",
-    [verifyToken, isAssociationAuthorized],
-    catchErrors(dashboardController.getRequests)
-);
-
-dashboardAssociationRoutes.patch(
-    "/association/request/:id(\\d+)",
-    [verifyToken, isAssociationAuthorized],
-    catchErrors(dashboardController.updateRequest)
-);
-
 export { dashboardAssociationRoutes };

@@ -1,22 +1,15 @@
-import { Animal, Family, Association, Request, User } from "../models/associations.js";
-import { Sequelize } from "sequelize";
+import { Animal, Family, Association, Request, User, sequelize } from "../models/associations.js";
 import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { sendEmailAssociationForRequestAnimal } from "../utils/sendEmail/SendEmailAssociationForRequestAnimal.js";
 
 const requestsController = {
-
     // Pour les familles
-
-    // Créer une demande 
-
     createRequestFamily: async (req, res, next) => {
         const { family_id } = req.user;
         const { association_id, animal_id } = req.body;
 
-        // Validation des entrées et vérification si la famille et l'association existent
         const { error } = validateAndSanitize.createAnimalRequest.validate(req.body);
-
         if (error) {
             return next(new ValidationError());
         }
@@ -33,90 +26,49 @@ const requestsController = {
             return next(new NotFoundError());
         }
 
-        // Création de la demande
-
         const status = "En attente";
 
         const request = await Request.create({ status, family_id, animal_id, association_id });
 
         // Récupérer email association
-
-        // Recherche de l'association dans la base de données pour récupérer l'email
-
-        const association = await Association.findByPk(association_id);  // Assurez-vous que l'Association a un champ email
+        const association = await Association.findByPk(association_id);
         if (!association) {
             return next(new NotFoundError("Association introuvable"));
         }
 
         const emailAssociation = association.email_association;
 
-        // Avoir le nom de de la famille demandant l'hébergement
-
-        const familyName = family.name;
-
-        // Avoir le nom de l'animal objet de l'hébergement
-
-        const animalName = animal.name;
-
-        // Pour obtenir l'image de l'animal 
-
-        const imageAnimal = animal.url_image;
-
-        // Pour obtenir l'espèces de l'animal
-
-        const species = animal.species.toLowerCase();
-
-        // Objet 
-
         const emailContent = {
-            familyName,        // Nom de la famille
-            animalName,        // Nom de l'animal       
-            imageAnimal,       // Image de l'animal
-            species,
+            familyName: family.name,
+            animalName: animal.name,
+            imageAnimal: animal.url_image,
+            species: animal.species.toLowerCase(),
         };
 
         // Envoi de l'email à l'association pour l'informer de la demande
-
         await sendEmailAssociationForRequestAnimal(emailAssociation, emailContent);
-
-        // Réponse avec la demande créée et statut 201 (création réussie)
 
         res.status(201).json(request);
     },
 
-
-    // Avoir la liste des demandes
-
     getRequestsFamily: async (req, res, next) => {
-
-        // Extraire familyId et userId depuis le token décodé
-
         const { family_id: familyId } = req.user;
 
-        // Recherche de la famille par son ID
         const family = await Family.findByPk(familyId);
         if (!family) {
-            return next(new NotFoundError("Famille non trouvée"));  // Retourner une erreur si la famille n'est pas trouvée
+            return next(new NotFoundError("Famille non trouvée"));
         }
-
-        // Recherche des demandes associées à cette famille
 
         const requestsFamily = await Request.findAll({
             where: { family_id: familyId },
             include: [
                 { model: Animal, as: "animal" },
-                { model: Association, as: "association", include: [{ model: User, as: "user" }] }, // Inclure User dans Association
-                { model: Family, as: "family", include: [{ model: User, as: "user" }] },  // Inclure User dans Family
+                { model: Association, as: "association" },
             ],
-            order: [["created_at", "ASC"]], // Tri par created_at
+            order: [["created_at", "ASC"]],
         });
-
-        // Retourner les demandes et l'email de l'utilisateur
-        res.json({ requestsFamily });
-
+        res.json(requestsFamily);
     },
-
-    // Supprimer une demande 
 
     destroyRequestFamily: async (req, res, next) => {
         const { id: requestId } = req.params;
@@ -129,13 +81,10 @@ const requestsController = {
 
         await requestFamilyToDestroy.destroy();
 
-        res.status(204).send(); // Pas de contenu à renvoyer après suppression
+        res.status(204).send();
     },
 
     // Pour les associations
-
-    // Avoir la liste des demandes d'une famille 
-
     getRequestsAssociations: async (req, res, next) => {
         const { association_id: associationId } = req.user;
         const association = await Association.findByPk(associationId);
@@ -148,43 +97,94 @@ const requestsController = {
             where: { association_id: associationId },
             include: [
                 { model: Animal, as: "animal" },
-                { model: Association, as: "association", include: [{ model: User, as: "user" }] }, // Inclure User dans Association
-                { model: Family, as: "family", include: [{ model: User, as: "user" }] },  // Inclure User dans Family
+                {
+                    model: Family,
+                    as: "family",
+                    include: [{ model: User, as: "user", attributes: ["email"] }],
+                },
             ],
             order: [
-                ["animal_id", "ASC"], // Tri initial par animal_id
-                ["created_at", "ASC"], // Tri par created_at
+                ["animal_id", "ASC"],
+                ["created_at", "ASC"],
             ],
         });
 
         res.json(requestsAssociations);
     },
 
-    // Modifier le statut d'une demande par l'association
-
     updateRequestAssociation: async (req, res, next) => {
         const { association_id: associationId } = req.user;
         const { id: requestId } = req.params;
-
-        // JOI validation
 
         const { error } = validateAndSanitize.updateRequestAssociation.validate(req.body);
         if (error) {
             return next(new ValidationError());
         }
 
+        const statusList = ["En attente", "Acceptée", "Refusée", "Terminée"]; // Si changement des status, à mettre à jour dans le front également (ManageRequest - Dashboard)
+        const newStatus = req.body.status;
+
+        if (!statusList.includes(newStatus)) {
+            return next(new ValidationError("Ce statut n'est pas autorisé"));
+        }
+
         const request = await Request.findOne({
             where: { id: requestId, association_id: associationId },
         });
-
         if (!request) {
             return next(new NotFoundError());
         }
 
-        const newStatus = req.body.status;
-        const updatedRequestAssociation = await request.update({ status: newStatus });
+        const animal = await Animal.findByPk(request.animal_id);
+        if (!animal) {
+            return next(new NotFoundError());
+        }
 
-        res.json(updatedRequestAssociation);
+        const transaction = await sequelize.transaction();
+        try {
+            const updatedRequestAssociation = await request.update(
+                { status: newStatus },
+                { transaction }
+            );
+            if (newStatus === "Acceptée") {
+                // Vérifier si il n'y a pas déjà une demande Accepté pour cet animal.
+                const acceptedRequests = await Request.findAll(
+                    {
+                        where: {
+                            animal_id: animal.id,
+                            association_id: associationId,
+                            status: "Acceptée",
+                        },
+                    },
+                    { transaction }
+                );
+                if (acceptedRequests.length >= 1) {
+                    // Ne pas mettre a jour le status
+                    throw new ValidationError(
+                        "status",
+                        "Une demande est déjà acceptée pour cet animal, modification du statut annulé."
+                    );
+                }
+
+                await animal.update(
+                    { family_id: request.family_id, availability: false },
+                    { transaction }
+                );
+            } else if (
+                newStatus === "En attente" ||
+                newStatus === "Refusée" ||
+                newStatus === "Terminée"
+            ) {
+                if (animal.family_id === request.family_id) {
+                    await animal.update({ family_id: null }, { transaction });
+                }
+            }
+            await transaction.commit();
+            res.json(updatedRequestAssociation);
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
+        }
     },
 };
 
