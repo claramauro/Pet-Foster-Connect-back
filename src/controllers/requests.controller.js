@@ -1,4 +1,4 @@
-import { Animal, Family, Association, Request, User } from "../models/associations.js";
+import { Animal, Family, Association, Request, User, sequelize } from "../models/associations.js";
 import { ValidationError, NotFoundError } from "../utils/customErrors.js";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
 import { sendEmailAssociationForRequestAnimal } from "../utils/sendEmail/SendEmailAssociationForRequestAnimal.js";
@@ -136,34 +136,59 @@ const requestsController = {
             return next(new NotFoundError());
         }
 
-        const updatedRequestAssociation = await request.update({ status: newStatus });
-
         const animal = await Animal.findByPk(request.animal_id);
         if (!animal) {
             return next(new NotFoundError());
         }
 
-        if (newStatus === "Acceptée") {
-            await animal.update({ family_id: request.family_id, availability: false });
-        }
-        if (newStatus === "En attente" || newStatus === "Refusée" || newStatus === "Terminée") {
-            if (animal.family_id === request.family_id) {
-                await animal.update({ family_id: null });
+        const transaction = await sequelize.transaction();
+        try {
+            const updatedRequestAssociation = await request.update(
+                { status: newStatus },
+                { transaction }
+            );
+            if (newStatus === "Acceptée") {
+                // Vérifié si il n'y a pas déjà une demande Accepté pour cet animal.
+                const acceptedRequests = await Request.findAll(
+                    {
+                        where: {
+                            animal_id: animal.id,
+                            association_id: associationId,
+                            status: "Acceptée",
+                        },
+                    },
+                    { transaction }
+                );
+                if (acceptedRequests.length >= 1) {
+                    // Ne pas mettre a jour le status
+                    await transaction.rollback();
+                    return next(
+                        new ValidationError(
+                            "status",
+                            "Une demande est déjà acceptée pour cet animal, modification du statut annulé."
+                        )
+                    );
+                }
+
+                await animal.update(
+                    { family_id: request.family_id, availability: false },
+                    { transaction }
+                );
+            } else if (
+                newStatus === "En attente" ||
+                newStatus === "Refusée" ||
+                newStatus === "Terminée"
+            ) {
+                if (animal.family_id === request.family_id) {
+                    await animal.update({ family_id: null }, { transaction });
+                }
             }
+            await transaction.commit();
+            res.json(updatedRequestAssociation);
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
         }
-
-        // Rechercher si il existe deja une demande accepté (même association_id et animal_id avec status accepté)
-        // Passer cette demande à Terminée (ou Refusée ?)
-        // Renvoyer toutes les requêtes ? Ou renvoyer les requêtes modifiées seulement
-
-        console.log(animal);
-
-        // En attente : family-id null si family_id sur animal = family id
-        // Validé : ajouter family_id sur animal et indisponible
-        // Refusé : family-id null si family_id sur animal = family id
-        // Terminée : family-id null si family_id sur animal = family id
-
-        res.json(updatedRequestAssociation);
     },
 };
 
