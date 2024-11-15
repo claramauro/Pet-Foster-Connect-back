@@ -4,11 +4,11 @@ import { router } from "./src/routes/routes.js";
 import cors from "cors";
 import path from "node:path";
 import cookieParser from "cookie-parser";
+import { notFound, errorHandler } from "./src/middlewares/errorHandler.js";
 
 dotenv.config();
 
 import "./src/database/connection.js";
-import { notFound, errorHandler } from "./src/middlewares/errorHandler.js";
 
 const app = express();
 app.disable("x-powered-by");
