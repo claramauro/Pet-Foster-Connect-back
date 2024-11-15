@@ -1,54 +1,57 @@
 networks:
-    nodejs:
-        driver: bridge
+  nodejs:
+    driver: bridge
 
 services:
-    # Postgres Service
-    pg-petfoster:
-        image: postgres:16.3-alpine3.20
-        volumes:
-            - db_data:/var/lib/postgresql/data
-            - ./src/data/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
-            - ./src/data/seed_tables.sql:/docker-entrypoint-initdb.d/seed_tables.sql
+  # Postgres Service
+  pg-petfoster:
+    image: postgres:16.3-alpine3.20
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./src/data/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ./src/data/seed_tables.sql:/docker-entrypoint-initdb.d/seed_tables.sql
 
-        networks:
-            - nodejs
-        environment:
-            POSTGRES_USER: ${POSTGRES_USER}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_DB: ${POSTGRES_DB}
-        expose:
-            - "5432" # Port interne de PostgreSQL dans le conteneur
-        ports:
-            - "5435:5432" # Mappe le port local 5435 au port interne 5432
-        env_file:
-            - .env
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-            start_period: 15s
-            interval: 15s
-            timeout: 5s
-            retries: 5
+    networks:
+      - nodejs
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    expose:
+      - "5432" # Port interne de PostgreSQL dans le conteneur
+    ports:
+      - "5435:5432" # Mappe le port local 5435 au port interne 5432
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      start_period: 15s
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
-    # Backend Service
-    api-petfoster:
-        build:
-          context: .
-          dockerfile: Dockerfile
-        volumes:
-            - .:/src
-        networks:
-            - nodejs
-        depends_on:
-            pg-petfoster:
-                condition: service_healthy
+  # Backend Service
+  api-petfoster:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always   # Redémarre automatiquement en cas d'échec
+    volumes:
+      - .:/src
+    networks:
+      - nodejs
+    depends_on:
+      pg-petfoster:
+        condition: service_healthy
 
-        expose:
-            - "5050"
-        ports:
-            - "5050:5050"
-        env_file:
-            - .env
+    expose:
+      - "5050"
+    ports:
+      - "5050:5050"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=${NODE_ENV}
 
 volumes:
-  db_data: {}
+  db_data: { }
