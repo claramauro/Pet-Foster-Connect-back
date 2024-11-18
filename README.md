@@ -20,7 +20,29 @@ tables et seed)
 
 ## Mise en production back-end
 
-### Étape 1 : Installer NGINX sur le VPS
+### Étape 1 : Importer le repository et préparer l'environnement
+
+1. **Cloner le repository** :
+
+    ```bash
+    git clone https://<url-du-repository>.git
+    ```
+
+2. **Se rendre dans le répertoire du projet** :
+
+    ```bash
+    cd <nom-du-dossier-cloné>
+    ```
+
+3. **Créer le fichier `.env`** :
+   Le fichier `.env` est nécessaire pour définir les variables d'environnement utilisées par l'application. Il est
+   important de remplir ce fichier en fonction des variables spécifiques au projet.
+
+    ```bash
+    nano .env
+    ```
+
+### Étape 2 : Installer NGINX sur le VPS
 
 1. **Mettre à jour les paquets le VPS** :
    Exécuter cette commande pour mettre à jour les dépôts et les paquets du serveur :
@@ -50,7 +72,7 @@ tables et seed)
     sudo systemctl status nginx
     ```
 
-    Si le service n'est pas actif, démarrer avec :
+   Si le service n'est pas actif, démarrer avec :
 
     ```bash
     sudo systemctl start nginx
@@ -58,7 +80,7 @@ tables et seed)
 
 ---
 
-### Étape 2 : Configurer NGINX pour rediriger le trafic vers l'API
+### Étape 3 : Configurer NGINX pour rediriger le trafic vers l'API
 
 1. **Créer les fichiers de configuration** :
    Crée un fichier de configuration dans le répertoire `/etc/nginx/sites-available/` :
@@ -119,13 +141,71 @@ tables et seed)
     sudo nginx -t
     ```
 
-    Si tout est correct :
+   Si tout est correct :
 
     ```bash
     nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+5. **Redémarrer NGINX**
+
+   ```bash
+   sudo systemctl restart nginx
+   ```
+
+   ## OU si Nginx est dans le docker compose passer étape 2 et 3 :
+
+1. **Créer à la racine du repo un fichier ``nginx.conf``** :
+
+   Exemple de fichier de configuration NGINX :
+   Dans le cadre d'une configuration de Nginx avec docker compose, `events` et `htpp` sont obligatoires.
+
+    ```ngnix
+   events {
+    worker_connections 768;
+   }
+
+   http {
+   
+   server {
+   listen 80;
+   server_name example.com www.example.com;  # Remplace par ton domaine
+   
+       # Redirige HTTP vers HTTPS
+       return 301 https://$host$request_uri;
+   }
+   
+   server {
+   listen 443 ssl;
+   server_name <nom-de-domaine>;
+
+    ssl_certificate /etc/letsencrypt/live/<nom-de-domaine>/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/<nom-de-domaine>/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Reverse proxy pour toutes les autres requêtes vers le backend
+    location / {
+        proxy_pass http://<nom-container>:5050;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    # Cache des images pendant 30 jours
+    location /images/ {
+        root /usr/share/nginx/html;  # Répertoire des fichiers statiques montés depuis './public'
+        try_files $uri $uri/ =404;
+        expires 30d;  # Le cache des images dure 30 jours
+        add_header Cache-Control "public, max-age=2592000";  # Cache pendant 30 jours
+        add_header Access-Control-Allow-Origin <URL du front>; 
+        add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
+		    add_header Access-Control-Allow-Headers 'Origin, X-Requested-With, Content-Type, Accept'  
+	  }
+   }
+   }
     ```
 
-### Étape 3 : Configurer HTTPS
+### Étape 4 : Configurer HTTPS
 
 1. **Installer Certbot pour Let's Encrypt** :
 
@@ -148,43 +228,22 @@ Certbot va automatiquement configurer le fichier NGINX pour utiliser SSL et ajou
 
 ---
 
-### Étape 4 : Redémarrer NGINX
-
-```bash
-sudo systemctl restart nginx
-```
-
-### Étape 5 : Importer le repository et préparer l'environnement
-
-1. **Cloner le repository** :
-
-    ```bash
-    git clone https://<url-du-repository>.git
-    ```
-
-2. **Se rendre dans le répertoire du projet** :
-
-    ```bash
-    cd <nom-du-dossier-cloné>
-    ```
-
-3. **Créer le fichier `.env`** :
-   Le fichier `.env` est nécessaire pour définir les variables d'environnement utilisées par l'application. Il est
-   important de remplir ce fichier en fonction des variables spécifiques au projet.
-
-    ```bash
-    nano .env
-    ```
-
 ### Étape 6 : Lancer l'application avec Docker Compose
 
 1. **Lancer les conteneurs avec Docker Compose** :
    Avant de démarrer les conteneurs, s'assurer que Docker et Docker Compose sont installés sur le VPS.
 
     ```bash
-    sudo docker-compose up -d
+    sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
     ```
+2. **Lancer le script create_tables et seed_tables (uniquement à l'initialisation)** :
+   Le mot de passe de la base de donnée sera demandé à chaque étape (suppression db, creation nouvelle db, creation des
+   tables et seed)
 
-## Lancer docker en prod :
+   ```
+   sudo docker compose exec api-petfoster npm run db:reset
+   ```
+   
 
-    docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+    
