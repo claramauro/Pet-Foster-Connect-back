@@ -11,6 +11,7 @@ services:
     volumes:
       - ./public:/usr/share/nginx/html # Permet le montage du dossier public
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt # Montée des certificats SSL depuis l'hôte
     depends_on:
       - api-petfoster
     restart: always
