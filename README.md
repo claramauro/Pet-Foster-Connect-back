@@ -50,7 +50,7 @@ tables et seed)
     sudo systemctl status nginx
     ```
 
-   Si le service n'est pas actif, démarrer avec :
+    Si le service n'est pas actif, démarrer avec :
 
     ```bash
     sudo systemctl start nginx
@@ -74,25 +74,25 @@ tables et seed)
     # Redirection HTTP vers HTTPS
     server {
         listen 80;
-        server_name <nom-de-domaine>; 
-     
+        server_name <nom-de-domaine>;
+
         # Redirige le trafic HTTP vers HTTPS
         return 301 https://$host$request_uri;
     }
-    
+
     # Configuration pour HTTPS (Port 443)
     server {
         listen 443 ssl;
         server_name <nom-de-domaine>
-    
+
         # Certificat SSL de Let's Encrypt
         ssl_certificate /etc/letsencrypt/live/<nom-de-domaine>/fullchain.pem;
         ssl_certificate_key /etc/letsencrypt/live/<nom-de-domaine>/privkey.pem;
-    
+
         # Configuration SSL recommandée
         include /etc/letsencrypt/options-ssl-nginx.conf;
         ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-    
+
         location / {
             # Reverse proxy vers le conteneur Docker API sur le port 5050
             proxy_pass http://127.0.0.1:5050;
@@ -103,6 +103,7 @@ tables et seed)
         }
     }
     ```
+
 3. **Créer un lien symbolique dans `sites-enabled/`** :
    Pour activer ce fichier de configuration, créer un lien symbolique dans le répertoire
    `/etc/nginx/sites-enabled/` :
@@ -118,7 +119,7 @@ tables et seed)
     sudo nginx -t
     ```
 
-   Si tout est correct :
+    Si tout est correct :
 
     ```bash
     nginx: configuration file /etc/nginx/nginx.conf test is successful
@@ -183,3 +184,7 @@ sudo systemctl restart nginx
     ```bash
     sudo docker-compose up -d
     ```
+
+## Lancer docker en prod :
+
+    docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
