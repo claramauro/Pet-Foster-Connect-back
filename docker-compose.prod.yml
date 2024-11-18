@@ -1,3 +1,16 @@
 services:
   api-petfoster:
-      restart: always   # Redémarre automatiquement en cas d'échec
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-container
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./public:/usr/share/nginx/html # Permet le montage du dossier public
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api-petfoster
+    restart: always
