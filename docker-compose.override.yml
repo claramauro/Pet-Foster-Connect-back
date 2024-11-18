@@ -1,0 +1,11 @@
+# Override Docker Compose Environnement Dev
+services:
+  # Postgres Service
+  pg-petfoster:
+    volumes:
+      - ./src/data/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ./src/data/seed_tables.sql:/docker-entrypoint-initdb.d/seed_tables.sql
+    expose:
+      - "5432" # Port interne de PostgreSQL dans le conteneur
+    ports:
+      - "5435:5432" # Mappe le port local 5435 au port interne 5432
