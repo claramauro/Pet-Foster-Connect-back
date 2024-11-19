@@ -16,10 +16,10 @@ app.disable("x-powered-by");
 app.use(
     cors({
         origin: [
-            "http://localhost/",
-            "http://172.19.0.2/",
-            "http://172.19.0.2:5173/",
-            "http://localhost:5173/",
+            "http://localhost",
+            "http://172.19.0.2",
+            "http://172.19.0.2:5173",
+            "http://localhost:5173",
             process.env.REACT_URL,
         ],
         credentials: true,
