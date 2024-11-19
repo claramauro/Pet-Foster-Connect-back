@@ -331,14 +331,14 @@ const dashboardController = {
             return next(new NotFoundError());
         }
         const imageAbsolutePath = getAbsolutePathOfImage(association.url_image);
-        await removeImage(imageAbsolutePath);
 
-        const userToDestroy = await Family.findByPk(userId);
+        const userToDestroy = await User.findByPk(userId);
         if (!userToDestroy) {
             return next(new NotFoundError());
         }
 
-        await userToDestroy.destroy();
+        await association.destroy(); // Supprime aussi l'utilisateur correspondant sur la table user (delete cascade)
+        await removeImage(imageAbsolutePath);
 
         return res.sendStatus(204);
     },

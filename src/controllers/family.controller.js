@@ -5,7 +5,12 @@ import {
     getRelativePathOfImage,
     removeImage,
 } from "../utils/imageManager.js";
-import { ValidationError, NotFoundError, AuthorizationError, AuthentificationError } from "../utils/customErrors.js";
+import {
+    ValidationError,
+    NotFoundError,
+    AuthorizationError,
+    AuthentificationError,
+} from "../utils/customErrors.js";
 import bcrypt from "bcrypt";
 
 const familyController = {
@@ -46,7 +51,9 @@ const familyController = {
             if (familyData.password) {
                 if (familyData.password !== familyData.confirmPassword) {
                     await transaction.rollback();
-                    return next(new AuthentificationError("Les mots de passe ne correspondent pas."));
+                    return next(
+                        new AuthentificationError("Les mots de passe ne correspondent pas.")
+                    );
                 }
                 hashedPassword = await bcrypt.hash(familyData.password, 10);
             }
@@ -78,7 +85,7 @@ const familyController = {
                     description: familyData.description || familyToUpdate.description,
                     url_image: isImageChange ? relativePathNewImage : familyToUpdate.url_image,
                 },
-                { transaction },
+                { transaction }
             );
 
             if (isImageChange && oldImageName !== "default_family_img.svg") {
@@ -97,7 +104,7 @@ const familyController = {
                     email: familyData.email,
                     password: hashedPassword,
                 },
-                { transaction },
+                { transaction }
             );
 
             updatedFamily = await updatedFamily.reload({
@@ -109,7 +116,6 @@ const familyController = {
             await transaction.commit();
 
             res.json(updatedFamily);
-
         } catch (error) {
             await transaction.rollback();
             next(error);
@@ -125,19 +131,18 @@ const familyController = {
         const imageAbsolutePath = getAbsolutePathOfImage(familyToDestroy.url_image);
         const imageName = imageAbsolutePath.replace("/src/public/images/families/", "");
 
+        const userToDestroy = await User.findByPk(userId);
+        if (!userToDestroy) {
+            return next(new NotFoundError());
+        }
+
+        await familyToDestroy.destroy(); // Supprime aussi l'utilisateur correspondant sur la table user (delete cascade)
 
         if (imageName !== "default_family_img.svg") {
             // on supprime l'image de la famille SI ce n'était pas l'image par défaut
             // (default_family_img.svg)
             await removeImage(imageAbsolutePath);
         }
-
-        const userToDestroy = await Family.findByPk(userId);
-        if (!userToDestroy) {
-            return next(new NotFoundError());
-        }
-
-        await userToDestroy.destroy();
 
         res.status(204).send();
     },

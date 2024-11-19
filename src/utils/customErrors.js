@@ -1,5 +1,5 @@
 export class NotFoundError extends Error {
-    constructor(name, message = "Ressource non trouvée", statusCode = 404) {
+    constructor(message = "Ressource non trouvée", statusCode = 404) {
         super(message);
         this.name = "Not Found";
         this.statusCode = statusCode;
