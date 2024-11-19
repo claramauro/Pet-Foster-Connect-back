@@ -55,7 +55,10 @@ function convertAndSaveImage(req, res, next) {
                     `../../public/images/${directoryImageName}/${originalFileName}-${Date.now()}.webp`
                 );
                 // Voir pour redimensionner l'image ?
-                await sharp(req.files[currentField][0].buffer).webp().toFile(imagePath);
+                await sharp(req.files[currentField][0].buffer)
+                    .resize(1000, null, { fit: "cover" })
+                    .webp()
+                    .toFile(imagePath);
                 req.absolutePathImage = imagePath;
             } catch (error) {
                 next(error);
