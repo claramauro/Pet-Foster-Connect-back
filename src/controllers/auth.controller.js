@@ -89,7 +89,9 @@ const authController = {
                 }
                 try {
                     const { latitude: geoLat, longitude: geoLon } = await geocodeAddress(
-                        `${address}, ${zip_code}, ${city}`
+                        address,
+                        zip_code,
+                        city
                     );
                     latitude = geoLat;
                     longitude = geoLon;
