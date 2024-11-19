@@ -62,8 +62,8 @@ CREATE TABLE "association"
     "description"       TEXT,
     "url_image"         TEXT UNIQUE,
     "slug"              TEXT UNIQUE,
-    "longitude"         FLOAT UNIQUE,
-    "latitude"          FLOAT UNIQUE,
+    "longitude"         FLOAT,
+    "latitude"          FLOAT,
     "created_at"        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"        TIMESTAMP          DEFAULT CURRENT_TIMESTAMP
 );

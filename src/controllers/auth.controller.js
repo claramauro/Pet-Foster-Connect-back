@@ -78,18 +78,20 @@ const authController = {
                         url_image: relativePathImage ? relativePathImage : undefined,
                         // si pas d'image url_image = undefined donc champ ignoré par Sequelize (on a une image par défaut définie sur la table)
                     },
-                    { transaction },
+                    { transaction }
                 );
             } else if (type === "association") {
                 // Vérifier que l'association a fourni l'image
                 if (!req.files || Object.keys(req.files).length === 0) {
                     return next(
-                        new ValidationError("association_img", "Le champ image est obligatoire."),
+                        new ValidationError("association_img", "Le champ image est obligatoire.")
                     );
                 }
                 try {
                     const { latitude: geoLat, longitude: geoLon } = await geocodeAddress(
-                        `${address}, ${zip_code}, ${city}`,
+                        address,
+                        zip_code,
+                        city
                     );
                     latitude = geoLat;
                     longitude = geoLon;
@@ -112,7 +114,7 @@ const authController = {
                         email_association,
                         url_image: relativePathImage ? relativePathImage : undefined,
                     },
-                    { transaction },
+                    { transaction }
                 );
             } else {
                 // Si type != de association ou family
@@ -121,10 +123,11 @@ const authController = {
 
             const slug = generateSlug(createdEntity.name, createdEntity.id);
 
-            await createdEntity.update({
+            await createdEntity.update(
+                {
                     slug: slug,
                 },
-                { transaction },
+                { transaction }
             );
 
             const user = await User.create(
@@ -135,7 +138,7 @@ const authController = {
                     family_id: type === "family" ? createdEntity.id : null,
                     association_id: type === "association" ? createdEntity.id : null,
                 },
-                { transaction },
+                { transaction }
             );
 
             await transaction.commit();
@@ -152,7 +155,7 @@ const authController = {
                 userWithoutPassword.id,
                 userWithoutPassword.role,
                 userWithoutPassword.family_id,
-                userWithoutPassword.association_id,
+                userWithoutPassword.association_id
             );
 
             res.setHeader("Authorization", `Bearer ${authToken}`);
@@ -197,7 +200,7 @@ const authController = {
             userWithoutPassword.id,
             userWithoutPassword.role,
             userWithoutPassword.family_id,
-            userWithoutPassword.association_id,
+            userWithoutPassword.association_id
         );
         res.setHeader("Authorization", `Bearer ${authToken}`);
 
@@ -308,8 +311,6 @@ const authController = {
 
         res.json({ message: "Modification prise en compte" });
     },
-
 };
-
 
 export { authController };
