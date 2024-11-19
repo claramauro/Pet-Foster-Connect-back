@@ -92,7 +92,6 @@ const animalsController = {
 
         // On appelle buildWhereClause pour récupérer animalWhere et associationWhere
         const { animalWhere, associationWhere } = buildWhereClause(req.query);
-        console.log(animalWhere);
 
         const currentPage = req.query.page || 1;
         const limit = 6; // Nombre d'animaux max
