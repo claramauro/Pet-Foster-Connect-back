@@ -52,7 +52,7 @@ const familyController = {
                 if (familyData.password !== familyData.confirmPassword) {
                     await transaction.rollback();
                     return next(
-                        new AuthentificationError("Les mots de passe ne correspondent pas.")
+                        new AuthentificationError("Les mots de passe ne correspondent pas."),
                     );
                 }
                 hashedPassword = await bcrypt.hash(familyData.password, 10);
@@ -77,15 +77,15 @@ const familyController = {
             let updatedFamily = await familyToUpdate.update(
                 {
                     name: familyData.name || familyToUpdate.name,
-                    address: familyData.gender || familyToUpdate.address,
-                    zip_code: familyData.race || familyToUpdate.zip_code,
+                    address: familyData.address || familyToUpdate.address,
+                    zip_code: familyData.zip_code || familyToUpdate.zip_code,
                     city: familyData.city || familyToUpdate.city,
                     department_id: familyData.department_id || familyToUpdate.department_id,
                     phone_number: familyData.phone_number || familyToUpdate.phone_number,
                     description: familyData.description || familyToUpdate.description,
                     url_image: isImageChange ? relativePathNewImage : familyToUpdate.url_image,
                 },
-                { transaction }
+                { transaction },
             );
 
             if (isImageChange && oldImageName !== "default_family_img.svg") {
@@ -104,7 +104,7 @@ const familyController = {
                     email: familyData.email,
                     password: hashedPassword,
                 },
-                { transaction }
+                { transaction },
             );
 
             updatedFamily = await updatedFamily.reload({
