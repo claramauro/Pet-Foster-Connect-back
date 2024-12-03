@@ -1,30 +1,25 @@
 import { ValidationError } from "./customErrors.js";
 
 /**
- * Fonction pour géocoder une adresse via Nominatim.
- *
+ * Fonction pour récupérer la longitude et latitude d'une adresse via l'API Nominatim.
  * @param {string} address - Numéro (facultatif) et nom de rue
  * @param {string} zipcode - code postal
  * @param {string} city - Nom de la ville
- * @returns {Promise<{latitude: number, longitude: number}>} - Latitude et Longitude de l'adresse géocodée.
+ * @returns {Promise<{latitude: number, longitude: number}>} Latitude et Longitude de l'adresse géocodée.
  */
 const geocodeAddress = async (address, zipcode, city) => {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(`${address}, ${zipcode}, ${city}`)}&addressdetails=1&limit=1`;
-
     try {
         // Envoi de la requête avec un User-Agent pour éviter les blocages
         const response = await fetch(url, {
             headers: {
-                "User-Agent": "MonApp/1.0 (contact@monapp.com)", // Remplace par l'email ou contact de ton app
+                "User-Agent": "PetFosterConnect/1.0 (noreplypetfosterconnect@gmail.com)", // Remplace par l'email ou contact de ton app
             },
         });
 
         const data = await response.json(); //
 
-        // Afficher les données récupérées
-
         if (!response.ok) {
-            // Si la réponse n'est pas ok (status 4xx ou 5xx), on lève une erreur
             const errorMessage = `Erreur ${response.status}: ${response.statusText}`;
             throw new Error(errorMessage);
         }
