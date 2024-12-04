@@ -41,7 +41,6 @@ const requestsController = {
         const emailContent = {
             familyName: family.name,
             animalName: animal.name,
-            imageAnimal: animal.url_image,
             species: animal.species.toLowerCase(),
         };
 
