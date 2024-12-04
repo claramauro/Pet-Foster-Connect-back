@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { createAuthToken } from "../src/utils/createAuthToken.js";
 
 describe("test createAuthToken function", () => {
-    it("Should return a valid token (string)", () => {
+    it("Devrait retourner un token valide (type string)", () => {
         const id = 2;
         const role = "association";
         const family_id = null;
@@ -15,7 +15,7 @@ describe("test createAuthToken function", () => {
         expect(token).to.be.a("string");
     });
 
-    it("Should return a token with correct payload for association (family_id = null)", () => {
+    it("Devrait retourner un token avec un payload correct pour une association (family_id = null)", () => {
         const id = 2;
         const role = "association";
         const family_id = null;
@@ -31,7 +31,7 @@ describe("test createAuthToken function", () => {
         expect(decodedPayload).to.not.have.property("family_id");
     });
 
-    it("Should return a token with correct payload for family (association_id = null)", () => {
+    it("Devrait retourner un token avec un payload correct pour une famille (association_id = null)", () => {
         const id = 2;
         const role = "family";
         const family_id = 2;
@@ -47,7 +47,7 @@ describe("test createAuthToken function", () => {
         expect(decodedPayload).to.not.have.property("association_id");
     });
 
-    it("Should return an error if id is null", () => {
+    it("Devrait lancer une erreur si id est null", () => {
         const id = null;
         const role = "family";
         const family_id = 2;
@@ -55,7 +55,7 @@ describe("test createAuthToken function", () => {
 
         expect(() => createAuthToken(id, role, family_id, association_id).to.throw(Error));
     });
-    it("Should return an error if role is null", () => {
+    it("Devrait lancer une erreur si role est null", () => {
         const id = 2;
         const role = null;
         const family_id = 2;
@@ -64,7 +64,7 @@ describe("test createAuthToken function", () => {
         expect(() => createAuthToken(id, role, family_id, association_id).to.throw(Error));
     });
 
-    it("should throw an error if jwt.sign fail", () => {
+    it("Devrait lancer une erreur si une erreur se produit", () => {
         const id = "12";
         const role = "family";
         const family_id = "4";

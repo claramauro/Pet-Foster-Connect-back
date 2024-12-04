@@ -14,7 +14,7 @@ describe("test function geocodeAddress", function () {
         nock.cleanAll();
     });
 
-    it("should return correct latitude and longitude for a valid address", async function () {
+    it("Devrait retourner une latitude et longitude correctes pour une adresse valide", async function () {
         const mockedResponse = [
             {
                 lat: "48.8706225",
@@ -44,7 +44,7 @@ describe("test function geocodeAddress", function () {
         expect(roundedLongitude).to.equal(parseFloat(mockedResponse[0].lon));
     });
 
-    it("should throw a ValidationError if no result is found for the address", async function () {
+    it("Devrait lancer une ValidationError si pas de résultat pour l'adresse", async function () {
         nock("https://nominatim.openstreetmap.org")
             .get("/search")
             .query({
@@ -64,7 +64,7 @@ describe("test function geocodeAddress", function () {
         }
     });
 
-    it("should handle API errors gracefully", async function () {
+    it("Devrait lancer une erreur si erreur provenant de l'API Nominatim", async function () {
         nock("https://nominatim.openstreetmap.org")
             .get("/search")
             .query({
