@@ -141,22 +141,23 @@ const authController = {
                 { transaction }
             );
 
-            await transaction.commit();
-
             const userWithoutPassword = await User.findByPk(user.id, {
+                transaction,
                 include: [
                     { association: "association", include: "department" },
                     { association: "family", include: "department" },
                 ],
                 attributes: { exclude: ["password"] },
             });
-            /* Creation du token et envoi dans le cookie, token et cookie valide 3h */
+            /* Creation du token, valide 3h */
             const authToken = createAuthToken(
                 userWithoutPassword.id,
                 userWithoutPassword.role,
                 userWithoutPassword.family_id,
                 userWithoutPassword.association_id
             );
+
+            await transaction.commit();
 
             res.setHeader("Authorization", `Bearer ${authToken}`);
             res.status(201).json(userWithoutPassword);

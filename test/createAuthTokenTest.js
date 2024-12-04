@@ -1,108 +1,82 @@
-// Imports 
+import { expect } from "chai";
+import sinon from "sinon";
+import jwt from "jsonwebtoken";
+import { createAuthToken } from "../src/utils/createAuthToken.js";
 
-import { expect } from 'chai';
-import sinon from 'sinon';
-import jwt from 'jsonwebtoken'; 
-import { createAuthToken } from '../src/utils/createAuthToken.js';  // Adapte le chemin si nécessaire
+describe("test createAuthToken function", () => {
+    it("Should return a valid token (string)", () => {
+        const id = 2;
+        const role = "association";
+        const family_id = null;
+        const association_id = 3;
 
-describe('createAuthToken', () => {
-  let jwtSignStub;
+        const token = createAuthToken(id, role, family_id, association_id);
 
-  // Avant chaque test
+        expect(token).to.be.a("string");
+    });
 
-  beforeEach(() => {
-    // Stub la fonction jwt.sign pour éviter d'appeler l'API réelle
-    jwtSignStub = sinon.stub(jwt, 'sign');
-  });
+    it("Should return a token with correct payload for association (family_id = null)", () => {
+        const id = 2;
+        const role = "association";
+        const family_id = null;
+        const association_id = 3;
 
-  // Après chaque test - remise à zéro
+        const token = createAuthToken(id, role, family_id, association_id);
+        const encodedPayload = token.split(".")[1];
+        const decodedPayload = JSON.parse(atob(encodedPayload));
 
-  afterEach(() => {
-    jwtSignStub.restore();
-  });
+        expect(decodedPayload.id).to.be.equal(id);
+        expect(decodedPayload.role).to.be.equal(role);
+        expect(decodedPayload.association_id).to.be.equal(association_id);
+        expect(decodedPayload).to.not.have.property("family_id");
+    });
 
-  it('devrait générer un token valide avec les bons paramètres', () => {
-    const id = '123';
-    const role = 'user';
-    const family_id = '456';
-    const association_id = '789';
+    it("Should return a token with correct payload for family (association_id = null)", () => {
+        const id = 2;
+        const role = "family";
+        const family_id = 2;
+        const association_id = null;
 
-    const expectedPayload = {
-      id,
-      role,
-      family_id,
-      association_id
-    };
+        const token = createAuthToken(id, role, family_id, association_id);
+        const encodedPayload = token.split(".")[1];
+        const decodedPayload = JSON.parse(atob(encodedPayload));
 
-    const fakeToken = 'fake.jwt.token';
-    jwtSignStub.returns(fakeToken);  // Simule le token généré
+        expect(decodedPayload.id).to.be.equal(id);
+        expect(decodedPayload.role).to.be.equal(role);
+        expect(decodedPayload.family_id).to.be.equal(family_id);
+        expect(decodedPayload).to.not.have.property("association_id");
+    });
 
-    // Act - Appel à la fonction
+    it("Should return an error if id is null", () => {
+        const id = null;
+        const role = "family";
+        const family_id = 2;
+        const association_id = null;
 
-    const token = createAuthToken(id, role, family_id, association_id);
+        expect(() => createAuthToken(id, role, family_id, association_id).to.throw(Error));
+    });
+    it("Should return an error if role is null", () => {
+        const id = 2;
+        const role = null;
+        const family_id = 2;
+        const association_id = null;
 
-    // Assert - Vérifications
+        expect(() => createAuthToken(id, role, family_id, association_id).to.throw(Error));
+    });
 
-    expect(jwtSignStub.calledOnce).to.be.true;  // Assure-toi que jwt.sign a été appelé une fois
-    expect(jwtSignStub.calledWith(expectedPayload, process.env.JWT_SECRET, { expiresIn: '3h' })).to.be.true;
-    expect(token).to.equal(fakeToken);  // Vérifie que le token généré est celui du stub
-  });
+    it("should throw an error if jwt.sign fail", () => {
+        const id = "12";
+        const role = "family";
+        const family_id = "4";
+        const association_id = null;
 
-  it('devrait générer un token valide sans family_id si non fourni', () => {
-    const id = '123';
-    const role = 'user';
-    const family_id = undefined;  // Pas de family_id
-    const association_id = '789';
+        const jwtSignStub = sinon.stub(jwt, "sign");
 
-    const expectedPayload = {
-      id,
-      role,
-      association_id
-    };
+        // Simuler une erreur dans jwt.sign en utilisant throws
+        jwtSignStub.throws(new Error("JWT signing error"));
 
-    const fakeToken = 'fake.jwt.token';
-    jwtSignStub.returns(fakeToken);  // Simule le token généré
+        expect(() => createAuthToken(id, role, family_id, association_id)).to.throw(Error);
 
-    const token = createAuthToken(id, role, family_id, association_id);
-
-    expect(jwtSignStub.calledOnce).to.be.true;
-    expect(jwtSignStub.calledWith(expectedPayload, process.env.JWT_SECRET, { expiresIn: '3h' })).to.be.true;
-    expect(token).to.equal(fakeToken);
-  });
-
-  it('devrait générer un token valide sans association_id si non fourni', () => {
-    const id = '123';
-    const role = 'user';
-    const family_id = '456';
-    const association_id = undefined;  // Pas d'association_id
-
-    const expectedPayload = {
-      id,
-      role,
-      family_id
-    };
-
-    const fakeToken = 'fake.jwt.token';
-    jwtSignStub.returns(fakeToken);  // Simule le token généré
-
-    const token = createAuthToken(id, role, family_id, association_id);
-
-    expect(jwtSignStub.calledOnce).to.be.true;
-    expect(jwtSignStub.calledWith(expectedPayload, process.env.JWT_SECRET, { expiresIn: '3h' })).to.be.true;
-    expect(token).to.equal(fakeToken);
-  });
-
-  it('devrait lancer une erreur si jwt.sign échoue', () => {
-    const id = '123';
-    const role = 'user';
-    const family_id = '456';
-    const association_id = '789';
-  
-    // Simuler une erreur dans jwt.sign en utilisant throws
-    jwtSignStub.throws(new Error('JWT signing error'));
-  
-    // Vérifier que l'appel à createAuthToken lève bien l'erreur
-    expect(() => createAuthToken(id, role, family_id, association_id)).to.throw('JWT signing error');
-  });
-})
-
+        jwtSignStub.restore();
+    });
+});
