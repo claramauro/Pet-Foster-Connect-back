@@ -76,9 +76,11 @@ describe("sendMailResetPassword", () => {
     });
 
     it("devrait lancer une erreur si l'email est manquant", async () => {
-        expect(
-            async () =>
-                await sendEmailAssociationForRequestAnimal(null, emailContent).to.throw(Error)
-        );
+        try {
+            await sendEmailAssociationForRequestAnimal(null, emailContent);
+            expect.fail("Erreur non lancée");
+        } catch (error) {
+            expect(error).to.be.instanceof(Error);
+        }
     });
 });
