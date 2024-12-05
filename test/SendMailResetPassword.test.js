@@ -24,22 +24,31 @@ describe("sendMailResetPassword", () => {
         transporterStub.restore();
     });
 
-    it("devrait appeler sendMail avec les bons paramètres", async () => {
-        const email = "toto@toto.com";
+    const email = "toto@toto.com";
 
+    it("devrait appeler sendMail une fois en envoyer l'email au bon destinataire", async () => {
         // Appel de la fonction pour envoyer l'email
         await sendMailResetPassword(email);
 
         const sendMailArgs = transporterStub().sendMail.getCall(0).args[0];
 
         // Vérifier que sendMail a été appelé avec le bon email et lien
+        expect(transporterStub().sendMail.calledOnce).to.be.true;
         expect(sendMailArgs.to).to.equal(email);
-        expect(sendMailArgs.html).to.include("token=");
+    });
+
+    it("devrait configurer les en-têtes d'email correctement", async () => {
+        await sendMailResetPassword(email);
+
+        const sendMailArgs = transporterStub().sendMail.getCall(0).args[0];
+
+        expect(sendMailArgs.from).to.equal(process.env.GMAIL_EMAIL);
+        expect(sendMailArgs.to).to.equal(email);
+        expect(sendMailArgs.subject).to.equal("Réinitialiser le mot de passe - PetFoster Connect");
+        expect(sendMailArgs.html).to.be.a("string").and.not.empty;
     });
 
     it("devrait générer un token valide contenant l'email", async () => {
-        const email = "toto@toto.com";
-
         await sendMailResetPassword(email);
 
         const sendMailArgs = transporterStub().sendMail.getCall(0).args[0];
@@ -55,8 +64,6 @@ describe("sendMailResetPassword", () => {
     });
 
     it("l'email devrait inclure un lien de réinitialisation avec le token", async () => {
-        const email = "toto@toto.com";
-
         await sendMailResetPassword(email);
 
         const sendMailArgs = transporterStub().sendMail.getCall(0).args[0];
@@ -68,13 +75,14 @@ describe("sendMailResetPassword", () => {
         );
     });
 
-    it("devrait lancer une erreur en cas d'échec d'envoi de l'email", async () => {
-        const email = "toto@toto.com";
-
-        // Simuler un rejet de l'email (par exemple un problème d'authentification)
+    it("devrait retourner success à false et le message d'erreur en cas d'échec d'envoi de l'email", async () => {
+        // Simuler un échec d'envoi de l'email
         transporterStub().sendMail.rejects(new Error("Échec de l'envoi"));
 
-        expect(async () => await sendMailResetPassword(email).to.throw(Error));
+        const { success, message } = await sendMailResetPassword(email);
+
+        expect(success).to.be.false;
+        expect(message).to.include("Échec de l'envoi");
     });
 
     it("devrait lancer une erreur si l'email est manquant", async () => {

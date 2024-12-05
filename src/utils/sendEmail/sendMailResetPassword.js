@@ -11,20 +11,20 @@ async function sendMailResetPassword(email) {
     if (!email) {
         throw new Error("L'argument email est obligatoire");
     }
-    /* Création du token avec une expiration à 30 min */
-    const resetToken = jwt.sign({ email }, process.env.JWT_RESET_PASSWORD_SECRET, {
-        expiresIn: "30m",
-    });
-
-    /* Création du lien de réinitialisation du mot de passe avec le token */
-    const resetLink = `${process.env.REACT_URL}/reinitialisation-mot-de-passe?token=${resetToken}`;
-
-    // Récupérer l'html à insérer dans l'email
-    const emailTemplateHtmlPath = path.join(import.meta.dirname, "htmlEmailResetPassword.html");
-    let htmlContent = fs.readFileSync(emailTemplateHtmlPath, "utf-8");
-    htmlContent = htmlContent.replace("{{resetLink}}", resetLink);
-
     try {
+        /* Création du token avec une expiration à 30 min */
+        const resetToken = jwt.sign({ email }, process.env.JWT_RESET_PASSWORD_SECRET, {
+            expiresIn: "30m",
+        });
+
+        /* Création du lien de réinitialisation du mot de passe avec le token */
+        const resetLink = `${process.env.REACT_URL}/reinitialisation-mot-de-passe?token=${resetToken}`;
+
+        // Récupérer l'html à insérer dans l'email
+        const emailTemplateHtmlPath = path.join(import.meta.dirname, "htmlEmailResetPassword.html");
+        let htmlContent = fs.readFileSync(emailTemplateHtmlPath, "utf-8");
+        htmlContent = htmlContent.replace("{{resetLink}}", resetLink);
+
         // Détails du transporteur
         const transporter = nodemailer.createTransport({
             service: "gmail",
@@ -38,7 +38,7 @@ async function sendMailResetPassword(email) {
         const mailOptions = {
             from: process.env.GMAIL_EMAIL, // Email de l'expéditeur
             to: email, // Email du destinataire
-            subject: "Mot de passe oublié",
+            subject: "Réinitialiser le mot de passe - PetFoster Connect",
             html: htmlContent,
         };
 

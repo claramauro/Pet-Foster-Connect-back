@@ -7,6 +7,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 async function sendEmailAssociationForRequestAnimal(email, emailContent) {
+    if (!email) {
+        throw new Error("L'argument email est obligatoire");
+    }
     try {
         // Détails du transporteur
         const transporter = nodemailer.createTransport({
@@ -44,7 +47,6 @@ async function sendEmailAssociationForRequestAnimal(email, emailContent) {
         return { success: true, message: "Email envoyé avec succès" };
     } catch (error) {
         console.error("Erreur lors de l'envoi du mail:", error); // Gestion des erreurs
-        console.error("Détails de l'erreur:", error.response); // Détails supplémentaires de l'erreur
         return { success: false, message: `Erreur: ${error.message}` };
     }
 }
