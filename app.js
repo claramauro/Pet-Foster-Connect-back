@@ -33,6 +33,10 @@ app.use(notFound);
 
 app.use(errorHandler);
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
-});
+if (process.env.NODE_ENV !== 'test'){
+    app.listen(process.env.PORT == "0" ? 0 : process.env.PORT, () => {
+        console.log(`Server is running on port ${process.env.PORT}`);
+    });
+}
+
+export { app };
