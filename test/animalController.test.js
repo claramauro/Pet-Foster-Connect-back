@@ -25,7 +25,7 @@ describe("test animalController", () => {
     // });
 
     describe("test findOne method", () => {
-        const animalMock = { id: 1, name: "Garfield", species: "Chat" };
+        const animal = { id: 1, name: "Garfield", species: "Chat" };
 
         let findOneStub;
         beforeEach(() => {
@@ -37,22 +37,22 @@ describe("test animalController", () => {
         });
 
         it("Devrait appeler findByPk avec l'id présent dans l'url (req.params)", async () => {
-            findOneStub.resolves(animalMock);
+            findOneStub.resolves(animal);
 
-            await request(app).get(`/animals/${animalMock.id}`);
+            await request(app).get(`/animals/${animal.id}`);
 
             const findByPkArgs = findOneStub.getCall(0).args[0];
 
             expect(findOneStub.calledOnce).to.be.true;
-            expect(findByPkArgs).to.equal(animalMock.id.toString());
+            expect(findByPkArgs).to.equal(animal.id.toString());
         });
 
         it("Devrait retourner l'animal et une réponse 200", async () => {
-            findOneStub.resolves(animalMock);
+            findOneStub.resolves(animal);
 
-            const response = await request(app).get(`/animals/${animalMock.id}`);
+            const response = await request(app).get(`/animals/${animal.id}`);
 
-            expect(response.body).to.deep.equal(animalMock);
+            expect(response.body).to.deep.equal(animal);
             expect(response.status).to.equal(200);
         });
 
@@ -61,7 +61,7 @@ describe("test animalController", () => {
 
             let response;
             try {
-                response = await request(app).get(`/animals/${animalMock.id}`);
+                response = await request(app).get(`/animals/${animal.id}`);
             } catch (error) {
                 expect(error).to.be.instanceof(NotFoundError);
                 expect(response.status).to.equal(404);

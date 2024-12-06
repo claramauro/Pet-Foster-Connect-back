@@ -77,6 +77,8 @@ const dashboardController = {
 
     storeAnimal: async (req, res, next) => {
         const { association_id: associationId } = req.user;
+        console.log(req.files);
+
         if (!req.files || Object.keys(req.files).length === 0) {
             return next(new ValidationError("animal_img", "Le champ image est obligatoire."));
         }
