@@ -97,11 +97,11 @@ const validateAndSanitize = {
     }),
     familyOrAssociationRegister: JoiSanitized.object({
         /* Famille ou asso */
-        name: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        name: JoiSanitized.string().trim().min(1).sanitize().required(),
         address: JoiSanitized.string().trim().min(1).sanitize().required(),
         zip_code: JoiSanitized.string().trim().min(1).sanitize().required(),
         city: JoiSanitized.string().trim().min(1).sanitize().required(),
-        department_id: Joi.number().integer().min(1).optional(),
+        department_id: Joi.number().integer().min(1).required(),
         phone_number: JoiSanitized.string().trim().min(1).sanitize().required(),
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
         email_association: JoiSanitized.string().trim().min(1).sanitize().optional(),

@@ -7,22 +7,31 @@ import { Animal } from "../src/models/Animal.js";
 import { NotFoundError } from "../src/utils/customErrors.js";
 
 describe("test animalController", () => {
-    // it("devrait retourner une liste d'animaux", async () => {
-    //     const animals = [
-    //         { id: 1, name: "Garfield", species: "Chat" },
-    //         { id: 2, name: "Snoopy", species: "Chien" },
-    //     ];
+    describe("test index method", () => {
+        const animals = [
+            { id: 1, name: "Garfield", species: "Chat" },
+            { id: 2, name: "Snoopy", species: "Chien" },
+        ];
 
-    //     const findStub = sinon.stub(Animal, "findAll").resolves(animals);
+        let findAllStub;
+        beforeEach(() => {
+            findAllStub = sinon.stub(Animal, "findAll");
+        });
 
-    //     const response = await request(app).get("/animals");
+        afterEach(() => {
+            findAllStub.restore();
+        });
 
-    //     console.log(response.body);
+        it("devrait retourner une liste d'animaux et un code 200", async () => {
+            findAllStub.resolves(animals);
 
-    //     expect(response.status).to.equal(200);
+            const response = await request(app).get("/animals");
 
-    //     findStub.restore();
-    // });
+            expect(response.status).to.equal(200);
+            expect(response.body).to.have.property("allAnimals");
+            expect(response.body).to.have.property("paginatedAnimals");
+        });
+    });
 
     describe("test findOne method", () => {
         const animal = { id: 1, name: "Garfield", species: "Chat" };

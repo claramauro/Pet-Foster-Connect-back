@@ -4,13 +4,34 @@ import sinon from "sinon";
 import { app } from "../app.js";
 import { Animal } from "../src/models/Animal.js";
 import { Association } from "../src/models/Association.js";
-import { NotFoundError } from "../src/utils/customErrors.js";
 
 import supertest from "supertest";
 
 import jwt from "jsonwebtoken";
-import { validateAndSanitize } from "../src/utils/validateAndSanitize.js";
-import { convertAndSaveImage } from "../src/middlewares/imageHandler.js";
+import { dashboardAssociationRoutes } from "../src/routes/dashboardAssociation.routes.js";
+
+/**
+ * Pour bypasser le middleware convertAndSaveImage
+ * @param {Array} files par défaut on simule que req.files contient une image
+ * @param {String} absolutePath par défaut on simule que req.absolutePathImage a un chemin défini
+ */
+function mockConvertAndSaveImage(files = undefined, absolutePath = undefined) {
+    dashboardAssociationRoutes.stack.forEach((layer) => {
+        if (layer.route) {
+            layer.route.stack.forEach((routeLayer) => {
+                if (routeLayer.name === "convertAndSaveImage") {
+                    routeLayer.handle = (req, res, next) => {
+                        req.files = files;
+                        req.absolutePathImage = absolutePath;
+                        next();
+                    };
+                }
+            });
+        }
+    });
+}
+
+mockConvertAndSaveImage();
 
 describe("test dashboardAssociation Controller", () => {
     const associationId = 1;
@@ -20,14 +41,6 @@ describe("test dashboardAssociation Controller", () => {
         role: "association",
         association_id: associationId,
     };
-
-    before(() => {
-        // Remplacer temporairement le middleware pour les tests
-        app.use((req, res, next) => {
-            req.user = associationData;
-            next();
-        });
-    });
 
     after(() => {
         sinon.restore();
@@ -138,46 +151,84 @@ describe("test dashboardAssociation Controller", () => {
     });
 
     describe("test storeAnimal function", () => {
-        let validateStub;
-        let animalCreateStub;
-        let animalUpdateStub;
-
-        let middlewareImageStub;
-
-        const obj = {
-            convertAndSaveImage: convertAndSaveImage,
+        const animal = {
+            name: "Garfield",
+            species: "Chat",
+            age: "3",
+            size: "Petit",
+            gender: "Mâle",
+            description: "toto",
+            availability: true,
         };
-        beforeEach(async () => {
-            // Stub de la fonction convertAndSaveImage
-            middlewareImageStub = sinon
-                .stub(obj, "convertAndSaveImage")
-                .callsFake((req, res, next) => {
-                    req.files = { animal_img: [{ buffer: Buffer.from("mockImage") }] };
-                    req.absolutePathImage = "/mock/image/path.webp"; // Simulez le chemin d'accès
-                    next(); // Passez au middleware suivant
-                });
+        const animalId = 1;
 
-            validateStub = sinon.stub(validateAndSanitize.animalStore, "validate");
+        let animalCreateStub;
+
+        beforeEach(async () => {
             animalCreateStub = sinon.stub(Animal, "create");
-            animalUpdateStub = sinon.stub(Animal, "update");
         });
 
         afterEach(() => {
             sinon.restore();
         });
 
-        const animal = { id: 1, name: "Garfield", species: "Chat", animal_img: "test" };
+        it("Devrait renvoyer l'animal ajouté avec un code 201", async () => {
+            mockConvertAndSaveImage([{ animal_img: "fakeImage" }], "/fake/path/to/img");
 
-        it("Retourne une ValidationError si une donnée non valide (Joi/Sanitize)", async () => {
-            validateStub.resolves();
-            animalCreateStub.resolves();
-            animalUpdateStub.resolves();
+            const updateStub = sinon
+                .stub()
+                .resolves({ ...animal, id: animalId, slug: "garfield-1" });
+
+            animalCreateStub.resolves({
+                ...animal,
+                id: 1,
+                update: updateStub,
+            });
 
             const response = await supertest(app)
                 .post("/dashboard/association/animals")
-                .set("Authorization", `Bearer ${validToken}`);
+                .set("Authorization", `Bearer ${validToken}`)
+                .send(animal);
 
-            console.log(response.body);
+            const updateStubArgs = updateStub.getCall(0).args[0];
+
+            expect(animalCreateStub.calledOnce).to.be.true;
+            expect(updateStub.calledOnce).to.be.true;
+            expect(updateStubArgs).to.have.property("slug", "garfield-1");
+
+            for (let [key, value] of Object.entries(animal)) {
+                expect(response.body).to.have.property(key, value);
+            }
+            expect(response.body).to.have.property("id", animalId);
+            expect(response.body).to.have.property("slug", "garfield-1");
+            expect(response.status).to.equal(201);
+        });
+
+        it("Devrait renvoyer une ValidationError si une donnée non valide (Joi/Sanitize) avec un code 400", async () => {
+            mockConvertAndSaveImage([{ animal_img: "fakeImage" }], undefined);
+
+            const animalCopy = { ...animal };
+            delete animalCopy.species;
+
+            const response = await supertest(app)
+                .post("/dashboard/association/animals")
+                .set("Authorization", `Bearer ${validToken}`)
+                .send(animalCopy);
+
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.property("error");
+        });
+
+        it("Devrait renvoyer une ValidationError si pas d'image dans la requête avec un code 400", async () => {
+            mockConvertAndSaveImage(undefined, undefined);
+
+            const response = await supertest(app)
+                .post("/dashboard/association/animals")
+                .set("Authorization", `Bearer ${validToken}`)
+                .send(animal);
+
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.property("error");
         });
     });
 });

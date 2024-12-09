@@ -43,7 +43,7 @@ const familyController = {
             const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
             if (error) {
                 await transaction.rollback();
-                return next(new ValidationError());
+                return next(new ValidationError(error.details[0].path[0], error.message));
             }
             const familyData = req.body;
 
@@ -52,7 +52,7 @@ const familyController = {
                 if (familyData.password !== familyData.confirmPassword) {
                     await transaction.rollback();
                     return next(
-                        new AuthentificationError("Les mots de passe ne correspondent pas."),
+                        new AuthentificationError("Les mots de passe ne correspondent pas.")
                     );
                 }
                 hashedPassword = await bcrypt.hash(familyData.password, 10);
@@ -85,7 +85,7 @@ const familyController = {
                     description: familyData.description || familyToUpdate.description,
                     url_image: isImageChange ? relativePathNewImage : familyToUpdate.url_image,
                 },
-                { transaction },
+                { transaction }
             );
 
             if (isImageChange && oldImageName !== "default_family_img.svg") {
@@ -104,7 +104,7 @@ const familyController = {
                     email: familyData.email,
                     password: hashedPassword,
                 },
-                { transaction },
+                { transaction }
             );
 
             updatedFamily = await updatedFamily.reload({

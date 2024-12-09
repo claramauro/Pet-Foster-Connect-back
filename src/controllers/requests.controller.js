@@ -11,7 +11,7 @@ const requestsController = {
 
         const { error } = validateAndSanitize.createAnimalRequest.validate(req.body);
         if (error) {
-            return next(new ValidationError());
+            return next(new ValidationError(error.details[0].path[0], error.message));
         }
 
         const family = await Family.findByPk(family_id);
@@ -117,14 +117,14 @@ const requestsController = {
 
         const { error } = validateAndSanitize.updateRequestAssociation.validate(req.body);
         if (error) {
-            return next(new ValidationError());
+            return next(new ValidationError(error.details[0].path[0], error.message));
         }
 
         const statusList = ["En attente", "Acceptée", "Refusée", "Terminée"]; // Si changement des status, à mettre à jour dans le front également (ManageRequest - Dashboard)
         const newStatus = req.body.status;
 
         if (!statusList.includes(newStatus)) {
-            return next(new ValidationError("Ce statut n'est pas autorisé"));
+            return next(new ValidationError("status", "Ce statut n'est pas autorisé"));
         }
 
         const request = await Request.findOne({

@@ -18,9 +18,9 @@ import jwt from "jsonwebtoken";
 const authController = {
     register: async (req, res, next) => {
         const { type } = req.params;
-        const { error, value } = validateAndSanitize.familyOrAssociationRegister.validate(req.body);
+        const { error } = validateAndSanitize.familyOrAssociationRegister.validate(req.body);
         if (error) {
-            return next(new ValidationError(error.name, error.message));
+            return next(new ValidationError(error.details[0].path[0], error.message));
         }
 
         const {
@@ -118,7 +118,7 @@ const authController = {
                 );
             } else {
                 // Si type != de association ou family
-                return next(new ValidationError("Type non autorisé"));
+                return next(new ValidationError("type", "Type non autorisé"));
             }
 
             const slug = generateSlug(createdEntity.name, createdEntity.id);
@@ -168,10 +168,10 @@ const authController = {
     },
 
     login: async (req, res, next) => {
-        const { error, value } = validateAndSanitize.familyOrAssociationLogin.validate(req.body);
+        const { error } = validateAndSanitize.familyOrAssociationLogin.validate(req.body);
 
         if (error) {
-            return next(new ValidationError(error));
+            return next(new ValidationError(error.details[0].path[0], error.message));
         }
 
         const { email, password } = req.body;
@@ -278,7 +278,7 @@ const authController = {
         const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
 
         if (error) {
-            return next(new ValidationError());
+            return next(new ValidationError(error.details[0].path[0], error.message));
         }
 
         /* Vérifie le token dans les header */
