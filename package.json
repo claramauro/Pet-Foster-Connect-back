@@ -15,7 +15,7 @@
         "db:create_tables": "psql -h pg-petfoster -p 5432 -U petfoster -d petfoster < ./src/data/create_tables.sql",
         "db:seed": "psql -h pg-petfoster -p 5432 -U petfoster -d petfoster < ./src/data/seed_tables.sql",
         "db:reset": "npm run db:drop && npm run db:create && npm run db:create_tables && npm run db:seed",
-        "test": "mocha"
+        "test": "NODE_ENV=test mocha"
     },
     "author": "",
     "license": "ISC",
@@ -29,14 +29,12 @@
         "joi": "^17.13.3",
         "jsonwebtoken": "^9.0.2",
         "multer": "^1.4.5-lts.1",
-        "nock": "^13.5.6",
         "nodemailer": "^6.9.16",
         "pg": "^8.13.1",
         "sanitize-html": "^2.13.1",
         "sequelize": "^6.37.4",
         "sharp": "^0.33.5",
-        "sinon": "^19.0.2",
-        "supertest": "^7.0.0"
+        "sinon": "^19.0.2"
     },
     "devDependencies": {
         "@babel/core": "^7.26.0",
@@ -45,7 +43,9 @@
         "chai": "^5.1.2",
         "chai-http": "^5.1.1",
         "mocha": "^10.8.2",
+        "nock": "^14.0.0-beta.18",
         "nodemon": "^3.1.7",
-        "prettier": "^3.3.3"
+        "prettier": "^3.3.3",
+        "supertest": "^7.0.0"
     }
 }

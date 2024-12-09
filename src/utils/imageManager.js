@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 /**
- * @param {String} path the path of the image to delete
+ * @param {String} path the absolute path of the image to delete
  */
 async function removeImage(path) {
     await fs.unlink(path);

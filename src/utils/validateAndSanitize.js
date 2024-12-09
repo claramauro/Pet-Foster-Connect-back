@@ -18,6 +18,9 @@ const sanitizeString = (string) => {
 const JoiSanitized = Joi.extend((joi) => ({
     type: "string",
     base: joi.string(),
+    messages: {
+        "string.sanitized": "Le contenu contient des balises ou attributs HTML non autorisés.",
+    },
     rules: {
         sanitize: {
             validate(value, helpers) {
@@ -76,7 +79,6 @@ const validateAndSanitize = {
         race: JoiSanitized.string().trim().min(1).sanitize().optional(),
         description: JoiSanitized.string().trim().min(1).sanitize().required(),
         availability: JoiSanitized.boolean().required(),
-        family_id: Joi.number().integer().optional(),
     }),
     animalUpdate: JoiSanitized.object({
         name: JoiSanitized.string().trim().min(1).sanitize().optional(),
@@ -95,11 +97,11 @@ const validateAndSanitize = {
     }),
     familyOrAssociationRegister: JoiSanitized.object({
         /* Famille ou asso */
-        name: JoiSanitized.string().trim().min(1).sanitize().optional(),
+        name: JoiSanitized.string().trim().min(1).sanitize().required(),
         address: JoiSanitized.string().trim().min(1).sanitize().required(),
         zip_code: JoiSanitized.string().trim().min(1).sanitize().required(),
         city: JoiSanitized.string().trim().min(1).sanitize().required(),
-        department_id: Joi.number().integer().min(1).optional(),
+        department_id: Joi.number().integer().min(1).required(),
         phone_number: JoiSanitized.string().trim().min(1).sanitize().required(),
         description: JoiSanitized.string().trim().min(1).sanitize().optional(),
         email_association: JoiSanitized.string().trim().min(1).sanitize().optional(),

@@ -1,8 +1,7 @@
-import { Animal, Request, Family, Association } from "../models/associations.js";
+import { Animal, Association } from "../models/associations.js";
 import { Sequelize } from "sequelize";
 import { validateAndSanitize } from "../utils/validateAndSanitize.js";
-import { ValidationError, NotFoundError } from "../utils/customErrors.js";
-import { sendEmailAssociationForRequestAnimal } from "../utils/sendEmail/SendEmailAssociationForRequestAnimal.js";
+import { NotFoundError } from "../utils/customErrors.js";
 
 const animalsController = {
     index: async (req, res) => {

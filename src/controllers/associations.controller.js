@@ -52,7 +52,7 @@ const associationsController = {
             // Validation des données
             const { error, value } = validateAndSanitize.associationSearchFilter.validate(query);
             if (error) {
-                return next(new ValidationError());
+                return next(new ValidationError(error.details[0].path[0], error.message));
             }
 
             const associationWhere = {};
@@ -81,13 +81,12 @@ const associationsController = {
                 },
                 {
                     model: Animal,
-                    as: "animals",  // Alias du modèle Animal
+                    as: "animals", // Alias du modèle Animal
                     required: Object.keys(animalWhere).length > 0, // Si animalWhere est vide, utilise LEFT JOIN
                     where: animalWhere,
                 },
             ],
         });
-
 
         // On pagine le résultat des associations par rapport à la limite (nb d'associations) et l'offset (correspondant au numéro de page demandé)
         const paginatedAssociations = filterAssociations.slice(offset, offset + limit);

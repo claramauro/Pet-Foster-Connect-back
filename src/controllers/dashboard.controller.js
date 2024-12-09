@@ -77,13 +77,14 @@ const dashboardController = {
 
     storeAnimal: async (req, res, next) => {
         const { association_id: associationId } = req.user;
+
         if (!req.files || Object.keys(req.files).length === 0) {
             return next(new ValidationError("animal_img", "Le champ image est obligatoire."));
         }
         // Valider les entrées avec Joi
         const { error } = validateAndSanitize.animalStore.validate(req.body);
         if (error) {
-            return next(new ValidationError());
+            return next(new ValidationError(error.details[0].path[0], error.message));
         }
         const animalData = {};
         for (const key in req.body) {
@@ -108,18 +109,19 @@ const dashboardController = {
             animal = await Animal.create(animalData);
             const slug = generateSlug(animal.name, animal.id);
 
-            await animal.update(
+            animal = await animal.update(
                 {
                     slug: slug,
                 },
                 { transaction }
             );
             await transaction.commit();
+
+            res.status(201).json(animal);
         } catch (error) {
             await transaction.rollback();
-            next(error);
+            return next(error);
         }
-        res.status(201).json(animal);
     },
 
     updateAnimal: async (req, res, next) => {
@@ -127,7 +129,7 @@ const dashboardController = {
         // Validation des données
         const { error } = validateAndSanitize.animalUpdate.validate(req.body);
         if (error) {
-            return next(new ValidationError());
+            return next(new ValidationError(error.details[0].path[0], error.message));
         }
         const { id: animalId } = req.params;
         const animalData = {};
@@ -239,7 +241,7 @@ const dashboardController = {
             // Valider avec Joi Validator
             const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
             if (error) {
-                return next(new ValidationError());
+                return next(new ValidationError(error.details[0].path[0], error.message));
             }
 
             const associationData = {};
