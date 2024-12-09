@@ -42,7 +42,6 @@ const familyController = {
             const { family_id: id, id: userId } = req.user;
             const { error } = validateAndSanitize.familyOrAssociationUpdate.validate(req.body);
             if (error) {
-                await transaction.rollback();
                 return next(new ValidationError(error.details[0].path[0], error.message));
             }
             const familyData = req.body;
