@@ -17,10 +17,4 @@ router.use("/departments", departmentsRoutes);
 router.use("/auth", authRoutes);
 router.use("/requests", requestsRoutes);
 
-router.get("/", (req, res) => {
-    /*
-    fetch and return  res.json() 6 animals
-     */
-});
-
 export { router };

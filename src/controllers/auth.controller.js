@@ -295,6 +295,12 @@ const authController = {
             return next(new AuthorizationError("Ce lien est expiré"));
         }
 
+        if (decoded.email !== email) {
+            return next(
+                new AuthorizationError("L'email ne correspond pas à celui associé au token.")
+            );
+        }
+
         /* Vérifie l'email de l'utilisateur */
         const userToUpdate = await User.findOne({ where: { email: email } });
 
