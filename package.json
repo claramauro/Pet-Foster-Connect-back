@@ -1,6 +1,6 @@
 {
     "name": "pet-foster-connect-back",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "",
     "main": "app.js",
     "type": "module",
