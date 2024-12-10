@@ -72,7 +72,7 @@ tables et seed)
     sudo systemctl status nginx
     ```
 
-   Si le service n'est pas actif, démarrer avec :
+    Si le service n'est pas actif, démarrer avec :
 
     ```bash
     sudo systemctl start nginx
@@ -141,42 +141,44 @@ tables et seed)
     sudo nginx -t
     ```
 
-   Si tout est correct :
+    Si tout est correct :
 
     ```bash
     nginx: configuration file /etc/nginx/nginx.conf test is successful
 
+    ```
+
 5. **Redémarrer NGINX**
 
-   ```bash
-   sudo systemctl restart nginx
-   ```
+    ```bash
+    sudo systemctl restart nginx
+    ```
 
-   ## OU si Nginx est dans le docker compose passer étape 2 et 3 :
+    ## OU si Nginx est dans le docker compose passer étape 2 et 3 :
 
-1. **Créer à la racine du repo un fichier ``nginx.conf``** :
+6. **Créer à la racine du repo un fichier `nginx.conf`** :
 
-   Exemple de fichier de configuration NGINX :
-   Dans le cadre d'une configuration de Nginx avec docker compose, `events` et `htpp` sont obligatoires.
+    Exemple de fichier de configuration NGINX :
+    Dans le cadre d'une configuration de Nginx avec docker compose, `events` et `htpp` sont obligatoires.
 
     ```ngnix
-   events {
+    events {
     worker_connections 768;
-   }
+    }
 
-   http {
-   
-   server {
-   listen 80;
-   server_name example.com www.example.com;  # Remplace par ton domaine
-   
+    http {
+
+    server {
+    listen 80;
+    server_name example.com www.example.com;  # Remplace par ton domaine
+
        # Redirige HTTP vers HTTPS
        return 301 https://$host$request_uri;
-   }
-   
-   server {
-   listen 443 ssl;
-   server_name <nom-de-domaine>;
+    }
+
+    server {
+    listen 443 ssl;
+    server_name <nom-de-domaine>;
 
     ssl_certificate /etc/letsencrypt/live/<nom-de-domaine>/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/<nom-de-domaine>/privkey.pem;
@@ -197,12 +199,12 @@ tables et seed)
         try_files $uri $uri/ =404;
         expires 30d;  # Le cache des images dure 30 jours
         add_header Cache-Control "public, max-age=2592000";  # Cache pendant 30 jours
-        add_header Access-Control-Allow-Origin <URL du front>; 
+        add_header Access-Control-Allow-Origin <URL du front>;
         add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
-		    add_header Access-Control-Allow-Headers 'Origin, X-Requested-With, Content-Type, Accept'  
-	  }
-   }
-   }
+    	    add_header Access-Control-Allow-Headers 'Origin, X-Requested-With, Content-Type, Accept'
+     }
+    }
+    }
     ```
 
 ### Étape 4 : Configurer HTTPS
@@ -236,14 +238,48 @@ Certbot va automatiquement configurer le fichier NGINX pour utiliser SSL et ajou
     ```bash
     sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
     ```
+
 2. **Lancer le script create_tables et seed_tables (uniquement à l'initialisation)** :
    Le mot de passe de la base de donnée sera demandé à chaque étape (suppression db, creation nouvelle db, creation des
    tables et seed)
 
-   ```
-   sudo docker compose exec api-petfoster npm run db:reset
-   ```
-   
+    ```
+    sudo docker compose exec api-petfoster npm run db:reset
+    ```
 
+## Test unitaires
 
-    
+Les tests utilisent les librairies Mocha et Chai.
+Certains tests utilisent des librairies supplémentaires (Sinon, Nock, SuperTest).
+
+### Pour lancer l'ensemble des tests :
+
+1.  Démarrer les conteneurs Docker :
+
+        docker compose up
+
+2.  Ouvrir un autre terminal et exécuter la commande suivante pour accéder au conteneur de l'API :
+
+        docker compose exec api-petfoster sh
+
+3.  Puis lancer les tests avec ce script :
+
+        npm run test
+
+**NB** : La variable d'environnement NODE_ENV=test est automatiquement définie dans la commande.
+
+### Pour lancer un fichier de tests spécifique :
+
+1.  Démarrer les conteneurs Docker : :
+
+        docker compose up
+
+2.  Ouvrir un autre terminal et exécuter la commande suivante pour accéder au conteneur de l'API :
+
+        docker compose exec api-petfoster sh
+
+3.  Puis lancer le fichier de tests voulu avec la commande :
+
+        NODE_ENV=test npx mocha <chemin/du/fichier/test>
+
+NB : Il est important de définir NODE_ENV=test avant npx pour que les tests s'exécutent correctement.

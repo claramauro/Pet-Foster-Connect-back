@@ -9,13 +9,33 @@ const requestsRoutes = Router();
 
 // Pour les familles
 
-requestsRoutes.post("/family", [verifyToken, isFamilyAuthorized], catchErrors(requestsController.createRequestFamily));
-requestsRoutes.get("/family", [verifyToken, isFamilyAuthorized], catchErrors(requestsController.getRequestsFamily));
-requestsRoutes.delete("/family/:id(\\d+)", [verifyToken, isFamilyAuthorized], catchErrors(requestsController.destroyRequestFamily));
+requestsRoutes.get(
+    "/family",
+    [verifyToken, isFamilyAuthorized],
+    catchErrors(requestsController.getRequestsFamily)
+);
+requestsRoutes.post(
+    "/family",
+    [verifyToken, isFamilyAuthorized],
+    catchErrors(requestsController.createRequestFamily)
+);
+requestsRoutes.delete(
+    "/family/:id(\\d+)",
+    [verifyToken, isFamilyAuthorized],
+    catchErrors(requestsController.destroyRequestFamily)
+);
 
 // Pour les associations
 
-requestsRoutes.get("/associations", [verifyToken, isAssociationAuthorized], catchErrors(requestsController.getRequestsAssociations));
-requestsRoutes.patch("/associations/:id(\\d+)", [verifyToken, isAssociationAuthorized], catchErrors(requestsController.updateRequestAssociation));
+requestsRoutes.get(
+    "/associations",
+    [verifyToken, isAssociationAuthorized],
+    catchErrors(requestsController.getRequestsAssociations)
+);
+requestsRoutes.patch(
+    "/associations/:id(\\d+)",
+    [verifyToken, isAssociationAuthorized],
+    catchErrors(requestsController.updateRequestAssociation)
+);
 
 export { requestsRoutes };

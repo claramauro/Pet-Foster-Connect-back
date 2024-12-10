@@ -4,10 +4,11 @@ species text
 name text
 gender text
 race text
-age number
+age integer
 size text
 description text
 url_image text
+slug text
 available boolean
 association_id integer
 family_id integer
@@ -32,6 +33,7 @@ department_id integer
 phone_number text
 description text
 url_image text
+slug text
 }
 
 Table association {
@@ -42,8 +44,12 @@ zip_code text
 city text
 department_id integer
 phone_number text
+email_association text
 description text
 url_image text
+slug text
+longitude float
+latitude float
 }
 
 Table department{

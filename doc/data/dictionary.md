@@ -11,6 +11,7 @@
 | size           | string             |           | NOT NULL        | Taille de l'animal             |
 | description    | string             |           | NOT NULL        | Description de l’animal        |
 | url_image      | string             |           | UNIQUE          | Url de l’image                 |
+| slug           | string             |           | UNIQUE          | Sous la forme nom-id           |
 | availability   | boolean            |           | NOT NULL        | Disponibilité de l’animal      |
 | family_id      | number             | Etrangère |                 | Code de la famille             |
 | association_id | number             | Etrangère | NOT NULL        | Code de l’association          |
@@ -39,27 +40,32 @@
 | phone_number  | string             |          | NOT NULL        | Numéro de téléphone de la famille                      |
 | description   | string             |          |                 | Description de la famille                              |
 | url_image     | string             |          | DEFAULT         | URL de l’image, url vers une image "neutre" par défaut |
+| slug          | string             |          | UNIQUE          | Sous la forme nom-id                                   |
 
 ## TABLE ASSOCIATION
 
-| **Champ**     | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                      |
-| ------------- | ------------------ | -------- | --------------- | ------------------------------------ |
-| id            | number             | Primaire | UNIQUE NOT NULL | Identifiant unique de l’association  |
-| name          | string             |          | NOT NULL        | Nom de l'association                 |
-| address       | string             |          | NOT NULL        | Adresse de l’association             |
-| zip_code      | string             |          | NOT NULL        | Code postal de l'association         |
-| city          | string             |          | NOT NULL        | Ville de l'association               |
-| department_id | number             |          | NOT NULL        | Code Département de l'association    |
-| phone_number  | string             |          | NOT NULL        | Numéro de téléphone de l’association |
-| description   | string             |          |                 | Description de l'association         |
-| url_image     | string             |          | UNIQUE          | URL de l’image                       |
+| **Champ**         | **Type de donnée** | **Clé**  | **Contraintes** | **Description**                      |
+| ----------------- | ------------------ | -------- | --------------- | ------------------------------------ |
+| id                | number             | Primaire | UNIQUE NOT NULL | Identifiant unique de l’association  |
+| name              | string             |          | NOT NULL        | Nom de l'association                 |
+| address           | string             |          | NOT NULL        | Adresse de l’association             |
+| zip_code          | string             |          | NOT NULL        | Code postal de l'association         |
+| city              | string             |          | NOT NULL        | Ville de l'association               |
+| department_id     | number             |          | NOT NULL        | Code Département de l'association    |
+| phone_number      | string             |          | NOT NULL        | Numéro de téléphone de l’association |
+| email_association | string             |          | NOT NULL        | email de contact de l’association    |
+| description       | string             |          |                 | Description de l'association         |
+| url_image         | string             |          | UNIQUE          | URL de l’image                       |
+| slug              | string             |          | UNIQUE          | Sous la forme nom-id                 |
+| latitude          | float number       |          |                 | Issue de l'adresse de l'asso         |
+| longitude         | float number       |          |                 | Issue de l'adresse de l'asso         |
 
 ## Table REQUEST
 
 | **Champ**      | **Type de donnée** | **Clé**   | **Contraintes** | **Description**                  |
 | -------------- | ------------------ | --------- | --------------- | -------------------------------- |
 | id             | number             | Primaire  | UNIQUE NOT NULL | Identifiant unique de la demande |
-| statuts        | string             |           | NOT NULL        | Statut de la demande             |
+| status         | string             |           | NOT NULL        | Statut de la demande             |
 | family_id      | number             | Etrangère |                 | Code de la famille               |
 | animal_id      | number             | Etrangère |                 | Code de l’animal                 |
 | association_id | number             | Etrangère |                 | Code de l’association            |
