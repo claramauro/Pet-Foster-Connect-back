@@ -24,6 +24,10 @@ async function sendMailResetPassword(email) {
         const emailTemplateHtmlPath = path.join(import.meta.dirname, "htmlEmailResetPassword.html");
         let htmlContent = fs.readFileSync(emailTemplateHtmlPath, "utf-8");
         htmlContent = htmlContent.replace("{{resetLink}}", resetLink);
+        htmlContent = htmlContent.replace(
+            "{{logoUrl}}",
+            `${process.env.REACT_URL}/assets/logo_name.webp`
+        );
 
         // Détails du transporteur
         const transporter = nodemailer.createTransport({
