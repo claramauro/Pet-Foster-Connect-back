@@ -29,7 +29,7 @@ async function sendEmailAssociationForRequestAnimal(email, emailContent) {
         );
         htmlContent = htmlContent.replace(
             "{{logoUrl}}",
-            `${process.env.REACT_URL}/assets/logo_name.webp`
+            `${process.env.REACT_URL}/assets/logo_name.png`
         );
         htmlContent = htmlContent.replace("{{familyName}}", emailContent.familyName);
         htmlContent = htmlContent.replace("{{animalSpecies}}", emailContent.species);
