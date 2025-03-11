@@ -2,7 +2,7 @@
 node_modules/
 .vscode
 .idea
-nginx.conf
+certbot/
 
 
 # Ignorer toutes les images sauf les images associées aux données du seed_tables.sql
